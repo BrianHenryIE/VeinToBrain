@@ -28,7 +28,7 @@
 					<artifactId>dropwizard-assets</artifactId>
 					<version>${dropwizard.version}</version>
 				</dependency>
-				<dependency>
+				<!-- <dependency>
 					<groupId>com.google.gwt</groupId>
 					<artifactId>gwt-user</artifactId>
 					<version>${gwt.version}</version>
@@ -39,7 +39,7 @@
 							<groupId>javax.validation</groupId>
 						</exclusion>
 					</exclusions>
-				</dependency>
+				</dependency>-->
 			</dependencies>
 
 			<build>

@@ -71,7 +71,7 @@ public class VeintobrainClient implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		final Button sendButton = new Button("Send");
+		final Button sendButton = new Button("Send!!!!!!");
 		final TextBox nameField = new TextBox();
 		nameField.setText("GWT User");
 		final Label errorLabel = new Label();
@@ -81,9 +81,15 @@ public class VeintobrainClient implements EntryPoint {
 
 		// Add the nameField and sendButton to the RootPanel
 		// Use RootPanel.get() to get the entire body element
-		RootPanel.get("nameFieldContainer").add(nameField);
-		RootPanel.get("sendButtonContainer").add(sendButton);
-		RootPanel.get("errorLabelContainer").add(errorLabel);
+		RootPanel root = RootPanel.get("gwt");
+		
+		VerticalPanel panel = new VerticalPanel();
+		
+		root.add(panel);
+		
+		panel.add(nameField);
+		panel.add(sendButton);
+		panel.add(errorLabel);
 
 		// Focus the cursor on the name field when the app loads
 		nameField.setFocus(true);
