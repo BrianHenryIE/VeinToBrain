@@ -1,5 +1,8 @@
 *.class
 
+# Local Repo for stuff without a public Maven #
+lib/
+
 # Package Files #
 *.jar
 *.war
