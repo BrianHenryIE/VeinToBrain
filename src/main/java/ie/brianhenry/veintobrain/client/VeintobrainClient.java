@@ -71,7 +71,7 @@ public class VeintobrainClient implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		final Button sendButton = new Button("Send!!!!!!");
+		final Button sendButton = new Button("Send!!1234!!!!");
 		final TextBox nameField = new TextBox();
 		nameField.setText("GWT User");
 		final Label errorLabel = new Label();
