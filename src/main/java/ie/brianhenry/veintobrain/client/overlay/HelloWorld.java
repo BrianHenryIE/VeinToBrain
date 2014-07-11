@@ -1,4 +1,4 @@
-package ie.brianhenry.veintobrain.client;
+package ie.brianhenry.veintobrain.client.overlay;
 
 import com.google.gwt.core.client.JavaScriptObject;
 

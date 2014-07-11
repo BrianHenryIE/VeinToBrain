@@ -5,6 +5,8 @@ import java.util.Date;
 
 import org.apache.commons.math3.stat.StatUtils;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class AnalyteStat {
 
 	final private Date statDate;
@@ -68,10 +70,12 @@ public class AnalyteStat {
 		return min;
 	}
 
+	@JsonProperty("i2p5th")
 	public double get2p5th() {
 		return i2p5th;
 	}
 
+	@JsonProperty("i25th")
 	public double get25th() {
 		return i25th;
 	}
@@ -88,10 +92,12 @@ public class AnalyteStat {
 		return mode;
 	}
 
+	@JsonProperty("i75th")
 	public double get75th() {
 		return i75th;
 	}
 
+	@JsonProperty("i97p5th")
 	public double get97p5th() {
 		return i97p5th;
 	}
