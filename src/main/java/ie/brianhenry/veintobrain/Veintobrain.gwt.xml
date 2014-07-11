@@ -15,7 +15,7 @@
   <inherits name='com.google.gwt.user.theme.clean.Clean'/>
 
   <!-- Other module inherits                                      -->
-
+  <inherits name="org.moxieapps.gwt.highcharts.Highcharts"/>
   <!-- Specify the app entry point class.                         -->
   <entry-point class='ie.brianhenry.veintobrain.client.VeintobrainClient'/>
 
