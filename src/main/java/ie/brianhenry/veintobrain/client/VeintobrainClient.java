@@ -1,7 +1,12 @@
 package ie.brianhenry.veintobrain.client;
 
+
+import org.moxieapps.gwt.highcharts.client.Chart;
+import org.moxieapps.gwt.highcharts.client.Series;
+
 import ie.brianhenry.veintobrain.client.overlay.AnalyteStat;
 import ie.brianhenry.veintobrain.client.overlay.HelloWorld;
+
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.JsonUtils;
@@ -20,7 +25,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -33,13 +40,15 @@ public class VeintobrainClient implements EntryPoint {
 	 * The message displayed to the user when the server cannot be reached or
 	 * returns an error.
 	 */
-	private static final String SERVER_ERROR = "An error occurred while " + "attempting to contact the server. Please check your network "
+	private static final String SERVER_ERROR = "An error occurred while "
+			+ "attempting to contact the server. Please check your network "
 			+ "connection and try again.";
 
-
+	
 	private void executeRequest(String message, final AsyncCallback<AnalyteStat> asyncCallback) {
 
 		String jsonUrl = "http://localhost:8080/api/analyte-stat?name="+message;
+
 
 		String url = URL.encode(jsonUrl);
 
@@ -52,11 +61,14 @@ public class VeintobrainClient implements EntryPoint {
 			builder.sendRequest(null, new RequestCallback() {
 
 				@Override
-				public void onResponseReceived(Request request, Response response) {
+				public void onResponseReceived(Request request,
+						Response response) {
 
 					System.out.println("response: " + response.getText());
 
+
 					asyncCallback.onSuccess(JsonUtils.<AnalyteStat>safeEval(response.getText()));
+
 				}
 
 				@Override
@@ -66,33 +78,44 @@ public class VeintobrainClient implements EntryPoint {
 				}
 			});
 		} catch (RequestException e) {
-			System.out.println("Couldn't retrieve JSON : " + e.getMessage() + " :getEventsForPage()");
+			System.out.println("Couldn't retrieve JSON : " + e.getMessage()
+					+ " :getEventsForPage()");
 		}
 	}
-	
+
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		final Button sendButton = new Button("Send!!1234!!!!");
+		final Button sendButton = new Button("Send!!88888888!!!!");
 		final TextBox nameField = new TextBox();
 		nameField.setText("GWT User");
 		final Label errorLabel = new Label();
 
 		// We can add style names to widgets
 		sendButton.addStyleName("sendButton");
+		
+		Chart chart = new Chart().setType(Series.Type.BAR)
+				.setChartTitleText("Lawn Tunnels").setMarginRight(10);
+		chart.setSize(700, 700);
+
+		Series series = chart.createSeries().setName("Moles per Yard")
+				.setPoints(new Number[] { 163, 203, 276, 408, 547, 729, 628 });
+		chart.addSeries(series);
 
 		// Add the nameField and sendButton to the RootPanel
 		// Use RootPanel.get() to get the entire body element
 		RootPanel root = RootPanel.get("gwt");
-		
+
 		VerticalPanel panel = new VerticalPanel();
-		
+		// HorizontalPanel p = new HorizontalPanel();
 		root.add(panel);
-		
+
 		panel.add(nameField);
 		panel.add(sendButton);
 		panel.add(errorLabel);
+
+		panel.add(chart);
 
 		// Focus the cursor on the name field when the app loads
 		nameField.setFocus(true);
@@ -145,13 +168,13 @@ public class VeintobrainClient implements EntryPoint {
 			}
 
 			/**
-			 * Send the name from the nameField to the server and wait for a response.
+			 * Send the name from the nameField to the server and wait for a
+			 * response.
 			 */
 			private void sendNameToServer() {
 				// First, we validate the input.
 				errorLabel.setText("");
 				String textToServer = nameField.getText();
-			
 
 				// Then, we send the input to the server.
 				sendButton.setEnabled(false);
@@ -161,7 +184,8 @@ public class VeintobrainClient implements EntryPoint {
 					public void onFailure(Throwable caught) {
 						// Show the RPC error message to the user
 						dialogBox.setText("Remote Procedure Call - Failure");
-						serverResponseLabel.addStyleName("serverResponseLabelError");
+						serverResponseLabel
+								.addStyleName("serverResponseLabelError");
 						serverResponseLabel.setHTML(SERVER_ERROR);
 						dialogBox.center();
 						closeButton.setFocus(true);
@@ -169,8 +193,10 @@ public class VeintobrainClient implements EntryPoint {
 
 					public void onSuccess(AnalyteStat result) {
 						dialogBox.setText("Remote Procedure Call");
+
 						serverResponseLabel.removeStyleName("serverResponseLabelError");
 						serverResponseLabel.setHTML("median: " + result.getMedian());
+
 						dialogBox.center();
 						closeButton.setFocus(true);
 					}

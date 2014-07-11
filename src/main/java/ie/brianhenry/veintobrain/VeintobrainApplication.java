@@ -20,6 +20,7 @@ public class VeintobrainApplication extends Application<VeintobrainConfiguration
 	@Override
 	public void initialize(Bootstrap<VeintobrainConfiguration> bootstrap) {
 		bootstrap.addBundle(new AssetsBundle("/gwt", "/", "index.html", "gwt"));
+		bootstrap.addBundle(new AssetsBundle("/gwt/js", "/js", "", "js"));
 		
 		
 	}
