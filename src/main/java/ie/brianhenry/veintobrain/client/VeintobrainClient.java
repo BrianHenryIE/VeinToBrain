@@ -1,7 +1,12 @@
 package ie.brianhenry.veintobrain.client;
 
+
 import org.moxieapps.gwt.highcharts.client.Chart;
 import org.moxieapps.gwt.highcharts.client.Series;
+
+import ie.brianhenry.veintobrain.client.overlay.AnalyteStat;
+import ie.brianhenry.veintobrain.client.overlay.HelloWorld;
+
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.JsonUtils;
@@ -39,11 +44,11 @@ public class VeintobrainClient implements EntryPoint {
 			+ "attempting to contact the server. Please check your network "
 			+ "connection and try again.";
 
-	private void executeRequest(String message,
-			final AsyncCallback<HelloWorld> callback) {
+	
+	private void executeRequest(String message, final AsyncCallback<AnalyteStat> asyncCallback) {
 
-		String jsonUrl = "http://localhost:8080/api/hello-world?name="
-				+ message;
+		String jsonUrl = "http://localhost:8080/api/analyte-stat?name="+message;
+
 
 		String url = URL.encode(jsonUrl);
 
@@ -61,8 +66,9 @@ public class VeintobrainClient implements EntryPoint {
 
 					System.out.println("response: " + response.getText());
 
-					callback.onSuccess(JsonUtils.<HelloWorld> safeEval(response
-							.getText()));
+
+					asyncCallback.onSuccess(JsonUtils.<AnalyteStat>safeEval(response.getText()));
+
 				}
 
 				@Override
@@ -174,7 +180,7 @@ public class VeintobrainClient implements EntryPoint {
 				sendButton.setEnabled(false);
 				textToServerLabel.setText(textToServer);
 				serverResponseLabel.setText("");
-				executeRequest(textToServer, new AsyncCallback<HelloWorld>() {
+				executeRequest(textToServer, new AsyncCallback<AnalyteStat>() {
 					public void onFailure(Throwable caught) {
 						// Show the RPC error message to the user
 						dialogBox.setText("Remote Procedure Call - Failure");
@@ -185,11 +191,12 @@ public class VeintobrainClient implements EntryPoint {
 						closeButton.setFocus(true);
 					}
 
-					public void onSuccess(HelloWorld result) {
+					public void onSuccess(AnalyteStat result) {
 						dialogBox.setText("Remote Procedure Call");
-						serverResponseLabel
-								.removeStyleName("serverResponseLabelError");
-						serverResponseLabel.setHTML(result.getContent());
+
+						serverResponseLabel.removeStyleName("serverResponseLabelError");
+						serverResponseLabel.setHTML("median: " + result.getMedian());
+
 						dialogBox.center();
 						closeButton.setFocus(true);
 					}
