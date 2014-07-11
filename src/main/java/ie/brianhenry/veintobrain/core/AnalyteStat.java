@@ -56,17 +56,11 @@ public class AnalyteStat {
 	// http://www.itl.nist.gov/div898/handbook/prc/section2/prc252.htm
 	private double percentile(double[] readings, double percentile) {
 		
-		double percentileIndex = 1 + percentile * (readings.length - 1);
+		double pIndex = 1 + percentile * (readings.length - 1) - 1;
 		
-		System.out.println(percentile + " : " + percentileIndex);
-		
-		double javaIndex = percentileIndex - 1;
-		
-		System.out.println(percentile + " : readings["+ ((int) javaIndex) + "] " + readings[(int) javaIndex]);
-
-		return readings[(int) javaIndex]
-				+ (javaIndex % 1)
-				* (readings[(int) (javaIndex + 1)] - readings[(int) javaIndex]);
+		return readings[(int) pIndex]
+				+ (pIndex % 1)
+				* (readings[(int) (pIndex + 1)] - readings[(int) pIndex]);
 
 	}
 
