@@ -26,6 +26,13 @@
 			<artifactId>mockito-all</artifactId>
 			<version>1.9.5</version>
 		</dependency>
+		<dependency>
+					<groupId>org.moxieapps.gwt</groupId>
+					<artifactId>org.moxieapps.gwt.highcharts</artifactId>
+					<version>1.6.0</version>
+					<scope>system</scope>
+					<systemPath>${basedir}/lib/org.moxieapps.gwt.highcharts-1.6.0.jar</systemPath>
+				</dependency>
 	</dependencies>
 
 	<profiles>
@@ -139,13 +146,7 @@
 					<version>${gwt.version}</version>
 					<scope>provided</scope>
 				</dependency>
-				<dependency>
-					<groupId>org.moxieapps.gwt</groupId>
-					<artifactId>org.moxieapps.gwt.highcharts</artifactId>
-					<version>1.6.0</version>
-					<scope>system</scope>
-					<systemPath>${basedir}/lib/org.moxieapps.gwt.highcharts-1.6.0.jar</systemPath>
-				</dependency>
+				
 				<dependency>
 					<groupId>com.google.gwt.gwtmockito</groupId>
 					<artifactId>gwtmockito</artifactId>
