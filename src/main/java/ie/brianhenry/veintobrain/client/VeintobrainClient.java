@@ -2,12 +2,15 @@ package ie.brianhenry.veintobrain.client;
 
 import ie.brianhenry.veintobrain.client.overlay.AnalyteStat;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.moxieapps.gwt.highcharts.client.Chart;
-import org.moxieapps.gwt.highcharts.client.Legend;
 import org.moxieapps.gwt.highcharts.client.Point;
 import org.moxieapps.gwt.highcharts.client.Series;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -48,7 +51,7 @@ public class VeintobrainClient implements EntryPoint {
 	VerticalPanel panel = new VerticalPanel();
 
 	private void executeRequest(String message,
-			final AsyncCallback<AnalyteStat> asyncCallback) {
+			final AsyncCallback<JsArray<AnalyteStat>> asyncCallback) {
 
 		String jsonUrl = "http://localhost:8080/api/analyte-stat?name="
 				+ message;
@@ -70,7 +73,7 @@ public class VeintobrainClient implements EntryPoint {
 					System.out.println("response: " + response.getText());
 
 					asyncCallback.onSuccess(JsonUtils
-							.<AnalyteStat> safeEval(response.getText()));
+							.<JsArray<AnalyteStat>> safeEval(response.getText()));
 
 				}
 
@@ -124,21 +127,23 @@ public class VeintobrainClient implements EntryPoint {
 		panel.add(errorLabel);
 
 		
-		executeRequest("a request object", new AsyncCallback<AnalyteStat>() {
+		executeRequest("a request object", new AsyncCallback<JsArray<AnalyteStat>>() {
 			public void onFailure(Throwable caught) {
 				
 			}
 
-			public void onSuccess(AnalyteStat result) {
+			public void onSuccess(JsArray<AnalyteStat> result) {
 				
 				Chart chart = new Chart();
 				chart.setType(Series.Type.BOXPLOT);
-				chart.setSize("200px", "200px");
-				// chart.setPersistent(true); //remove this line to see
-				// the proper behavior
+				chart.setSize("800px", "500px");
 
+				//List<Chart> charts = new ArrayList<Chart>();
+				//List<Series> series = new ArrayList<Series>();
+				
 				Series series = chart.createSeries();
-				series.addPoint(new Point(result.getMin(), result.get25th(), result.getMedian(), result.get75th(), result.getMax()));
+				for(int i=0; i< result.length(); i++)
+					series.addPoint(new Point(result.get(i).getMin(), result.get(i).get25th(), result.get(i).getMedian(), result.get(i).get75th(), result.get(i).getMax()));
 				chart.addSeries(series);
 
 				panel.add(chart);
@@ -211,7 +216,7 @@ public class VeintobrainClient implements EntryPoint {
 				sendButton.setEnabled(false);
 				textToServerLabel.setText(textToServer);
 				serverResponseLabel.setText("");
-				executeRequest(textToServer, new AsyncCallback<AnalyteStat>() {
+				executeRequest(textToServer, new AsyncCallback<JsArray<AnalyteStat>>() {
 					public void onFailure(Throwable caught) {
 						// Show the RPC error message to the user
 						dialogBox.setText("Remote Procedure Call - Failure");
@@ -222,17 +227,17 @@ public class VeintobrainClient implements EntryPoint {
 						closeButton.setFocus(true);
 					}
 
-					public void onSuccess(AnalyteStat result) {
+					public void onSuccess(JsArray<AnalyteStat> result) {
 						dialogBox.setText("Remote Procedure Call");
 
 						serverResponseLabel
 								.removeStyleName("serverResponseLabelError");
-						serverResponseLabel.setHTML("median: "
-								+ result.getMedian());
-
+						
 						dialogBox.center();
 						closeButton.setFocus(true);
 
+						List<Chart> charts = new ArrayList<Chart>();
+						
 						Chart chart = new Chart();
 						chart.setType(Series.Type.BOXPLOT);
 						chart.setSize("200px", "200px");

@@ -1,10 +1,9 @@
 package ie.brianhenry.veintobrain.resources;
 
 import ie.brianhenry.veintobrain.core.AnalyteStat;
-import ie.brianhenry.veintobrain.core.Saying;
 import ie.brianhenry.veintobrain.jdbi.Dummy;
 
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -18,21 +17,21 @@ import com.google.common.base.Optional;
 @Path("/analyte-stat")
 @Produces(MediaType.APPLICATION_JSON)
 public class VeintobrainResource {
-    private final String template;
-    private final String defaultName;
-    private final AtomicLong counter;
+	// private final String template;
+	// private final String defaultName;
+	// private final AtomicLong counter;
 
-    public VeintobrainResource(String template, String defaultName) {
-        this.template = template;
-        this.defaultName = defaultName;
-        this.counter = new AtomicLong();
-    }
+	public VeintobrainResource(String template, String defaultName) {
+		//this.template = template;
+		//this.defaultName = defaultName;
+		//this.counter = new AtomicLong();
+	}
 
-    @GET
-    @Timed
-    public AnalyteStat sayHello(@QueryParam("name") Optional<String> name) {
-        final String value = String.format(template, name.or(defaultName));
-        // return new Saying(counter.incrementAndGet(), value);
-        return Dummy.getIndividualStat();
-    }
+	@GET
+	@Timed
+	public List<AnalyteStat> sayHello(@QueryParam("name") Optional<String> name) {
+		// final String value = String.format(template, name.or(defaultName));
+		// return new Saying(counter.incrementAndGet(), value);
+		return Dummy.getListOfStats();
+	}
 }
