@@ -40,13 +40,13 @@ public class AnalyteStatTest {
 		assertEquals(statType, folate02Jan2009.getType());
 		
 		assertEquals(min, folate02Jan2009.getMin(), 0.001);
-		assertEquals(i2p5th, folate02Jan2009.get2p5th(), 0.001);
-		assertEquals(i25th, folate02Jan2009.get25th(), 0.001);
-		assertEquals(median, folate02Jan2009.getMedian(),0.001);
+		assertEquals(i2p5th, folate02Jan2009.getPercentile(0.025), 0.001);
+		assertEquals(i25th, folate02Jan2009.getPercentile(0.25), 0.001);
+		assertEquals(median, folate02Jan2009.getPercentile(0.5),0.001);
 		assertEquals(mean, folate02Jan2009.getMean(), 0.001);
 		assertEquals(mode, folate02Jan2009.getMode()[0], 0.001);
-		assertEquals(i75th,folate02Jan2009.get75th(), 0.001);
-		assertEquals(i97p5th, folate02Jan2009.get97p5th(), 0.001);
+		assertEquals(i75th,folate02Jan2009.getPercentile(0.75), 0.001);
+		assertEquals(i97p5th, folate02Jan2009.getPercentile(0.975), 0.001);
 		assertEquals(max, folate02Jan2009.getMax(), 0.001);
 		
 	}

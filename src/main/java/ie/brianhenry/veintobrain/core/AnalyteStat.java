@@ -2,10 +2,9 @@ package ie.brianhenry.veintobrain.core;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 
 import org.apache.commons.math3.stat.StatUtils;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AnalyteStat {
 
@@ -20,14 +19,11 @@ public class AnalyteStat {
 		return statType;
 	}
 
+	private HashMap<Double, Double> percentiles = new HashMap<Double, Double>();
+	
 	private double min;
-	private double i2p5th;
-	private double i25th;
-	private double median;
 	private double mean;
 	private double[] mode;
-	private double i75th;
-	private double i97p5th;
 	private double max;
 
 	public AnalyteStat(Date statDate, String statType, double[] readings) {
@@ -39,13 +35,10 @@ public class AnalyteStat {
 
 		min = readings[0];
 
-		i2p5th = percentile(readings, 0.025);
-		i25th = percentile(readings, 0.25);
+		Double[] defaultPercentiles = {0.025, 0.25, 0.5, 0.025, 0.75, 0.975};
 		
-		median = percentile(readings, 0.5);
-		i75th = percentile(readings, 0.75);
-		
-		i97p5th = percentile(readings, 0.975);
+		for(double p : defaultPercentiles)
+			percentiles.put(p, percentile(readings, p));
 		
 		max = readings[readings.length-1];
 		
@@ -70,18 +63,12 @@ public class AnalyteStat {
 		return min;
 	}
 
-	@JsonProperty("i2p5th")
-	public double get2p5th() {
-		return i2p5th;
+	public HashMap<Double, Double> getPercentiles() {
+		return percentiles;
 	}
-
-	@JsonProperty("i25th")
-	public double get25th() {
-		return i25th;
-	}
-
-	public double getMedian() {
-		return median;
+	
+	public double getPercentile(double p){
+		return percentiles.get(p); // TODO what about null
 	}
 
 	public double getMean() {
@@ -90,16 +77,6 @@ public class AnalyteStat {
 
 	public double[] getMode() {
 		return mode;
-	}
-
-	@JsonProperty("i75th")
-	public double get75th() {
-		return i75th;
-	}
-
-	@JsonProperty("i97p5th")
-	public double get97p5th() {
-		return i97p5th;
 	}
 
 	public double getMax() {
