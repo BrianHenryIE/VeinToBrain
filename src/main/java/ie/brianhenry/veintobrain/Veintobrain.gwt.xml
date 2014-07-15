@@ -17,6 +17,7 @@
   <!-- Other module inherits                                      -->
   <inherits name="org.moxieapps.gwt.highcharts.Highcharts"/>
   <inherits name='com.google.web.bindery.event.EventBinder'/>
+  <inherits name='com.kfuntak.gwt.json.serialization.GWTProJsonSerializer' />
   
   <!-- Specify the app entry point class.                         -->
   <entry-point class='ie.brianhenry.veintobrain.client.VeintobrainClient'/>

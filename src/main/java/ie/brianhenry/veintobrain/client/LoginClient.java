@@ -1,9 +1,9 @@
 package ie.brianhenry.veintobrain.client;
 
-import ie.brianhenry.veintobrain.client.overlay.AnalyteStat;
+import ie.brianhenry.veintobrain.shared.LoginDetails;
+import ie.brianhenry.veintobrain.shared.LoginResponse;
 
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.JsonUtils;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -22,9 +22,11 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.kfuntak.gwt.json.serialization.client.Serializer;
 
 public class LoginClient implements IsWidget {
 
@@ -37,6 +39,8 @@ public class LoginClient implements IsWidget {
 	final Button sendButton = new Button("Send!");
 	final TextBox nameField = new TextBox();
 
+	final PasswordTextBox passwordField = new PasswordTextBox();
+
 	final Label errorLabel = new Label();
 
 	final Label textToServerLabel = new Label();
@@ -45,6 +49,12 @@ public class LoginClient implements IsWidget {
 	final DialogBox dialogBox = new DialogBox();
 	final Button closeButton = new Button("Close");
 
+	
+	// This serializes the POJO to json for POSTing to the server
+	Serializer serializer = (Serializer) GWT.create(Serializer.class);
+
+	
+	
 	public LoginClient() {
 
 		nameField.setText("GWT User");
@@ -53,6 +63,9 @@ public class LoginClient implements IsWidget {
 		sendButton.addStyleName("sendButton");
 
 		p.add(nameField);
+		p.add(passwordField);
+
+		
 		p.add(sendButton);
 		p.add(errorLabel);
 
@@ -80,10 +93,13 @@ public class LoginClient implements IsWidget {
 
 		// Add a handler to close the DialogBox
 		closeButton.addClickHandler(new ClickHandler() {
+
+			@Override
 			public void onClick(ClickEvent event) {
 				dialogBox.hide();
 				sendButton.setEnabled(true);
 				sendButton.setFocus(true);
+
 			}
 		});
 
@@ -100,39 +116,40 @@ public class LoginClient implements IsWidget {
 
 	}
 
-	private void executeRequest(String message,
-			final AsyncCallback<JsArray<AnalyteStat>> asyncCallback) {
+	private void sendPassword(LoginDetails details,
+			final AsyncCallback<LoginResponse> asyncCallback) {
 
-		String jsonUrl = "http://localhost:8080/api/analyte-stat?name="
-				+ message;
+		String jsonUrl = "http://localhost:8080/api/authenticate";
 
 		String url = URL.encode(jsonUrl);
 
-		System.out.println(url);
-
 		// Send request to server and catch any errors.
-		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, url);
+
+		builder.setHeader("Content-Type", "application/json");
 
 		try {
-			builder.sendRequest(null, new RequestCallback() {
+			builder.sendRequest(serializer.serialize(details),
+					new RequestCallback() {
 
-				@Override
-				public void onResponseReceived(Request request,
-						Response response) {
+						@Override
+						public void onResponseReceived(Request request,
+								Response response) {
 
-					System.out.println("response: " + response.getText());
+							// This converts from JSON to a Java object
+							LoginResponse deResponse = (LoginResponse) serializer.deSerialize(response.getText(),
+									"ie.brianhenry.veintobrain.shared.LoginResponse");
 
-					asyncCallback.onSuccess(JsonUtils
-							.<JsArray<AnalyteStat>> safeEval(response.getText()));
+							asyncCallback.onSuccess(deResponse);
 
-				}
+						}
 
-				@Override
-				public void onError(Request request, Throwable exception) {
-					// TODO Auto-generated method stub
+						@Override
+						public void onError(Request request, Throwable exception) {
+							// TODO Auto-generated method stub
 
-				}
-			});
+						}
+					});
 		} catch (RequestException e) {
 			System.out.println("Couldn't retrieve JSON : " + e.getMessage()
 					+ " :getEventsForPage()");
@@ -170,30 +187,33 @@ public class LoginClient implements IsWidget {
 			sendButton.setEnabled(false);
 			textToServerLabel.setText(textToServer);
 			serverResponseLabel.setText("");
-			executeRequest(textToServer,
-					new AsyncCallback<JsArray<AnalyteStat>>() {
-						public void onFailure(Throwable caught) {
-							// Show the RPC error message to the user
-							dialogBox
-									.setText("Remote Procedure Call - Failure");
-							serverResponseLabel
-									.addStyleName("serverResponseLabelError");
-							serverResponseLabel.setHTML(SERVER_ERROR);
-							dialogBox.center();
-							closeButton.setFocus(true);
-						}
 
-						public void onSuccess(JsArray<AnalyteStat> result) {
-							dialogBox.setText("Remote Procedure Call");
+			LoginDetails details = new LoginDetails(nameField.getText(),
+					passwordField.getText());
 
-							serverResponseLabel
-									.removeStyleName("serverResponseLabelError");
+			sendPassword(details, new AsyncCallback<LoginResponse>() {
+				public void onFailure(Throwable caught) {
+					// Show the RPC error message to the user
+					dialogBox.setText("Remote Procedure Call - Failure");
+					serverResponseLabel
+							.addStyleName("serverResponseLabelError");
+					serverResponseLabel.setHTML(SERVER_ERROR);
+					dialogBox.center();
+					closeButton.setFocus(true);
+				}
 
-							dialogBox.center();
-							closeButton.setFocus(true);
+				public void onSuccess(LoginResponse result) {
+					dialogBox.setText("Remote Procedure Call");
 
-						}
-					});
+					serverResponseLabel
+							.removeStyleName("serverResponseLabelError");
+
+					serverResponseLabel.setHTML("anythin");
+					dialogBox.center();
+					closeButton.setFocus(true);
+
+				}
+			});
 		}
 	}
 
