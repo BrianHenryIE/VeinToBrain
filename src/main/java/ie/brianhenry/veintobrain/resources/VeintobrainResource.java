@@ -32,6 +32,7 @@ public class VeintobrainResource {
 	public List<AnalyteStat> sayHello(@QueryParam("name") Optional<String> name) {
 		// final String value = String.format(template, name.or(defaultName));
 		// return new Saying(counter.incrementAndGet(), value);
-		return Dummy.getListOfStats();
+		return Dummy.getListOfStats(name.get());
+		
 	}
 }
