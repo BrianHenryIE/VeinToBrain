@@ -50,7 +50,7 @@ public class RpcService {
 	public void executeRequest(String message,
 			final AsyncCallback<JsArray<AnalyteStat>> asyncCallback) {
 
-		String jsonUrl = "http://localhost:8080/api/analyte-stat?name="
+		String jsonUrl = "/api/analyte-stat?name="
 				+ message;
 
 		String url = URL.encode(jsonUrl);
