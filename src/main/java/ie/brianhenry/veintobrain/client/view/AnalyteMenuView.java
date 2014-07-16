@@ -26,8 +26,6 @@ public class AnalyteMenuView implements IsWidget {
 
 		for (String mi : menuItems)
 			p.add(new MenuItem(mi));
-		
-		
 
 	}
 
@@ -36,6 +34,8 @@ public class AnalyteMenuView implements IsWidget {
 		return p;
 	}
 
+	
+	//TODO should just use buttons
 	class MenuItem extends Composite {
 
 		Label p = new Label();

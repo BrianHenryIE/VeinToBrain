@@ -1,6 +1,7 @@
 package ie.brianhenry.veintobrain.client;
 
 import ie.brianhenry.veintobrain.client.events.MenuEvent;
+import ie.brianhenry.veintobrain.client.resources.VeintobrainResources;
 import ie.brianhenry.veintobrain.client.view.AnalyteMenuView;
 import ie.brianhenry.veintobrain.client.view.AnalyteView;
 
@@ -28,13 +29,20 @@ public class AppController {
 
 	private final MyEventBinder eventBinder = GWT.create(MyEventBinder.class);
 
+	VeintobrainResources resources = VeintobrainResources.INSTANCE;
+
 	public AppController(RpcService rpcService, EventBus eventBus) {
+
+		resources.css().ensureInjected();
+
+		menuContainer.setStyleName(resources.css().menuPanel());
+		appContainer.setStyleName(resources.css().appPanel());
 
 		this.rpcService = rpcService;
 		this.eventBus = eventBus;
 
 		eventBinder.bindEventHandlers(this, eventBus);
-		
+
 		app.add(menuContainer);
 		app.add(appContainer);
 	}
@@ -47,8 +55,7 @@ public class AppController {
 		appContainer.add(av);
 
 		av.setAnalyte("folate");
-		
-		
+
 		container.add(app);
 
 	}
@@ -56,8 +63,7 @@ public class AppController {
 	@EventHandler
 	void newEvents(MenuEvent event) {
 		// Something was clicked... what was it!?
-		
-		
+
 		Window.alert(event.getName());
 	}
 }

@@ -40,7 +40,7 @@ public class AnalyteView implements IsWidget {
 		return p;
 	}
 
-	public void setAnalyte(String analyte) {
+	public void setAnalyte(final String analyte) {
 
 		rpcService.executeRequest(analyte,
 				new AsyncCallback<JsArray<AnalyteStat>>() {
@@ -50,7 +50,7 @@ public class AnalyteView implements IsWidget {
 
 					public void onSuccess(JsArray<AnalyteStat> result) {
 
-						// TODO This will be different depending on what's specified by user
+						series.setName(analyte);
 						
 						for (int i = 0; i < result.length(); i++)
 							series.addPoint(new Point(result.get(i).getMin(),

@@ -17,8 +17,6 @@ import com.google.web.bindery.event.shared.binder.EventBinder;
 
 public class RpcService {
 
-
-	
 	/**
 	 * The message displayed to the user when the server cannot be reached or
 	 * returns an error.
@@ -32,9 +30,7 @@ public class RpcService {
 
 	private final MyEventBinder eventBinder = GWT.create(MyEventBinder.class);
 
-
 	private EventBus eventBus;
-
 
 	public RpcService(EventBus eventBus) {
 
@@ -43,15 +39,11 @@ public class RpcService {
 		eventBinder.bindEventHandlers(this, eventBus);
 
 	}
-	
-	
-
 
 	public void executeRequest(String message,
 			final AsyncCallback<JsArray<AnalyteStat>> asyncCallback) {
 
-		String jsonUrl = "/api/analyte-stat?name="
-				+ message;
+		String jsonUrl = "/api/analyte-stat?name=" + message;
 
 		String url = URL.encode(jsonUrl);
 
@@ -86,5 +78,4 @@ public class RpcService {
 		}
 	}
 
-	
 }
