@@ -17,10 +17,32 @@ import com.google.gwt.user.client.ui.Widget;
 public class AnalyteView implements IsWidget {
 
 	FlowPanel p = new FlowPanel();
-	
-	public AnalyteView(RpcService rpcService, EventBus eventBus) {
+	private RpcService rpcService;
 
-		rpcService.executeRequest("a request object",
+	Chart chart = new Chart();
+
+	Series series = chart.createSeries();
+
+	public AnalyteView(RpcService rpcService, EventBus eventBus) {
+		this.rpcService = rpcService;
+
+		chart.setType(Series.Type.BOXPLOT);
+		chart.setSize("800px", "500px");
+
+		chart.setCredits(null);
+
+		// if no analyte set.. display a message of some sort... maybe a waiting
+		// animation
+	}
+
+	@Override
+	public Widget asWidget() {
+		return p;
+	}
+
+	public void setAnalyte(String analyte) {
+
+		rpcService.executeRequest(analyte,
 				new AsyncCallback<JsArray<AnalyteStat>>() {
 					public void onFailure(Throwable caught) {
 
@@ -28,13 +50,8 @@ public class AnalyteView implements IsWidget {
 
 					public void onSuccess(JsArray<AnalyteStat> result) {
 
-						Chart chart = new Chart();
-						chart.setType(Series.Type.BOXPLOT);
-						chart.setSize("800px", "500px");
-
-						chart.setCredits(null);
-
-						Series series = chart.createSeries();
+						// TODO This will be different depending on what's specified by user
+						
 						for (int i = 0; i < result.length(); i++)
 							series.addPoint(new Point(result.get(i).getMin(),
 									result.get(i).getPercentile(0.25), result
@@ -48,12 +65,6 @@ public class AnalyteView implements IsWidget {
 
 					}
 				});
-
-	}
-
-	@Override
-	public Widget asWidget() {
-		return p;
 	}
 
 }
