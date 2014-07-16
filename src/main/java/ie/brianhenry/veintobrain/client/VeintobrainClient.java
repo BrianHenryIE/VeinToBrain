@@ -15,9 +15,9 @@ public class VeintobrainClient implements EntryPoint {
 		SimpleEventBus eventBus = new SimpleEventBus();
 		RpcService rpcService = new RpcService(eventBus);
 		AppController appViewer = new AppController(rpcService, eventBus);
-		// appViewer.go(RootPanel.get("gwt"));
+		appViewer.go(RootPanel.get("gwt"));
 		
-		RootPanel.get("gwt").add(new LoginClient());
+		// RootPanel.get("gwt").add(new LoginClient());
 	}
 	
 	

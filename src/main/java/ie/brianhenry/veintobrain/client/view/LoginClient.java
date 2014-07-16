@@ -1,4 +1,4 @@
-package ie.brianhenry.veintobrain.client;
+package ie.brianhenry.veintobrain.client.view;
 
 import ie.brianhenry.veintobrain.shared.LoginDetails;
 import ie.brianhenry.veintobrain.shared.LoginResponse;
