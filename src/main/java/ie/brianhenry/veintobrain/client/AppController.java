@@ -47,11 +47,12 @@ public class AppController {
 		app.add(appContainer);
 	}
 
+	AnalyteView av = new AnalyteView(rpcService, eventBus);
+	
 	public void go(HasWidgets container) {
 
 		menuContainer.add(new AnalyteMenuView(rpcService, eventBus));
 
-		AnalyteView av = new AnalyteView(rpcService, eventBus);
 		appContainer.add(av);
 
 		av.setAnalyte("folate");
@@ -63,7 +64,7 @@ public class AppController {
 	@EventHandler
 	void newEvents(MenuEvent event) {
 		// Something was clicked... what was it!?
-
-		Window.alert(event.getName());
+		av.setAnalyte(event.getName());
+		
 	}
 }

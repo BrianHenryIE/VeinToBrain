@@ -18,19 +18,13 @@ public class AnalyteView implements IsWidget {
 
 	FlowPanel p = new FlowPanel();
 	private RpcService rpcService;
-
-	Chart chart = new Chart();
-
-	Series series = chart.createSeries();
-
+	Chart chart;
+	Series series;
+	
 	public AnalyteView(RpcService rpcService, EventBus eventBus) {
 		this.rpcService = rpcService;
-
-		chart.setType(Series.Type.BOXPLOT);
-		chart.setSize("800px", "500px");
-
-		chart.setCredits(null);
-
+		setChart();
+		
 		// if no analyte set.. display a message of some sort... maybe a waiting
 		// animation
 	}
@@ -38,6 +32,17 @@ public class AnalyteView implements IsWidget {
 	@Override
 	public Widget asWidget() {
 		return p;
+	}
+
+	private void setChart() {
+		chart = new Chart();
+
+		chart.setType(Series.Type.BOXPLOT);
+		chart.setSize("800px", "500px");
+
+		chart.setCredits(null);
+		
+
 	}
 
 	public void setAnalyte(final String analyte) {
@@ -50,17 +55,23 @@ public class AnalyteView implements IsWidget {
 
 					public void onSuccess(JsArray<AnalyteStat> result) {
 
-						series.setName(analyte);
+						setChart();
 						
-						for (int i = 0; i < result.length(); i++)
-							series.addPoint(new Point(result.get(i).getMin(),
-									result.get(i).getPercentile(0.25), result
-											.get(i).getPercentile(0.5), result
-											.get(i).getPercentile(0.75), result
-											.get(i).getMax()));
+						series = chart.createSeries();
 
 						chart.addSeries(series);
 
+						series.setName(analyte);
+
+						for (int i = 0; i < result.length(); i++)
+							series.addPoint(new Point(result.get(i)
+									.getPercentile(0.025), result.get(i)
+									.getPercentile(0.25), result.get(i)
+									.getPercentile(0.5), result.get(i)
+									.getPercentile(0.75), result.get(i)
+									.getPercentile(0.975)));
+
+						p.clear();
 						p.add(chart);
 
 					}

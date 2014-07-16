@@ -11,8 +11,6 @@ import org.apache.commons.math3.stat.StatUtils;
 
 import com.google.common.primitives.Doubles;
 
-
-
 public class AnalyteStat {
 
 	final private Date statDate;
@@ -33,6 +31,12 @@ public class AnalyteStat {
 	private double[] mode;
 	private double max;
 
+	private int count;
+
+	public int getCount() {
+		return count;
+	}
+
 	List<Double> allNumericReadings = new ArrayList<Double>();
 	Map<String, Integer> otherData = new HashMap<String, Integer>();
 
@@ -40,10 +44,14 @@ public class AnalyteStat {
 
 	public AnalyteStat(List<AnalyteDate> days) {
 
+		// TODO somewhere check that they're not weekends etc
+		
 		// TODO Check that everything in the list is of the same type of analyte
 
-		for (AnalyteDate day : days)
+		for (AnalyteDate day : days) {
 			processReadingsFromStrings(day.getResults());
+			count+=day.getResults().length;
+		}
 
 		this.statDate = days.get(days.size() - 1).getDay();
 		this.statType = days.get(0).getType();
@@ -54,19 +62,33 @@ public class AnalyteStat {
 	public AnalyteStat(AnalyteDate day) {
 		statDate = day.getDay();
 		statType = day.getType();
+		count = day.getResults().length;
 		processReadingsFromStrings(day.getResults());
 		calculate();
 	}
 
 	private void processReadingsFromStrings(String[] results) {
-		for (String reading : results) {
+		for (String reading : results)
 			if (AnalyteStat.isNumeric(reading))
 				allNumericReadings.add(Double.parseDouble(reading));
 			else if (otherData.get(reading) != null)
 				otherData.put(reading, otherData.get(reading) + 1);
 			else
 				otherData.put(reading, 1);
-		}
+
+		// include >24 and <0.3
+		for (String other : otherData.keySet())
+			if (isNumeric(other.replace(">", "")))
+				allNumericReadings.add(Double.parseDouble(other
+						.replace(">", "")) + 0.01);
+			else if (isNumeric(other.replace("<", "")))
+				allNumericReadings.add(Double.parseDouble(other
+						.replace("<", "")) - 0.01);
+
+	}
+
+	public Map<String, Integer> getOtherData() {
+		return otherData;
 	}
 
 	private void calculate() {
@@ -103,7 +125,7 @@ public class AnalyteStat {
 	}
 
 	// http://stackoverflow.com/questions/1102891/how-to-check-if-a-string-is-a-numeric-type-in-java
-	public static boolean isNumeric(String str) {
+	private static boolean isNumeric(String str) {
 		return str.matches("-?\\d+(\\.\\d+)?"); // match a number with optional
 												// '-' and decimal.
 	}
@@ -130,17 +152,6 @@ public class AnalyteStat {
 
 	public double getMax() {
 		return max;
-	}
-
-	// TODO Temp until we figure something seneible
-	private String title;
-
-	public void setTitle(String name) {
-		this.title = name;
-	}
-
-	public String getTitle() {
-		return title;
 	}
 
 }
