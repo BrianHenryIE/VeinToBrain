@@ -24,6 +24,10 @@ public class AnalyteStat extends JavaScriptObject {
 		return this.max;
 	}-*/;
 
+	public final native double getCount() /*-{
+		return this.count;
+	}-*/;
+
 	public final double getPercentile(double p){
 		return this.getPercentiles().getPercentile(p);
 	}

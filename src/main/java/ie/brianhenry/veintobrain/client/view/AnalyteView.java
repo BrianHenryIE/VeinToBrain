@@ -12,6 +12,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AnalyteView implements IsWidget {
@@ -20,13 +21,12 @@ public class AnalyteView implements IsWidget {
 	private RpcService rpcService;
 	Chart chart;
 	Series series;
-	
+
 	public AnalyteView(RpcService rpcService, EventBus eventBus) {
 		this.rpcService = rpcService;
 		setChart();
-		
-		// if no analyte set.. display a message of some sort... maybe a waiting
-		// animation
+
+		// TODO if no analyte set.. display a message of some sort... maybe a waiting animation
 	}
 
 	@Override
@@ -41,9 +41,10 @@ public class AnalyteView implements IsWidget {
 		chart.setSize("800px", "500px");
 
 		chart.setCredits(null);
-		
 
 	}
+
+	FlowPanel d = new FlowPanel();
 
 	public void setAnalyte(final String analyte) {
 
@@ -56,14 +57,17 @@ public class AnalyteView implements IsWidget {
 					public void onSuccess(JsArray<AnalyteStat> result) {
 
 						setChart();
-						
+
 						series = chart.createSeries();
 
 						chart.addSeries(series);
 
 						series.setName(analyte);
 
-						for (int i = 0; i < result.length(); i++)
+						p.clear();
+						// d.clear();
+
+						for (int i = 0; i < result.length(); i++) {
 							series.addPoint(new Point(result.get(i)
 									.getPercentile(0.025), result.get(i)
 									.getPercentile(0.25), result.get(i)
@@ -71,8 +75,20 @@ public class AnalyteView implements IsWidget {
 									.getPercentile(0.75), result.get(i)
 									.getPercentile(0.975)));
 
-						p.clear();
+							// d.add(new
+							// Label(result.get(i).getDate().toLocaleString() +
+							// " total: "+ result.get(i).getCount()));
+							// d.add(new
+							// Label(result.get(i).getDate().toLocaleString() +
+							// " mean: "+ result.get(i).getMean()));
+
+						}
+
+						p.add(new Label("test"));
+
 						p.add(chart);
+
+						// p.add(d);
 
 					}
 				});

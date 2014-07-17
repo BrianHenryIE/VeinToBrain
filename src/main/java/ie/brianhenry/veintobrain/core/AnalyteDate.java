@@ -6,6 +6,7 @@ import java.util.Date;
  * @author BrianHenry.ie
  * 
  *         For a single day's raw data
+ *         This isn't the way it comes from Cognos and probably isn't the best way to store it 
  *
  */
 public class AnalyteDate {

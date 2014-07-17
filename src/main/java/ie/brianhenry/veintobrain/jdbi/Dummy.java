@@ -44,18 +44,18 @@ public class Dummy {
 		
 		if(name.toLowerCase().equals("psa")){
 		
-			list.add(new AnalyteStat(PSAdata.psaJuly()));
-			list.add(new AnalyteStat(PSAdata.psaAugust()));
-			list.add(new AnalyteStat(PSAdata.psaSeptember()));
-			list.add(new AnalyteStat(PSAdata.psaOctober()));
-			list.add(new AnalyteStat(PSAdata.psaNovember()));
-			list.add(new AnalyteStat(PSAdata.psaDecember()));
-			list.add(new AnalyteStat(PSAdata.psaJan()));
-			list.add(new AnalyteStat(PSAdata.psaFeb()));
-			list.add(new AnalyteStat(PSAdata.psaMarch()));
-			list.add(new AnalyteStat(PSAdata.psaApril()));
-			list.add(new AnalyteStat(PSAdata.psaMay()));
-			list.add(new AnalyteStat(PSAdata.psaJune()));
+			list.add(new AnalyteStat("psa", PSAdata.psaJuly()));
+			list.add(new AnalyteStat("psa", PSAdata.psaAugust()));
+			list.add(new AnalyteStat("psa", PSAdata.psaSeptember()));
+			list.add(new AnalyteStat("psa", PSAdata.psaOctober()));
+			list.add(new AnalyteStat("psa", PSAdata.psaNovember()));
+			list.add(new AnalyteStat("psa", PSAdata.psaDecember()));
+			list.add(new AnalyteStat("psa", PSAdata.psaJan()));
+			list.add(new AnalyteStat("psa", PSAdata.psaFeb()));
+			list.add(new AnalyteStat("psa", PSAdata.psaMarch()));
+			list.add(new AnalyteStat("psa", PSAdata.psaApril()));
+			list.add(new AnalyteStat("psa", PSAdata.psaMay()));
+			list.add(new AnalyteStat("psa", PSAdata.psaJune()));
 		}
 		
 		
