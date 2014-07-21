@@ -23,6 +23,10 @@ public class LoginResponse implements JsonSerializable {
 //		return this.username;
 //	}
 
+	public void setMessage(String message){
+		this.message = message;
+	}
+	
 	public String getMessage() {
 		return this.message;
 	}

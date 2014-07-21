@@ -3,6 +3,7 @@ package ie.brianhenry.veintobrain.client.view;
 import ie.brianhenry.veintobrain.client.RpcService;
 import ie.brianhenry.veintobrain.client.overlay.AnalyteStat;
 
+import org.moxieapps.gwt.highcharts.client.BaseChart.ZoomType;
 import org.moxieapps.gwt.highcharts.client.Chart;
 import org.moxieapps.gwt.highcharts.client.Point;
 import org.moxieapps.gwt.highcharts.client.Series;
@@ -12,39 +13,72 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AnalyteView implements IsWidget {
 
 	FlowPanel p = new FlowPanel();
+
+	SimplePanel chartPanel = new SimplePanel();
+	SimplePanel tablePanel = new SimplePanel();
+	FlowPanel optionsPanel = new FlowPanel();
+
 	private RpcService rpcService;
+
+	JsArray<AnalyteStat> analyteStats;
+
 	Chart chart;
 	Series series;
 
 	public AnalyteView(RpcService rpcService, EventBus eventBus) {
 		this.rpcService = rpcService;
-		setChart();
 
-		// TODO if no analyte set.. display a message of some sort... maybe a waiting animation
+		p.add(chartPanel);
+		p.add(tablePanel);
+		p.add(optionsPanel);
+
+		// TODO if no analyte set.. display a message of some sort... maybe a
+		// waiting animation
+
+		// Options (should be app-wide defaults for anythign configurable)
+		
+		// duration of each b
+		// minimum number of 
+
 	}
 
-	@Override
-	public Widget asWidget() {
-		return p;
-	}
-
-	private void setChart() {
+	private void setChart(String analyte) {
 		chart = new Chart();
 
+		chart.setZoomType(ZoomType.Y);
+		chart.getYAxis().setMin(0);
+		
 		chart.setType(Series.Type.BOXPLOT);
 		chart.setSize("800px", "500px");
 
 		chart.setCredits(null);
 
-	}
+		series = chart.createSeries();
 
-	FlowPanel d = new FlowPanel();
+		chart.addSeries(series);
+
+		series.setName(analyte);
+
+		chartPanel.clear();
+
+		for (int i = 0; i < analyteStats.length(); i++) {
+			series.addPoint(new Point(analyteStats.get(i)
+					.getPercentile(0.025), analyteStats.get(i)
+					.getPercentile(0.25), analyteStats.get(i)
+					.getPercentile(0.5), analyteStats.get(i)
+					.getPercentile(0.75), analyteStats.get(i)
+					.getPercentile(0.975)));
+		}
+
+		chartPanel.add(chart);
+
+	}
 
 	public void setAnalyte(final String analyte) {
 
@@ -56,42 +90,17 @@ public class AnalyteView implements IsWidget {
 
 					public void onSuccess(JsArray<AnalyteStat> result) {
 
-						setChart();
+						analyteStats = result;
 
-						series = chart.createSeries();
-
-						chart.addSeries(series);
-
-						series.setName(analyte);
-
-						p.clear();
-						// d.clear();
-
-						for (int i = 0; i < result.length(); i++) {
-							series.addPoint(new Point(result.get(i)
-									.getPercentile(0.025), result.get(i)
-									.getPercentile(0.25), result.get(i)
-									.getPercentile(0.5), result.get(i)
-									.getPercentile(0.75), result.get(i)
-									.getPercentile(0.975)));
-
-							// d.add(new
-							// Label(result.get(i).getDate().toLocaleString() +
-							// " total: "+ result.get(i).getCount()));
-							// d.add(new
-							// Label(result.get(i).getDate().toLocaleString() +
-							// " mean: "+ result.get(i).getMean()));
-
-						}
-
-						p.add(new Label("test"));
-
-						p.add(chart);
-
-						// p.add(d);
+						setChart(analyte);
 
 					}
 				});
+	}
+
+	@Override
+	public Widget asWidget() {
+		return p;
 	}
 
 }

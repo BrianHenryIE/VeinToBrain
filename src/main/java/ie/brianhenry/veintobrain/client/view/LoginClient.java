@@ -31,8 +31,7 @@ import com.kfuntak.gwt.json.serialization.client.Serializer;
 public class LoginClient implements IsWidget {
 
 	private static final String SERVER_ERROR = "An error occurred while "
-			+ "attempting to contact the server. Please check your network "
-			+ "connection and try again.";
+			+ "attempting to contact the server. Please check your network " + "connection and try again.";
 
 	FlowPanel p = new FlowPanel();
 
@@ -49,12 +48,9 @@ public class LoginClient implements IsWidget {
 	final DialogBox dialogBox = new DialogBox();
 	final Button closeButton = new Button("Close");
 
-	
 	// This serializes the POJO to json for POSTing to the server
 	Serializer serializer = (Serializer) GWT.create(Serializer.class);
 
-	
-	
 	public LoginClient() {
 
 		nameField.setText("GWT User");
@@ -65,7 +61,6 @@ public class LoginClient implements IsWidget {
 		p.add(nameField);
 		p.add(passwordField);
 
-		
 		p.add(sendButton);
 		p.add(errorLabel);
 
@@ -116,8 +111,7 @@ public class LoginClient implements IsWidget {
 
 	}
 
-	private void sendPassword(LoginDetails details,
-			final AsyncCallback<LoginResponse> asyncCallback) {
+	private void sendPassword(LoginDetails details, final AsyncCallback<LoginResponse> asyncCallback) {
 
 		String jsonUrl = "http://localhost:8080/api/authenticate";
 
@@ -129,30 +123,27 @@ public class LoginClient implements IsWidget {
 		builder.setHeader("Content-Type", "application/json");
 
 		try {
-			builder.sendRequest(serializer.serialize(details),
-					new RequestCallback() {
+			builder.sendRequest(serializer.serialize(details), new RequestCallback() {
 
-						@Override
-						public void onResponseReceived(Request request,
-								Response response) {
+				@Override
+				public void onResponseReceived(Request request, Response response) {
 
-							// This converts from JSON to a Java object
-							LoginResponse deResponse = (LoginResponse) serializer.deSerialize(response.getText(),
-									"ie.brianhenry.veintobrain.shared.LoginResponse");
+					// This converts from JSON to a Java object
+					LoginResponse deResponse = serializer.deSerialize(response.getText(), LoginResponse.class);
+					
 
-							asyncCallback.onSuccess(deResponse);
+					asyncCallback.onSuccess(deResponse);
 
-						}
+				}
 
-						@Override
-						public void onError(Request request, Throwable exception) {
-							// TODO Auto-generated method stub
+				@Override
+				public void onError(Request request, Throwable exception) {
+					// TODO Auto-generated method stub
 
-						}
-					});
+				}
+			});
 		} catch (RequestException e) {
-			System.out.println("Couldn't retrieve JSON : " + e.getMessage()
-					+ " :getEventsForPage()");
+			System.out.println("Couldn't retrieve JSON : " + e.getMessage() + " :getEventsForPage()");
 		}
 	}
 
@@ -188,15 +179,13 @@ public class LoginClient implements IsWidget {
 			textToServerLabel.setText(textToServer);
 			serverResponseLabel.setText("");
 
-			LoginDetails details = new LoginDetails(nameField.getText(),
-					passwordField.getText());
+			LoginDetails details = new LoginDetails(nameField.getText(), passwordField.getText());
 
 			sendPassword(details, new AsyncCallback<LoginResponse>() {
 				public void onFailure(Throwable caught) {
 					// Show the RPC error message to the user
 					dialogBox.setText("Remote Procedure Call - Failure");
-					serverResponseLabel
-							.addStyleName("serverResponseLabelError");
+					serverResponseLabel.addStyleName("serverResponseLabelError");
 					serverResponseLabel.setHTML(SERVER_ERROR);
 					dialogBox.center();
 					closeButton.setFocus(true);
@@ -205,8 +194,7 @@ public class LoginClient implements IsWidget {
 				public void onSuccess(LoginResponse result) {
 					dialogBox.setText("Remote Procedure Call");
 
-					serverResponseLabel
-							.removeStyleName("serverResponseLabelError");
+					serverResponseLabel.removeStyleName("serverResponseLabelError");
 
 					serverResponseLabel.setHTML("anythin");
 					dialogBox.center();

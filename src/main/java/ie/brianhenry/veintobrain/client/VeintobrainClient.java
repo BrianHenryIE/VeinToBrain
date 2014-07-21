@@ -1,5 +1,7 @@
 package ie.brianhenry.veintobrain.client;
 
+import ie.brianhenry.veintobrain.client.view.LoginClient;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -15,9 +17,9 @@ public class VeintobrainClient implements EntryPoint {
 		SimpleEventBus eventBus = new SimpleEventBus();
 		RpcService rpcService = new RpcService(eventBus);
 		AppController appViewer = new AppController(rpcService, eventBus);
-		appViewer.go(RootPanel.get("gwt"));
+		// appViewer.go(RootPanel.get("gwt"));
 		
-		// RootPanel.get("gwt").add(new LoginClient());
+		RootPanel.get("gwt").add(new LoginClient());
 	}
 	
 	

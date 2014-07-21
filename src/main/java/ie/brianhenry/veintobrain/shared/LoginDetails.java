@@ -3,11 +3,14 @@ package ie.brianhenry.veintobrain.shared;
 import com.kfuntak.gwt.json.serialization.client.JsonSerializable;
 
 public class LoginDetails implements JsonSerializable {
-	public String username;
-	public String password;
 
-	public LoginDetails(){}
-	
+	private String username;
+
+	private String password;
+
+	public LoginDetails() {
+	}
+
 	public LoginDetails(String username, String password) {
 		this.username = username;
 		this.password = password;
@@ -21,4 +24,11 @@ public class LoginDetails implements JsonSerializable {
 		return this.password;
 	}
 
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
 }

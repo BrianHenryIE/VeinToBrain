@@ -32,14 +32,14 @@ public class AnalyteStat {
 	/**
 	 * The percentiles to be calculated for every AnalyteStat
 	 */
-	private Double[] defaultPercentiles = { 0.025, 0.25, 0.5, 0.025, 0.75,
-			0.975 };
+	private Double[] defaultPercentiles = { 0.025, 0.25, 0.5, 0.75, 0.975 };
 
+	/**
+	 * This object could be for one day, week, month, etc.
+	 */
 	private List<Date> includedDates = new ArrayList<Date>();
 
 	private int inputCount;
-
-	private int invalidReadings;
 
 	private HashMap<Double, Double> percentileCalculations = new HashMap<Double, Double>();
 
@@ -56,6 +56,15 @@ public class AnalyteStat {
 	 * Any non-numeric input data, e.g. U, UXINC, <0.3, >24
 	 */
 	private Map<String, Integer> otherData = new HashMap<String, Integer>();
+
+	public AnalyteStat(AnalyteDate day) {
+		includedDates.add(day.getDay());
+		analyteType = day.getType();
+		inputCount = day.getResults().length;
+		processNumbersFromReadings(day.getResults());
+		processNumbersFromOtherData();
+		calculateStats();
+	}
 
 	public AnalyteStat(String analyteType, List<AnalyteDate> days) {
 
@@ -75,28 +84,8 @@ public class AnalyteStat {
 			if (!analyteType.equals(day.getType()))
 				return; // TODO deal with this properly
 		}
-		processOtherData();
+		processNumbersFromOtherData();
 		calculateStats();
-	}
-
-	public AnalyteStat(AnalyteDate day) {
-		includedDates.add(day.getDay());
-		analyteType = day.getType();
-		inputCount = day.getResults().length;
-		processNumbersFromReadings(day.getResults());
-		processOtherData();
-		calculateStats();
-	}
-
-	private int regularNumbersCount;
-	private int lowNumbersCount;
-
-	public int getRegularNumbersCount() {
-		return regularNumbersCount;
-	}
-
-	public int getLowNumbersCount() {
-		return lowNumbersCount;
 	}
 
 	/**
@@ -110,19 +99,19 @@ public class AnalyteStat {
 		allReadings.addAll(Arrays.asList(results));
 
 		for (String reading : results)
-			if (AnalyteStat.isNumeric(reading)) {
+			if (AnalyteStat.isNumeric(reading))
 				allNumericReadings.add(Double.parseDouble(reading));
-				regularNumbersCount++;
-			} else if (otherData.get(reading) != null)
+			else if (otherData.get(reading) != null)
 				otherData.put(reading, otherData.get(reading) + 1);
 			else
 				otherData.put(reading, 1);
 	}
 
 	/**
-	 * The HashMap of non-numeric readings is processed to include <0.03 etc
+	 * The HashMap of non-numeric readings is processed to include each <0.03
+	 * etc in the calculations
 	 */
-	private void processOtherData() {
+	private void processNumbersFromOtherData() {
 
 		// include >24 and <0.3
 		for (String other : otherData.keySet())
@@ -133,8 +122,7 @@ public class AnalyteStat {
 				for (int i = 0; i < otherData.get(other); i++)
 					allNumericReadings.add(Double.parseDouble(other.replace(
 							"<", "")) - 0.001);
-			else
-				invalidReadings++;
+
 	}
 
 	private void calculateStats() {
@@ -197,7 +185,6 @@ public class AnalyteStat {
 				* (readings[(int) (pIndex + 1)] - readings[(int) pIndex]);
 
 		return round(calc, 3);
-
 	}
 
 	/**
@@ -220,11 +207,17 @@ public class AnalyteStat {
 		return percentileCalculations;
 	}
 
+	/**
+	 * TODO This should maybe store in the database whenever it's called
+	 * 
+	 * @param p
+	 * @return
+	 */
 	public double getPercentile(double p) {
-		if(!percentileCalculations.containsKey(p))
+		if (!percentileCalculations.containsKey(p))
 			percentileCalculations.put(p, percentile(readings, p));
 
-		return round(percentileCalculations.get(p),3);
+		return round(percentileCalculations.get(p), 3);
 	}
 
 	public double getMean() {
@@ -249,10 +242,6 @@ public class AnalyteStat {
 
 	public List<Date> getIncludedDates() {
 		return includedDates;
-	}
-
-	public int getInvalidReadings() {
-		return invalidReadings;
 	}
 
 	public String getType() {
