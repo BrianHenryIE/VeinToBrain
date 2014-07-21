@@ -4,19 +4,12 @@ import ie.brianhenry.veintobrain.client.RpcService;
 import ie.brianhenry.veintobrain.client.events.LoginEvent;
 import ie.brianhenry.veintobrain.shared.LoginResponse;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -28,7 +21,6 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.kfuntak.gwt.json.serialization.client.Serializer;
 
 public class LoginClientView implements IsWidget {
 
@@ -49,9 +41,6 @@ public class LoginClientView implements IsWidget {
 
 	final DialogBox dialogBox = new DialogBox();
 	final Button closeButton = new Button("Close");
-
-	// This serializes the POJO to json for POSTing to the server
-	Serializer serializer = (Serializer) GWT.create(Serializer.class);
 
 	private RpcService rpcService;
 
@@ -120,52 +109,7 @@ public class LoginClientView implements IsWidget {
 
 	}
 
-	private void sendPassword(final String username, String password, final AsyncCallback<LoginResponse> asyncCallback) {
-
-		String jsonUrl = "http://localhost:8080/api/login";
-
-		String url = URL.encode(jsonUrl);
-
-		// Send request to server and catch any errors.
-		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
-
-		builder.setUser(username);
-		builder.setPassword(password);
-
-		try {
-			builder.sendRequest(null, new RequestCallback() {
-
-				@Override
-				public void onResponseReceived(Request request, Response response) {
-
-					// To check for unauthorised!
-					if (response.getStatusCode() == 401) {
-
-						asyncCallback.onSuccess(new LoginResponse(false, null, "401"));
-
-					} else {
-
-						// This converts from JSON to a Java object
-						LoginResponse deResponse = serializer.deSerialize(response.getText(), LoginResponse.class);
-
-						GWT.log(deResponse.getMessage());
-						GWT.log(response.getText());
-
-						asyncCallback.onSuccess(deResponse);
-					}
-
-				}
-
-				@Override
-				public void onError(Request request, Throwable exception) {
-					// TODO Auto-generated method stub
-
-				}
-			});
-		} catch (RequestException e) {
-			System.out.println("Couldn't retrieve JSON : " + e.getMessage() + " :getEventsForPage()");
-		}
-	}
+	
 
 	// Create a handler for the sendButton and nameField
 	class MyHandler implements ClickHandler, KeyUpHandler {
@@ -199,7 +143,7 @@ public class LoginClientView implements IsWidget {
 			textToServerLabel.setText(textToServer);
 			serverResponseLabel.setText("");
 
-			sendPassword(nameField.getText(), passwordField.getText(), new AsyncCallback<LoginResponse>() {
+			rpcService.sendPassword(nameField.getText(), passwordField.getText(), new AsyncCallback<LoginResponse>() {
 				public void onFailure(Throwable caught) {
 					// Show the RPC error message to the user
 					dialogBox.setText("Remote Procedure Call - Failure");

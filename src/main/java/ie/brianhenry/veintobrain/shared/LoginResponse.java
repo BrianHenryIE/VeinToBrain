@@ -1,10 +1,18 @@
 package ie.brianhenry.veintobrain.shared;
 
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.kfuntak.gwt.json.serialization.client.JsonSerializable;
 
+//@GwtIncompatible
+@JsonTypeInfo(use=Id.CLASS, include=As.PROPERTY, property="class")
 public class LoginResponse implements JsonSerializable {
 
+	// @JsonProperty("class")
+	// public String classname = LoginResponse.class.getName();
+	
 	public boolean success;
 	public User user;
 	private String message;

@@ -1,6 +1,7 @@
 package ie.brianhenry.veintobrain.client;
 
 import ie.brianhenry.veintobrain.client.overlay.AnalyteStat;
+import ie.brianhenry.veintobrain.shared.LoginResponse;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
@@ -14,6 +15,7 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.binder.EventBinder;
+import com.kfuntak.gwt.json.serialization.client.Serializer;
 
 public class RpcService {
 
@@ -22,8 +24,7 @@ public class RpcService {
 	 * returns an error.
 	 */
 	private static final String SERVER_ERROR = "An error occurred while "
-			+ "attempting to contact the server. Please check your network "
-			+ "connection and try again.";
+			+ "attempting to contact the server. Please check your network " + "connection and try again.";
 
 	interface MyEventBinder extends EventBinder<RpcService> {
 	}
@@ -31,6 +32,9 @@ public class RpcService {
 	private final MyEventBinder eventBinder = GWT.create(MyEventBinder.class);
 
 	private EventBus eventBus;
+
+	// This serializes the POJO to json for POSTing to the server
+	Serializer serializer = (Serializer) GWT.create(Serializer.class);
 
 	public RpcService(EventBus eventBus) {
 
@@ -40,8 +44,7 @@ public class RpcService {
 
 	}
 
-	public void executeRequest(String message,
-			final AsyncCallback<JsArray<AnalyteStat>> asyncCallback) {
+	public void executeRequest(String message, final AsyncCallback<JsArray<AnalyteStat>> asyncCallback) {
 
 		String jsonUrl = "/api/analyte-stat?name=" + message;
 
@@ -56,13 +59,11 @@ public class RpcService {
 			builder.sendRequest(null, new RequestCallback() {
 
 				@Override
-				public void onResponseReceived(Request request,
-						Response response) {
+				public void onResponseReceived(Request request, Response response) {
 
 					System.out.println("response: " + response.getText());
 
-					asyncCallback.onSuccess(JsonUtils
-							.<JsArray<AnalyteStat>> safeEval(response.getText()));
+					asyncCallback.onSuccess(JsonUtils.<JsArray<AnalyteStat>> safeEval(response.getText()));
 
 				}
 
@@ -73,9 +74,54 @@ public class RpcService {
 				}
 			});
 		} catch (RequestException e) {
-			System.out.println("Couldn't retrieve JSON : " + e.getMessage()
-					+ " :getEventsForPage()");
+			System.out.println("Couldn't retrieve JSON : " + e.getMessage() + " :getEventsForPage()");
 		}
 	}
 
+	public void sendPassword(final String username, String password, final AsyncCallback<LoginResponse> asyncCallback) {
+
+		String jsonUrl = "http://localhost:8080/api/login";
+
+		String url = URL.encode(jsonUrl);
+
+		// Send request to server and catch any errors.
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
+
+		builder.setUser(username);
+		builder.setPassword(password);
+
+		try {
+			builder.sendRequest(null, new RequestCallback() {
+
+				@Override
+				public void onResponseReceived(Request request, Response response) {
+
+					// To check for unauthorised!
+					if (response.getStatusCode() != 200) {
+
+						asyncCallback.onSuccess(new LoginResponse(false, null, response.getStatusCode() + ""));
+
+					} else {
+
+						// This converts from JSON to a Java object
+						LoginResponse deResponse = serializer.deSerialize(response.getText(), LoginResponse.class);
+
+						GWT.log(deResponse.getMessage());
+						GWT.log(response.getText());
+
+						asyncCallback.onSuccess(deResponse);
+					}
+
+				}
+
+				@Override
+				public void onError(Request request, Throwable exception) {
+					// TODO Auto-generated method stub
+
+				}
+			});
+		} catch (RequestException e) {
+			System.out.println("Couldn't retrieve JSON : " + e.getMessage() + " :getEventsForPage()");
+		}
+	}
 }
