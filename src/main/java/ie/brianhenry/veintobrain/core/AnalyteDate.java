@@ -11,6 +11,8 @@ import java.util.Date;
  */
 public class AnalyteDate {
 
+	// @JsonTypeInfo(use=Id.CLASS, include=As.PROPERTY, property="class")
+	
 	String type;
 	Date day;
 	String[] results;

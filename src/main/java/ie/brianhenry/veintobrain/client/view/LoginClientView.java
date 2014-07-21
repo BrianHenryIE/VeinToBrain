@@ -1,6 +1,7 @@
 package ie.brianhenry.veintobrain.client.view;
 
-import ie.brianhenry.veintobrain.shared.LoginDetails;
+import ie.brianhenry.veintobrain.client.RpcService;
+import ie.brianhenry.veintobrain.client.events.LoginEvent;
 import ie.brianhenry.veintobrain.shared.LoginResponse;
 
 import com.google.gwt.core.client.GWT;
@@ -9,6 +10,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -28,7 +30,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.kfuntak.gwt.json.serialization.client.Serializer;
 
-public class LoginClient implements IsWidget {
+public class LoginClientView implements IsWidget {
 
 	private static final String SERVER_ERROR = "An error occurred while "
 			+ "attempting to contact the server. Please check your network " + "connection and try again.";
@@ -51,7 +53,14 @@ public class LoginClient implements IsWidget {
 	// This serializes the POJO to json for POSTing to the server
 	Serializer serializer = (Serializer) GWT.create(Serializer.class);
 
-	public LoginClient() {
+	private RpcService rpcService;
+
+	private EventBus eventBus;
+
+	public LoginClientView(RpcService rpcService, EventBus eventBus) {
+
+		this.rpcService = rpcService;
+		this.eventBus = eventBus;
 
 		nameField.setText("GWT User");
 
@@ -111,28 +120,39 @@ public class LoginClient implements IsWidget {
 
 	}
 
-	private void sendPassword(LoginDetails details, final AsyncCallback<LoginResponse> asyncCallback) {
+	private void sendPassword(final String username, String password, final AsyncCallback<LoginResponse> asyncCallback) {
 
-		String jsonUrl = "http://localhost:8080/api/authenticate";
+		String jsonUrl = "http://localhost:8080/api/login";
 
 		String url = URL.encode(jsonUrl);
 
 		// Send request to server and catch any errors.
-		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, url);
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
 
-		builder.setHeader("Content-Type", "application/json");
+		builder.setUser(username);
+		builder.setPassword(password);
 
 		try {
-			builder.sendRequest(serializer.serialize(details), new RequestCallback() {
+			builder.sendRequest(null, new RequestCallback() {
 
 				@Override
 				public void onResponseReceived(Request request, Response response) {
 
-					// This converts from JSON to a Java object
-					LoginResponse deResponse = serializer.deSerialize(response.getText(), LoginResponse.class);
-					
+					// To check for unauthorised!
+					if (response.getStatusCode() == 401) {
 
-					asyncCallback.onSuccess(deResponse);
+						asyncCallback.onSuccess(new LoginResponse(false, null, "401"));
+
+					} else {
+
+						// This converts from JSON to a Java object
+						LoginResponse deResponse = serializer.deSerialize(response.getText(), LoginResponse.class);
+
+						GWT.log(deResponse.getMessage());
+						GWT.log(response.getText());
+
+						asyncCallback.onSuccess(deResponse);
+					}
 
 				}
 
@@ -179,9 +199,7 @@ public class LoginClient implements IsWidget {
 			textToServerLabel.setText(textToServer);
 			serverResponseLabel.setText("");
 
-			LoginDetails details = new LoginDetails(nameField.getText(), passwordField.getText());
-
-			sendPassword(details, new AsyncCallback<LoginResponse>() {
+			sendPassword(nameField.getText(), passwordField.getText(), new AsyncCallback<LoginResponse>() {
 				public void onFailure(Throwable caught) {
 					// Show the RPC error message to the user
 					dialogBox.setText("Remote Procedure Call - Failure");
@@ -192,14 +210,16 @@ public class LoginClient implements IsWidget {
 				}
 
 				public void onSuccess(LoginResponse result) {
-					dialogBox.setText("Remote Procedure Call");
 
-					serverResponseLabel.removeStyleName("serverResponseLabelError");
-
-					serverResponseLabel.setHTML("anythin");
-					dialogBox.center();
-					closeButton.setFocus(true);
-
+					if (result.getSuccess())
+						eventBus.fireEvent(new LoginEvent(result.getUser()));
+					else {
+						dialogBox.setText("Remote Procedure Call");
+						serverResponseLabel.removeStyleName("serverResponseLabelError");
+						serverResponseLabel.setHTML(result.getMessage());
+						dialogBox.center();
+						closeButton.setFocus(true);
+					}
 				}
 			});
 		}

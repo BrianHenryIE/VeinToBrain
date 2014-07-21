@@ -1,13 +1,14 @@
 package ie.brianhenry.veintobrain.client;
 
+import ie.brianhenry.veintobrain.client.events.LoginEvent;
 import ie.brianhenry.veintobrain.client.events.MenuEvent;
 import ie.brianhenry.veintobrain.client.resources.VeintobrainResources;
 import ie.brianhenry.veintobrain.client.view.AnalyteMenuView;
 import ie.brianhenry.veintobrain.client.view.AnalyteView;
+import ie.brianhenry.veintobrain.client.view.LoginClientView;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -51,14 +52,19 @@ public class AppController {
 	
 	public void go(HasWidgets container) {
 
-		menuContainer.add(new AnalyteMenuView(rpcService, eventBus));
+		appContainer.add(new LoginClientView(rpcService, eventBus));
 
+		container.add(app);
+	}
+	
+	@EventHandler
+	void loggedIn(LoginEvent event){
+		appContainer.clear();
+		menuContainer.add(new AnalyteMenuView(rpcService, eventBus));
+		
 		appContainer.add(av);
 
 		av.setAnalyte("folate");
-
-		container.add(app);
-
 	}
 
 	@EventHandler

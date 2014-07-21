@@ -1,9 +1,11 @@
 package ie.brianhenry.veintobrain;
 
 import ie.brianhenry.veintobrain.health.TemplateHealthCheck;
+import ie.brianhenry.veintobrain.resources.FriendlyLoginResource;
 import ie.brianhenry.veintobrain.resources.VeintobrainResource;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
+import io.dropwizard.auth.basic.BasicAuthProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
@@ -30,14 +32,20 @@ public class VeintobrainApplication extends Application<VeintobrainConfiguration
 			Environment environment) {
 		final VeintobrainResource resource = new VeintobrainResource(
 				configuration.getTemplate(), configuration.getDefaultName());
-
+		environment.jersey().register(resource);
+		
+		final FriendlyLoginResource loginResource = new FriendlyLoginResource();
+		environment.jersey().register(loginResource);
+		
 		final TemplateHealthCheck healthCheck = new TemplateHealthCheck(
 				configuration.getTemplate());
 		environment.healthChecks().register("template", healthCheck);
 
 		environment.jersey().setUrlPattern("/api/*");
 
-		environment.jersey().register(resource);
+		environment.jersey().register(new BasicAuthProvider<Boolean>(new SimpleAuthenticator(), "Super secret stufff"));
+		
+		
 
 	}
 
