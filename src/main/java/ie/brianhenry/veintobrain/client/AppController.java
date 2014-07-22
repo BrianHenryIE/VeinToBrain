@@ -56,7 +56,7 @@ public class AppController {
 
 		container.add(app);
 	}
-	
+		
 	@EventHandler
 	void loggedIn(LoginEvent event){
 		appContainer.clear();

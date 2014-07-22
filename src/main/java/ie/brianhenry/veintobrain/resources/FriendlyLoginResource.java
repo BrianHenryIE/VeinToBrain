@@ -1,7 +1,7 @@
 package ie.brianhenry.veintobrain.resources;
 
-import ie.brianhenry.veintobrain.shared.LoginResponse;
-import ie.brianhenry.veintobrain.shared.User;
+import ie.brianhenry.veintobrain.representations.LoginResponse;
+import ie.brianhenry.veintobrain.representations.User;
 import io.dropwizard.auth.Auth;
 
 import javax.ws.rs.GET;

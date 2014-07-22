@@ -1,11 +1,12 @@
 package ie.brianhenry.veintobrain.client;
 
-import ie.brianhenry.veintobrain.client.overlay.AnalyteStat;
-import ie.brianhenry.veintobrain.shared.LoginResponse;
+import ie.brianhenry.veintobrain.representations.AnalyteStat;
+import ie.brianhenry.veintobrain.representations.LoginResponse;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -15,6 +16,7 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.binder.EventBinder;
+import com.kfuntak.gwt.json.serialization.client.ArrayListSerializer;
 import com.kfuntak.gwt.json.serialization.client.Serializer;
 
 public class RpcService {
@@ -44,7 +46,7 @@ public class RpcService {
 
 	}
 
-	public void executeRequest(String message, final AsyncCallback<JsArray<AnalyteStat>> asyncCallback) {
+	public void executeRequest(String message, final AsyncCallback<List<AnalyteStat>> asyncCallback) {
 
 		String jsonUrl = "/api/analyte-stat?name=" + message;
 
@@ -60,10 +62,12 @@ public class RpcService {
 
 				@Override
 				public void onResponseReceived(Request request, Response response) {
+					ArrayListSerializer alSerializer = (ArrayListSerializer) GWT.create(ArrayListSerializer.class);
 
-					System.out.println("response: " + response.getText());
+					ArrayList<AnalyteStat> deResponse = (ArrayList<AnalyteStat>) alSerializer.deSerialize(
+							response.getText(), "java.util.ArrayList");
 
-					asyncCallback.onSuccess(JsonUtils.<JsArray<AnalyteStat>> safeEval(response.getText()));
+					asyncCallback.onSuccess(deResponse);
 
 				}
 

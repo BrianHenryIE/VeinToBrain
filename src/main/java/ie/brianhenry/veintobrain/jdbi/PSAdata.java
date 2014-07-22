@@ -1,6 +1,6 @@
 package ie.brianhenry.veintobrain.jdbi;
 
-import ie.brianhenry.veintobrain.core.AnalyteDate;
+import ie.brianhenry.veintobrain.representations.AnalyteDate;
 
 import java.util.ArrayList;
 import java.util.Date;

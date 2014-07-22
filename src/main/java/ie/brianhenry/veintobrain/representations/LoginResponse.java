@@ -1,24 +1,20 @@
-package ie.brianhenry.veintobrain.shared;
-
+package ie.brianhenry.veintobrain.representations;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.kfuntak.gwt.json.serialization.client.JsonSerializable;
 
-//@GwtIncompatible
-@JsonTypeInfo(use=Id.CLASS, include=As.PROPERTY, property="class")
+@JsonTypeInfo(use = Id.CLASS, include = As.PROPERTY, property = "class")
 public class LoginResponse implements JsonSerializable {
 
-	// @JsonProperty("class")
-	// public String classname = LoginResponse.class.getName();
-	
 	public boolean success;
 	public User user;
 	private String message;
 
-	public LoginResponse(){}
-	
+	public LoginResponse() {
+	}
+
 	public LoginResponse(boolean success, User user, String message) {
 		this.success = success;
 		this.user = user;
@@ -31,7 +27,7 @@ public class LoginResponse implements JsonSerializable {
 
 	public String getMessage() {
 		return this.message;
-	}	
+	}
 
 	public void setSuccess(boolean success) {
 		this.success = success;
@@ -41,7 +37,7 @@ public class LoginResponse implements JsonSerializable {
 		this.user = user;
 	}
 
-	public void setMessage(String message){
+	public void setMessage(String message) {
 		this.message = message;
 	}
 

@@ -12,6 +12,9 @@ public class VeintobrainConfiguration extends Configuration {
 
 	@NotEmpty
 	private String defaultName = "Stranger";
+	
+	
+//	private String hash
 
 	@JsonProperty
 	public String getTemplate() {

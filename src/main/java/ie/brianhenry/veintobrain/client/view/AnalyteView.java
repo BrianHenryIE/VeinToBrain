@@ -1,7 +1,9 @@
 package ie.brianhenry.veintobrain.client.view;
 
 import ie.brianhenry.veintobrain.client.RpcService;
-import ie.brianhenry.veintobrain.client.overlay.AnalyteStat;
+import ie.brianhenry.veintobrain.representations.AnalyteStat;
+
+import java.util.List;
 
 import org.moxieapps.gwt.highcharts.client.BaseChart.ZoomType;
 import org.moxieapps.gwt.highcharts.client.Chart;
@@ -9,6 +11,7 @@ import org.moxieapps.gwt.highcharts.client.Point;
 import org.moxieapps.gwt.highcharts.client.Series;
 
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -26,7 +29,7 @@ public class AnalyteView implements IsWidget {
 
 	private RpcService rpcService;
 
-	JsArray<AnalyteStat> analyteStats;
+	List<AnalyteStat> analyteStats;
 
 	Chart chart;
 	Series series;
@@ -42,9 +45,9 @@ public class AnalyteView implements IsWidget {
 		// waiting animation
 
 		// Options (should be app-wide defaults for anythign configurable)
-		
+
 		// duration of each b
-		// minimum number of 
+		// minimum number of
 
 	}
 
@@ -53,7 +56,7 @@ public class AnalyteView implements IsWidget {
 
 		chart.setZoomType(ZoomType.Y);
 		chart.getYAxis().setMin(0);
-		
+
 		chart.setType(Series.Type.BOXPLOT);
 		chart.setSize("800px", "500px");
 
@@ -67,13 +70,11 @@ public class AnalyteView implements IsWidget {
 
 		chartPanel.clear();
 
-		for (int i = 0; i < analyteStats.length(); i++) {
-			series.addPoint(new Point(analyteStats.get(i)
-					.getPercentile(0.025), analyteStats.get(i)
-					.getPercentile(0.25), analyteStats.get(i)
-					.getPercentile(0.5), analyteStats.get(i)
-					.getPercentile(0.75), analyteStats.get(i)
-					.getPercentile(0.975)));
+		for (int i = 0; i < analyteStats.size(); i++) {
+			GWT.log("log: " + analyteStats.get(i).getInputCount());
+			series.addPoint(new Point(analyteStats.get(i).getPercentile(0.025),
+					analyteStats.get(i).getPercentile(0.25), analyteStats.get(i).getPercentile(0.5), analyteStats
+							.get(i).getPercentile(0.75), analyteStats.get(i).getPercentile(0.975)));
 		}
 
 		chartPanel.add(chart);
@@ -82,20 +83,19 @@ public class AnalyteView implements IsWidget {
 
 	public void setAnalyte(final String analyte) {
 
-		rpcService.executeRequest(analyte,
-				new AsyncCallback<JsArray<AnalyteStat>>() {
-					public void onFailure(Throwable caught) {
+		rpcService.executeRequest(analyte, new AsyncCallback<List<AnalyteStat>>() {
+			public void onFailure(Throwable caught) {
 
-					}
+			}
 
-					public void onSuccess(JsArray<AnalyteStat> result) {
+			public void onSuccess(List<AnalyteStat> result) {
 
-						analyteStats = result;
+				analyteStats = result;
 
-						setChart(analyte);
+				setChart(analyte);
 
-					}
-				});
+			}
+		});
 	}
 
 	@Override
