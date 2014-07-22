@@ -11,9 +11,6 @@ public interface VeintobrainResources extends ClientBundle {
 	@Source("veintobrain.css")
 	Style css();
 
-	public interface DefaultStyle extends CssResource {
-	}
-	
 	public interface Style extends CssResource {
 		
 		String menuPanel();

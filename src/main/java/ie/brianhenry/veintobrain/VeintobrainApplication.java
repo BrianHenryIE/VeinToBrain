@@ -1,31 +1,34 @@
 package ie.brianhenry.veintobrain;
 
 import ie.brianhenry.veintobrain.health.TemplateHealthCheck;
-import ie.brianhenry.veintobrain.resources.FriendlyLoginResource;
 import ie.brianhenry.veintobrain.resources.AnalyteResource;
+import ie.brianhenry.veintobrain.resources.FriendlyLoginResource;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.auth.basic.BasicAuthProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import de.spinscale.dropwizard.jobs.JobsBundle;
 
 public class VeintobrainApplication extends Application<VeintobrainConfiguration> {
 	public static void main(String[] args) throws Exception {
 		new VeintobrainApplication().run(args);
 	}
 
-	
 	@Override
 	public void initialize(Bootstrap<VeintobrainConfiguration> bootstrap) {
 		bootstrap.addBundle(new AssetsBundle("/gwt", "/", "index.html", "gwt"));
 		bootstrap.addBundle(new AssetsBundle("/gwt/js", "/js", "", "js"));
+
+		bootstrap.addBundle(new JobsBundle("ie.brianhenry.veintobrain.core.cron"));
+
 	}
 
 	@Override
 	public void run(VeintobrainConfiguration configuration, Environment environment) {
 		environment.jersey().setUrlPattern("/api/*");
 		environment.jersey().register(new BasicAuthProvider<Boolean>(new SimpleAuthenticator(), "Super secret stufff"));
-		
+
 		final AnalyteResource resource = new AnalyteResource(configuration.getTemplate(),
 				configuration.getDefaultName());
 		environment.jersey().register(resource);
@@ -35,6 +38,9 @@ public class VeintobrainApplication extends Application<VeintobrainConfiguration
 
 		final TemplateHealthCheck healthCheck = new TemplateHealthCheck(configuration.getTemplate());
 		environment.healthChecks().register("template", healthCheck);
+		
+		// SundialManager sm = new SundialManager(configuration.getSundialProperties()); 
+		//environment.manage(sm);
 	}
 
 }
