@@ -26,12 +26,13 @@ public class LoginClientView implements IsWidget {
 
 	private static final String SERVER_ERROR = "An error occurred while "
 			+ "attempting to contact the server. Please check your network " + "connection and try again.";
-
-	FlowPanel p = new FlowPanel();
-
-	final Button sendButton = new Button("Send!");
-	final TextBox nameField = new TextBox();
-
+	
+	VerticalPanel p = new VerticalPanel();
+	
+	final Button loginButton = new Button("Login");
+	final Label userLabel = new Label("Username");
+	final TextBox userField = new TextBox();
+	final Label passwordLabel = new Label("Password");
 	final PasswordTextBox passwordField = new PasswordTextBox();
 
 	final Label errorLabel = new Label();
@@ -49,25 +50,24 @@ public class LoginClientView implements IsWidget {
 	public LoginClientView(RpcService rpcService, EventBus eventBus) {
 
 		this.rpcService = rpcService;
-		this.eventBus = eventBus;
+		this.eventBus = eventBus;	
 
-		nameField.setText("GWT User");
-
+		userField.setText("GWT User");
+		
 		// We can add style names to widgets
-		sendButton.addStyleName("sendButton");
+		loginButton.addStyleName("loginButton");
 
-		p.add(nameField);
+		p.add(userLabel);
+		p.add(userField);
+		p.add(passwordLabel);
 		p.add(passwordField);
-
-		p.add(sendButton);
-		p.add(errorLabel);
-
+		p.add(loginButton);
+		
 		// Focus the cursor on the name field when the app loads
-		nameField.setFocus(true);
-		nameField.selectAll();
+		userField.setFocus(true);
+		userField.selectAll();
 
 		// Create the popup dialog box
-
 		dialogBox.setText("Remote Procedure Call");
 		dialogBox.setAnimationEnabled(true);
 
@@ -90,16 +90,16 @@ public class LoginClientView implements IsWidget {
 			@Override
 			public void onClick(ClickEvent event) {
 				dialogBox.hide();
-				sendButton.setEnabled(true);
-				sendButton.setFocus(true);
+				loginButton.setEnabled(true);
+				loginButton.setFocus(true);
 
 			}
 		});
 
 		// Add a handler to send the name to the server
 		MyHandler handler = new MyHandler();
-		sendButton.addClickHandler(handler);
-		nameField.addKeyUpHandler(handler);
+		loginButton.addClickHandler(handler);
+		userField.addKeyUpHandler(handler);
 	}
 
 	@Override
@@ -136,14 +136,14 @@ public class LoginClientView implements IsWidget {
 		private void sendNameToServer() {
 			// First, we validate the input.
 			errorLabel.setText("");
-			String textToServer = nameField.getText();
+			String textToServer = userField.getText();
 
 			// Then, we send the input to the server.
-			sendButton.setEnabled(false);
+			loginButton.setEnabled(false);
 			textToServerLabel.setText(textToServer);
 			serverResponseLabel.setText("");
 
-			rpcService.sendPassword(nameField.getText(), passwordField.getText(), new AsyncCallback<LoginResponse>() {
+			rpcService.sendPassword(userField.getText(), passwordField.getText(), new AsyncCallback<LoginResponse>() {
 				public void onFailure(Throwable caught) {
 					// Show the RPC error message to the user
 					dialogBox.setText("Remote Procedure Call - Failure");
