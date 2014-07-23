@@ -9,7 +9,7 @@ import de.spinscale.dropwizard.jobs.annotations.On;
 // 2:30 am
 // http://quartz-scheduler.org/documentation/quartz-2.2.x/tutorials/tutorial-lesson-06
 @On("0 30 2 * * ?")
-public class EveryTestJob extends Job {
+public class NightlyJob extends Job {
 	
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {

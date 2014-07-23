@@ -2,37 +2,28 @@ package ie.brianhenry.veintobrain;
 
 import io.dropwizard.Configuration;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class VeintobrainConfiguration extends Configuration {
-	@NotEmpty
-	private String template;
 
-	@NotEmpty
-	private String defaultName = "Stranger";
-	
-	
-//	private String hash
 
 	@JsonProperty
-	public String getTemplate() {
-		return template;
-	}
-
-	@JsonProperty
-	public void setTemplate(String template) {
-		this.template = template;
-	}
-
-	@JsonProperty
-	public String getDefaultName() {
-		return defaultName;
-	}
-
-	@JsonProperty
-	public void setDefaultName(String name) {
-		this.defaultName = name;
-	}
+    @NotEmpty
+    public String mongohost = "localhost";
+ 
+    @JsonProperty
+    @Min(1)
+    @Max(65535)
+    public int mongoport = 27017;
+ 
+    @JsonProperty
+    @NotEmpty
+    public String mongodb = "mydb";
+    
+    
 }

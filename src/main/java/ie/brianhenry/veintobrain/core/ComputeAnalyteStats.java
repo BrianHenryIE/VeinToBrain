@@ -204,4 +204,19 @@ public class ComputeAnalyteStats {
 		return bd.doubleValue();
 	}
 
+	public static double standardDeviation(List<Double> readings) {
+		
+		double sum = 0;
+		for(double r : readings)
+			sum+=r;
+		
+		double mean = sum/readings.size();
+		
+		double sumSqDif = 0;
+		for(double r: readings)
+			sumSqDif+=Math.pow(r-mean, 2);
+			
+		return Math.sqrt(sumSqDif/readings.size());
+	}
+
 }

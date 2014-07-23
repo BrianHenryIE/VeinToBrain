@@ -17,14 +17,8 @@ import com.google.common.base.Optional;
 @Path("/analyte-stat")
 @Produces(MediaType.APPLICATION_JSON)
 public class AnalyteResource {
-	// private final String template;
-	// private final String defaultName;
-	// private final AtomicLong counter;
 
-	public AnalyteResource(String template, String defaultName) {
-		// this.template = template;
-		// this.defaultName = defaultName;
-		// this.counter = new AtomicLong();
+	public AnalyteResource() {
 	}
 
 	@GET
