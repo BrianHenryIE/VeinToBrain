@@ -44,7 +44,7 @@ public class AnalyteStatTest {
 		double max = 23.0;
 
 		assertEquals(statDate, folate02Jan2009.getIncludedDates().get(0));
-		assertEquals(statType, folate02Jan2009.getType());
+		assertEquals(statType, folate02Jan2009.getAnalyteType());
 
 		assertEquals(min, folate02Jan2009.getMin(), 0.001);
 //		assertEquals(i2p5th, folate02Jan2009.getPercentile(0.025), 0.001);

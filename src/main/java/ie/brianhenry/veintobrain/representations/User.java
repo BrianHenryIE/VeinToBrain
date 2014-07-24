@@ -6,12 +6,23 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.kfuntak.gwt.json.serialization.client.JsonSerializable;
 
 
+/**
+ * Implements the user credentials
+ */
 @JsonTypeInfo(use=Id.CLASS, include=As.PROPERTY, property="class")
 public class User implements JsonSerializable {
 
     // TODO: hash password
+    /**
+     * Constructor
+     */
     public User() {}
 
+    /**
+     * Contructor
+     * @param name username
+     * @param password
+     */
     public User(String name, String password) {
         setUsername(name);
         setPassword(password);
@@ -19,27 +30,35 @@ public class User implements JsonSerializable {
 
     private String username;
     private String password;
-    private String fullname;
 
+    /**
+     * @return username
+     */
     public String getUsername() {
         return username;
     }
-    public void setUsername(String name) {
-        username = name;
-    }
+
+    /**
+     * @return password
+     */
     public String getPassword() {
         return password;
     }
+    
+    /**
+     * sets the username
+     * @param name
+     */
+    public void setUsername(String name) {
+        username = name;
+    }
+    
+    /**
+     * sets the password
+     * @param password
+     */
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getFullname() {
-        return fullname;
-    }
-
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
     }
 
 }
