@@ -190,7 +190,7 @@ public class ComputeAnalyteStats {
 	 * @param value
 	 * @param places
 	 * @return
-	 * @see http 
+	 * @see http
 	 *      ://stackoverflow.com/questions/2808535/round-a-double-to-2-decimal
 	 *      -places
 	 * @see http://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html
@@ -205,18 +205,18 @@ public class ComputeAnalyteStats {
 	}
 
 	public static double standardDeviation(List<Double> readings) {
-		
+
 		double sum = 0;
-		for(double r : readings)
-			sum+=r;
-		
-		double mean = sum/readings.size();
-		
+		for (double r : readings)
+			sum += r;
+
+		double mean = sum / readings.size();
+
 		double sumSqDif = 0;
-		for(double r: readings)
-			sumSqDif+=Math.pow(r-mean, 2);
-			
-		return Math.sqrt(sumSqDif/readings.size());
+		for (double r : readings)
+			sumSqDif += Math.pow(r - mean, 2);
+
+		return Math.sqrt(sumSqDif / readings.size());
 	}
 
 }
