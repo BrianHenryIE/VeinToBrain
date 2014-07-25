@@ -6,7 +6,9 @@ import ie.brianhenry.veintobrain.client.events.MenuEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
@@ -15,12 +17,13 @@ import com.google.gwt.user.client.ui.Widget;
 public class AnalyteMenuView implements IsWidget {
 
 	FlowPanel p = new FlowPanel();
+//	DisclosurePanel p = new DisclosurePanel();
 
 	EventBus eventBus;
 
 	public AnalyteMenuView(RpcService rpcService, EventBus eventBus) {
 
-		this.eventBus = eventBus;
+		this.eventBus = eventBus;		
 
 		String[] menuItems = { "folate", "psa", "test", "CO3" };
 
@@ -38,6 +41,7 @@ public class AnalyteMenuView implements IsWidget {
 	//TODO should just use buttons
 	class MenuItem extends Composite {
 
+//		Button p = new Button();
 		Label p = new Label();
 
 		MenuItem(final String name) {

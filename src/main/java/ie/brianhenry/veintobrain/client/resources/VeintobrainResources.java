@@ -15,6 +15,7 @@ public interface VeintobrainResources extends ClientBundle {
 		
 		String menuPanel();
 		String appPanel();
+		String helpPanel();
 	}
 
 //	@Source("loading.gif")

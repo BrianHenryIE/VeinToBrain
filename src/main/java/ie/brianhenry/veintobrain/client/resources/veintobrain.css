@@ -1,13 +1,29 @@
+@external gwt-TabLayoutPanel, gwt-TabLayoutPanelTabs, gwt-DisclosurePanel;
+
 .menuPanel {
-	
-	/*width: 200px;
-	border: 1px solid black;*/
-	
+	float: left;
+	position: absolute;
+	width: 200px;
+	height: 200px;
+	border: 1px solid black;
 	
 }
 
 .appPanel {
-	
-	
+	float: left;
+	width: 800px;
+	margin-left: 250px;
+	border: 1px solid black;
     
+}
+
+.gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs{
+	height: 20px;
+}
+
+.helpPanel {
+	float: right;
+	width: 200px;
+	heigth: 200px;
+	border: 1px solid black;
 }
