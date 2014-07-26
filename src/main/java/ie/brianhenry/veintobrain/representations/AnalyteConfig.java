@@ -1,5 +1,7 @@
 package ie.brianhenry.veintobrain.representations;
 
+import java.util.List;
+
 import com.kfuntak.gwt.json.serialization.client.JsonSerializable;
 
 /**
@@ -16,7 +18,7 @@ public class AnalyteConfig implements JsonSerializable {
 	
 	private String analyteType;
 	
-	private Double[] additionalPercentiles;
+	private List<Double> additionalPercentiles;
 
 	public String getUsername() {
 		return username;
@@ -34,11 +36,11 @@ public class AnalyteConfig implements JsonSerializable {
 		this.analyteType = analyteType;
 	}
 
-	public Double[] getAdditionalPercentiles() {
+	public List<Double> getAdditionalPercentiles() {
 		return additionalPercentiles;
 	}
 
-	public void setAdditionalPercentiles(Double[] additionalPercentiles) {
+	public void setAdditionalPercentiles(List<Double> additionalPercentiles) {
 		this.additionalPercentiles = additionalPercentiles;
 	}
 	
