@@ -1,5 +1,7 @@
 package ie.brianhenry.veintobrain.representations;
 
+
+
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

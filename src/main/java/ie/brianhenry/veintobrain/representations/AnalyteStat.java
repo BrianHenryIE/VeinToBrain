@@ -1,6 +1,7 @@
 package ie.brianhenry.veintobrain.representations;
 
 import java.util.ArrayList;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +18,9 @@ import com.kfuntak.gwt.json.serialization.client.JsonSerializable;
 @JsonTypeInfo(use = Id.CLASS, include = As.PROPERTY, property = "class")
 public class AnalyteStat implements JsonSerializable {
 
+	@net.vz.mongodb.jackson.Id 
+	public String id; // UUID.randomUUID().toString();
+	
 	/**
 	 * The type of analyte (calcium, phospate, potassium, ...)
 	 */
@@ -113,7 +117,7 @@ public class AnalyteStat implements JsonSerializable {
 	public double getPercentile(double p) {
 		// if (!percentileCalculations.containsKey(p))
 		// percentileCalculations.put(p, percentile(readings, p));
-		return percentileCalculations.get(Double.toString(p));
+		return percentileCalculations.get(Double.toString(p).replace(".", "_"));
 	}
 	
 	/**
@@ -237,7 +241,7 @@ public class AnalyteStat implements JsonSerializable {
 	 * @param value value of the percentile
 	 */
 	public void setPercentile(double percentile, double value) {
-		percentileCalculations.put(Double.toString(percentile), value);
+		percentileCalculations.put(Double.toString(percentile).replace(".", "_"), value);
 	}
 
 	/**

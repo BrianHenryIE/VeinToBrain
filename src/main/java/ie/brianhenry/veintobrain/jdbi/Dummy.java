@@ -59,18 +59,11 @@ public class Dummy {
 
 		if (name.toLowerCase().equals("psa")) {
 
-			aList.add(ComputeAnalyteStats.computeMonth(PSAdata.psaJuly(), "psa", 7));
-			aList.add(ComputeAnalyteStats.computeMonth(PSAdata.psaAugust(), "psa", 8));
-			aList.add(ComputeAnalyteStats.computeMonth(PSAdata.psaSeptember(), "psa", 9));
-			aList.add(ComputeAnalyteStats.computeMonth(PSAdata.psaOctober(), "psa", 10));
-			aList.add(ComputeAnalyteStats.computeMonth(PSAdata.psaNovember(), "psa", 11));
-			aList.add(ComputeAnalyteStats.computeMonth(PSAdata.psaDecember(), "psa", 12));
-			aList.add(ComputeAnalyteStats.computeMonth(PSAdata.psaJan(), "psa", 1));
-			aList.add(ComputeAnalyteStats.computeMonth(PSAdata.psaFeb(), "psa", 2));
-			aList.add(ComputeAnalyteStats.computeMonth(PSAdata.psaMarch(), "psa", 3));
-			aList.add(ComputeAnalyteStats.computeMonth(PSAdata.psaApril(), "psa", 4));
-			aList.add(ComputeAnalyteStats.computeMonth(PSAdata.psaMay(), "psa", 5));
-			aList.add(ComputeAnalyteStats.computeMonth(PSAdata.psaJune(), "psa", 6));
+			PSAdata pd = new PSAdata();
+			
+			for(int i =1; i<13; i++)
+				aList.add(ComputeAnalyteStats.computeMonth(pd.getMonth(i), "psa", i));
+			
 
 		}
 

@@ -1,8 +1,11 @@
 package ie.brianhenry.veintobrain.resources;
 
-import ie.brianhenry.veintobrain.jdbi.Dummy;
+import ie.brianhenry.veintobrain.core.ComputeAnalyteStats;
+import ie.brianhenry.veintobrain.jdbi.PSAdata;
+import ie.brianhenry.veintobrain.representations.AnalyteResult;
 import ie.brianhenry.veintobrain.representations.AnalyteStat;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -11,6 +14,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import net.vz.mongodb.jackson.DBCursor;
+import net.vz.mongodb.jackson.JacksonDBCollection;
+import net.vz.mongodb.jackson.WriteResult;
+
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Optional;
 
@@ -18,14 +25,40 @@ import com.google.common.base.Optional;
 @Produces(MediaType.APPLICATION_JSON)
 public class AnalyteResource {
 
-	public AnalyteResource() {
+	JacksonDBCollection<AnalyteResult, String> analyteResults;
+	JacksonDBCollection<AnalyteStat, String> analyteStats;
+
+	public AnalyteResource(JacksonDBCollection<AnalyteResult, String> analyteResults,
+			JacksonDBCollection<AnalyteStat, String> analyteStat) {
+
+		this.analyteResults = analyteResults;
+		this.analyteStats = analyteStat;
+
+//		PSAdata pd = new PSAdata();
+//		for (int i = 1; i < 13 && i!=5 ; i++) {
+//			AnalyteStat as = ComputeAnalyteStats.computeMonth(pd.getMonth(i), "psa", i);
+//			WriteResult<AnalyteStat, String> result = analyteStats.insert(as);
+//		}
+//		
+//		
+//		for(AnalyteResult r : pd.getResults()){
+//			WriteResult<AnalyteResult, String> result = analyteResults.insert(r);
+//		}
+
 	}
 
 	@GET
 	@Timed
 	public List<AnalyteStat> sayHello(@QueryParam("name") Optional<String> name) {
 
-		return Dummy.getListOfStats("psa");
+		DBCursor<AnalyteStat> dbCursor = analyteStats.find();
+		List<AnalyteStat> stats = new ArrayList<AnalyteStat>();
+		while (dbCursor.hasNext()) {
+			AnalyteStat stat = dbCursor.next();
+			stats.add(stat);
+		}
+
+		return stats; // Dummy.getListOfStats("psa");
 
 	}
 }

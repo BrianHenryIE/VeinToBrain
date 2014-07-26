@@ -14,6 +14,8 @@ import org.joda.time.DateTime;
 
 import com.google.common.primitives.Doubles;
 
+// TODO Do we need to filter out ICQ samples??? 
+
 public class ComputeAnalyteStats {
 
 	/**
@@ -90,10 +92,11 @@ public class ComputeAnalyteStats {
 				/**
 				 * Non-numeric readings are recoded in a HashMap
 				 */
-				if (as.getOtherData().get(reading) != null)
-					as.getOtherData().put(reading, as.getOtherData().get(reading) + 1);
+				if (as.getOtherData().get(reading.replace(".", "_")) != null)
+					as.getOtherData().put(reading.replace(".", "_"),
+							as.getOtherData().get(reading.replace(".", "_")) + 1);
 				else
-					as.getOtherData().put(reading, 1);
+					as.getOtherData().put(reading.replace(".", "_"), 1);
 
 				/**
 				 * each <0.03 etc is included in the calculations
@@ -179,8 +182,11 @@ public class ComputeAnalyteStats {
 	 *      -a-numeric-type-in-java
 	 */
 	private static boolean isNumeric(String str) {
-		return str.matches("-?\\d+(\\.\\d+)?"); // match a number with optional
-												// '-' and decimal.
+		return str == null ? false : str.matches("-?\\d+(\\.\\d+)?"); // match a
+																		// number
+																		// with
+																		// optional
+		// '-' and decimal.
 	}
 
 	/**
@@ -190,7 +196,7 @@ public class ComputeAnalyteStats {
 	 * @param value
 	 * @param places
 	 * @return
-	 * @see http
+	 * @see http 
 	 *      ://stackoverflow.com/questions/2808535/round-a-double-to-2-decimal
 	 *      -places
 	 * @see http://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html
