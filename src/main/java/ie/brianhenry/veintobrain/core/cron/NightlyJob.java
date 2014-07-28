@@ -1,14 +1,11 @@
 package ie.brianhenry.veintobrain.core.cron;
 
-import ie.brianhenry.veintobrain.core.ComputeAnalyteStats;
-import ie.brianhenry.veintobrain.jdbi.PSAdata;
 import ie.brianhenry.veintobrain.representations.AnalyteResult;
 import ie.brianhenry.veintobrain.representations.AnalyteStat;
 
 import javax.inject.Inject;
 
 import net.vz.mongodb.jackson.JacksonDBCollection;
-import net.vz.mongodb.jackson.WriteResult;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -21,7 +18,7 @@ import de.spinscale.dropwizard.jobs.annotations.On;
 // 2:30 am
 // https://github.com/spinscale/dropwizard-jobs
 // http://quartz-scheduler.org/documentation/quartz-2.2.x/tutorials/tutorial-lesson-06
-@On("0 40 18 * * ?")
+@On("0 30 2 * * ?")
 public class NightlyJob extends Job {
 	
 	JacksonDBCollection<AnalyteResult, String> analyteResults;

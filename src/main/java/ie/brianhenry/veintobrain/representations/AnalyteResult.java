@@ -1,7 +1,5 @@
 package ie.brianhenry.veintobrain.representations;
 
-import java.util.Date;
-
 import org.joda.time.LocalDate;
 
 /**
