@@ -2,14 +2,18 @@ package ie.brianhenry.veintobrain.jdbi;
 
 import io.dropwizard.lifecycle.Managed;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import com.mongodb.Mongo;
 
 
 public class MongoManaged implements Managed {
 
 	private Mongo mongo;
-
-	public MongoManaged(Mongo mongo) {
+	
+	@Inject
+	public MongoManaged(@Named("mongo") Mongo mongo) {
 		this.mongo = mongo;
 	}
 
