@@ -11,6 +11,7 @@ import ie.brianhenry.veintobrain.representations.User;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -19,6 +20,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.binder.EventBinder;
 import com.google.web.bindery.event.shared.binder.EventHandler;
 
@@ -39,7 +41,7 @@ public class AppController {
 
 	FlowPanel leftFrame = new FlowPanel();
 	SimplePanel centerFrame = new SimplePanel(); 
-	SimplePanel rightFrame = new SimplePanel();
+	FlowPanel rightFrame = new FlowPanel();
 
 	interface MyEventBinder extends EventBinder<AppController> {
 	}
@@ -102,7 +104,12 @@ public class AppController {
 	@EventHandler
 	void newEvents(MenuEvent event) {
 		// Something was clicked... what was it!?
-		av.setAnalyte(event.getName());
-		
+		av.setAnalyte(event.getName());		
 	}
+	
+	  public void onClick(ClickEvent event) {
+		    // note that in general, events can have sources that are not Widgets.
+		   Label l = new Label("VEINTOBRAIN");
+		   rightFrame.add(l);
+		  }
 }

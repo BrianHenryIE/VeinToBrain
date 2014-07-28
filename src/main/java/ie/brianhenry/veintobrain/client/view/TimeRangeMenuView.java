@@ -1,5 +1,6 @@
 package ie.brianhenry.veintobrain.client.view;
 
+import ie.brianhenry.veintobrain.client.AppController;
 import ie.brianhenry.veintobrain.client.RpcService;
 import ie.brianhenry.veintobrain.client.events.MenuEvent;
 
