@@ -1,6 +1,5 @@
 package ie.brianhenry.veintobrain.resources;
 
-import ie.brianhenry.veintobrain.jdbi.Dummy;
 import ie.brianhenry.veintobrain.representations.AnalyteStat;
 
 import java.util.ArrayList;

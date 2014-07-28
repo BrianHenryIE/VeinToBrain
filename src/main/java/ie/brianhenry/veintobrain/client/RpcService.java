@@ -64,6 +64,7 @@ public class RpcService {
 				public void onResponseReceived(Request request, Response response) {
 					ArrayListSerializer alSerializer = (ArrayListSerializer) GWT.create(ArrayListSerializer.class);
 
+					@SuppressWarnings("unchecked")
 					ArrayList<AnalyteStat> deResponse = (ArrayList<AnalyteStat>) alSerializer.deSerialize(
 							response.getText(), "java.util.ArrayList");
 

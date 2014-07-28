@@ -5,15 +5,15 @@ import io.dropwizard.lifecycle.Managed;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.mongodb.Mongo;
-
+import com.mongodb.MongoClient;
 
 public class MongoManaged implements Managed {
 
-	private Mongo mongo;
-	
+	private MongoClient mongo;
+
 	@Inject
-	public MongoManaged(@Named("mongo") Mongo mongo) {
+	public MongoManaged(@Named("mongo") MongoClient mongo) {
+
 		this.mongo = mongo;
 	}
 

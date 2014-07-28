@@ -9,15 +9,15 @@ import javax.inject.Named;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.mongodb.DB;
-import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
 
 public class VeintobrainModule extends AbstractModule {
-	
+
 	@Override
 	protected void configure() {
 
 		bind(DB.class).toProvider(DbProvider.class);
-		
+
 	}
 
 	@Provides
@@ -31,7 +31,7 @@ public class VeintobrainModule extends AbstractModule {
 	public int provideMongoport(VeintobrainConfiguration configuration) {
 		return configuration.getMongoport();
 	}
-	
+
 	@Provides
 	@Named("mongodb")
 	public String provideMongodb(VeintobrainConfiguration configuration) {
@@ -40,16 +40,10 @@ public class VeintobrainModule extends AbstractModule {
 
 	@Provides
 	@Named("mongo")
-	public Mongo provideMongo(VeintobrainConfiguration configuration) throws UnknownHostException {
-		Mongo mongo = new Mongo(configuration.getMongohost(), configuration.getMongoport());
+	public MongoClient provideMongo(VeintobrainConfiguration configuration) throws UnknownHostException {
+
+		MongoClient mongo = new MongoClient(configuration.getMongohost(), configuration.getMongoport());
 		return mongo;
 	}
-//
-//	@Provides
-//	@Named("db")
-//	public DB provideDb(VeintobrainConfiguration configuration) throws UnknownHostException {
-//		// DB db =  guiceBundle.getInjector().getInstance(MongoManaged.class).getDB(configuration.getMongodb());
-//		DB db = provideMongo(configuration).getDB(provideMongodb(configuration));
-//		return db;
-//	}
+
 }
