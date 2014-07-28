@@ -7,56 +7,42 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AnalyteMenuView implements IsWidget {
 
-	FlowPanel p = new FlowPanel();
-//	DisclosurePanel p = new DisclosurePanel();
+	FlowPanel flow = new FlowPanel();
+	DisclosurePanel p = new DisclosurePanel("Analytes");
 
 	EventBus eventBus;
 
-	public AnalyteMenuView(RpcService rpcService, EventBus eventBus) {
+	public AnalyteMenuView(RpcService rpcService, final EventBus eventBus) {
 
 		this.eventBus = eventBus;		
 
 		String[] menuItems = { "folate", "psa", "test", "CO3" };
 
-		for (String mi : menuItems)
-			p.add(new MenuItem(mi));
-
+//		for (String mi : menuItems)
+//			flow.add(new MenuItem(mi));
+		for (final String mi : menuItems){
+			Button b = new Button(mi);
+			b.setSize("90px", "30px");
+			b.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					eventBus.fireEvent(new MenuEvent(mi));
+				}
+			});
+			flow.add(b);
+		}
+		p.setContent(flow);
 	}
 
 	@Override
 	public Widget asWidget() {
 		return p;
-	}
-
-	
-	//TODO should just use buttons
-	class MenuItem extends Composite {
-
-//		Button p = new Button();
-		Label p = new Label();
-
-		MenuItem(final String name) {
-
-			p.setText(name);
-			p.addClickHandler(new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					eventBus.fireEvent(new MenuEvent(name));
-				}
-			});
-			
-			initWidget(p);
-		}
-
 	}
 }

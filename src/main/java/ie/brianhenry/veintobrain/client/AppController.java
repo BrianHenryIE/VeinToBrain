@@ -36,7 +36,7 @@ public class AppController {
 
 	private final FlowPanel contentPanel = new FlowPanel();
 
-	SimplePanel leftFrame = new SimplePanel();
+	FlowPanel leftFrame = new FlowPanel();
 	SimplePanel centerFrame = new SimplePanel(); 
 	SimplePanel rightFrame = new SimplePanel();
 
@@ -69,8 +69,9 @@ public class AppController {
 	TabLayoutPanel tab = new TabLayoutPanel(1.0, Unit.EM); //leftFrame
 	AnalyteView av = new AnalyteView(rpcService, eventBus); //centerFrame
 	Label lab = new Label("Summary:"); //rightFrame
-	DisclosurePanel p = new DisclosurePanel();
-	
+	Label lab2 = new Label("AAAAAAAAAAA"); //rightFrame
+	DisclosurePanel p = new DisclosurePanel("Click to disclose something:");
+
 	public void go(HasWidgets container) {
 
 		leftFrame.add(new LoginClientView(rpcService, eventBus));
