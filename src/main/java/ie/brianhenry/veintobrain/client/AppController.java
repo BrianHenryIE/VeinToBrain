@@ -6,6 +6,7 @@ import ie.brianhenry.veintobrain.client.resources.VeintobrainResources;
 import ie.brianhenry.veintobrain.client.view.AnalyteMenuView;
 import ie.brianhenry.veintobrain.client.view.AnalyteView;
 import ie.brianhenry.veintobrain.client.view.LoginClientView;
+import ie.brianhenry.veintobrain.client.view.TimeRangeMenuView;
 import ie.brianhenry.veintobrain.representations.User;
 
 import com.google.gwt.core.client.GWT;
@@ -69,7 +70,6 @@ public class AppController {
 	TabLayoutPanel tab = new TabLayoutPanel(1.0, Unit.EM); //leftFrame
 	AnalyteView av = new AnalyteView(rpcService, eventBus); //centerFrame
 	Label lab = new Label("Summary:"); //rightFrame
-	Label lab2 = new Label("AAAAAAAAAAA"); //rightFrame
 	DisclosurePanel p = new DisclosurePanel("Click to disclose something:");
 
 	public void go(HasWidgets container) {
@@ -88,6 +88,7 @@ public class AppController {
 		rightFrame.clear();
 		
 		leftFrame.add(new AnalyteMenuView(rpcService, eventBus));
+		leftFrame.add(new TimeRangeMenuView(rpcService, eventBus));
 		
 		av.setAnalyte("folate");
 		tab.setSize("800px", "550px");
@@ -96,7 +97,6 @@ public class AppController {
 		centerFrame.add(tab);
 		
 		rightFrame.add(lab);
-	
 	}
 
 	@EventHandler
