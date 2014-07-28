@@ -5,7 +5,8 @@ import java.util.List;
 import com.kfuntak.gwt.json.serialization.client.JsonSerializable;
 
 /**
- * Config for a particular analyte beyond the dafaults used when computing the stats
+ * Config for a particular analyte beyond the dafaults used when computing the
+ * stats
  * 
  * Should this be per user?
  * 
@@ -13,11 +14,11 @@ import com.kfuntak.gwt.json.serialization.client.JsonSerializable;
  *
  */
 public class AnalyteConfig implements JsonSerializable {
-	
+
 	private String username;
-	
+
 	private String analyteType;
-	
+
 	private List<Double> additionalPercentiles;
 
 	public String getUsername() {
@@ -43,8 +44,5 @@ public class AnalyteConfig implements JsonSerializable {
 	public void setAdditionalPercentiles(List<Double> additionalPercentiles) {
 		this.additionalPercentiles = additionalPercentiles;
 	}
-	
 
-	
-	
 }

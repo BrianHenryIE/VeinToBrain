@@ -1,5 +1,9 @@
 package ie.brianhenry.veintobrain.core.cron;
 
+import ie.brianhenry.veintobrain.representations.AnalyteResult;
+import ie.brianhenry.veintobrain.representations.AnalyteStat;
+import net.vz.mongodb.jackson.JacksonDBCollection;
+
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
@@ -20,6 +24,35 @@ public class NightlyJob extends Job {
 	public void doJob() {
 		// logic run every time and time again
 		System.out.println("2:30am run");
+		
+		
+		// We need to get a refernce to our db here
+		
+//	     JacksonDBCollection<AnalyteResult, String> analyteResults = JacksonDBCollection.wrap(db.getCollection("analyteresult"), AnalyteResult.class, String.class);
+//	        
+//	        JacksonDBCollection<AnalyteStat, String> analyteStat = JacksonDBCollection.wrap(db.getCollection("analytestat"), AnalyteStat.class, String.class);
+
+//		
+//		JacksonDBCollection<AnalyteResult, String> analyteResults;
+//		JacksonDBCollection<AnalyteStat, String> analyteStats;
+//
+//		public AnalyteResource(JacksonDBCollection<AnalyteResult, String> analyteResults,
+//				JacksonDBCollection<AnalyteStat, String> analyteStat) {
+//
+//			this.analyteResults = analyteResults;
+//			this.analyteStats = analyteStat;
+
+//		PSAdata pd = new PSAdata();
+//		for (int i = 1; i < 13 && i!=5 ; i++) {
+//			AnalyteStat as = ComputeAnalyteStats.computeMonth(pd.getMonth(i), "psa", i);
+//			WriteResult<AnalyteStat, String> result = analyteStats.insert(as);
+//		}
+//		
+//		
+//		for(AnalyteResult r : pd.getResults()){
+//			WriteResult<AnalyteResult, String> result = analyteResults.insert(r);
+//		}
+
 
 	}
 }

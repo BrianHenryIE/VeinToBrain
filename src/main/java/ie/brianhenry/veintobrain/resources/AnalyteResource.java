@@ -34,17 +34,6 @@ public class AnalyteResource {
 		this.analyteResults = analyteResults;
 		this.analyteStats = analyteStat;
 
-//		PSAdata pd = new PSAdata();
-//		for (int i = 1; i < 13 && i!=5 ; i++) {
-//			AnalyteStat as = ComputeAnalyteStats.computeMonth(pd.getMonth(i), "psa", i);
-//			WriteResult<AnalyteStat, String> result = analyteStats.insert(as);
-//		}
-//		
-//		
-//		for(AnalyteResult r : pd.getResults()){
-//			WriteResult<AnalyteResult, String> result = analyteResults.insert(r);
-//		}
-
 	}
 
 	@GET
