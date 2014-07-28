@@ -14,16 +14,29 @@ public class VeintobrainConfiguration extends Configuration {
 
 	@JsonProperty
     @NotEmpty
-    public String mongohost = "localhost";
+    private String mongohost = "localhost";
  
     @JsonProperty
     @Min(1)
     @Max(65535)
-    public int mongoport = 27017;
+    private int mongoport = 27017;
  
     @JsonProperty
     @NotEmpty
-    public String mongodb = "mydb";
+    private String mongodb = "mydb";
+
+	public String getMongohost() {
+		return mongohost;
+	}
+
+	public int getMongoport() {
+		return mongoport;
+	}
+
+	public String getMongodb() {
+		return mongodb;
+	}
+    
     
     
 }
