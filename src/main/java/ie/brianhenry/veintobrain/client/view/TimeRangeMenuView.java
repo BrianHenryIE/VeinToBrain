@@ -32,7 +32,7 @@ public class TimeRangeMenuView implements IsWidget {
 			b.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					eventBus.fireEvent(new MenuEvent(mi));
+					eventBus.fireEvent(new MenuEvent());
 				}
 			});
 			flow.add(b);

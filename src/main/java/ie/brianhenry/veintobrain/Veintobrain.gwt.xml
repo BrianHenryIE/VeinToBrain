@@ -26,6 +26,8 @@
   <source path='client'/>
   <source path='shared'/>
   <source path='representations'/>
+  
+  <source path='events'/>
 
   <!-- allow Super Dev Mode -->
   <add-linker name="xsiframe"/>

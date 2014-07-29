@@ -4,15 +4,15 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.codahale.metrics.health.HealthCheck;
-import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
 
 
 public class MongoHealthCheck extends HealthCheck {
  
-    private Mongo mongo;
+    private MongoClient mongo;
  
     @Inject
-    public MongoHealthCheck(@Named("mongo") Mongo mongo) {
+    public MongoHealthCheck(@Named("mongo") MongoClient mongo) {
         this.mongo = mongo;
     }
  

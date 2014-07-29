@@ -24,16 +24,14 @@ public class AnalyteMenuView implements IsWidget {
 		this.eventBus = eventBus;		
 
 		String[] menuItems = { "folate", "psa", "test", "CO3" };
-
-//		for (String mi : menuItems)
-//			flow.add(new MenuItem(mi));
+	
 		for (final String mi : menuItems){
 			Button b = new Button(mi);
 			b.setSize("90px", "30px");
 			b.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					eventBus.fireEvent(new MenuEvent(mi));
+					eventBus.fireEvent(new MenuEvent());
 				}
 			});
 			flow.add(b);

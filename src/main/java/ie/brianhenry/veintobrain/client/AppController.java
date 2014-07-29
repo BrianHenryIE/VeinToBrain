@@ -25,6 +25,14 @@ import com.google.web.bindery.event.shared.binder.EventBinder;
 import com.google.web.bindery.event.shared.binder.EventHandler;
 
 public class AppController {
+	
+	/**
+	 * Interface which allows to register the event handlers
+	 * @author Daniele
+	 *
+	 */
+	interface MenuEventBinder extends EventBinder<AppController>{}
+	private final MenuEventBinder eventBinder= GWT.create(MenuEventBinder.class);
 
 	/**
 	 * Client side of the client/server communication. Implements
@@ -32,8 +40,7 @@ public class AppController {
 	 */
 	RpcService rpcService;
 	/**
-	 * The "pipe" which captures all the events during the run of the
-	 * application.
+	 * The "pipe" which captures all the events as the application runs.
 	 */
 	EventBus eventBus;
 
@@ -42,11 +49,6 @@ public class AppController {
 	FlowPanel leftFrame = new FlowPanel();
 	SimplePanel centerFrame = new SimplePanel(); 
 	FlowPanel rightFrame = new FlowPanel();
-
-	interface MyEventBinder extends EventBinder<AppController> {
-	}
-
-	private final MyEventBinder eventBinder = GWT.create(MyEventBinder.class);
 
 	//this line has to be added anytime you use CSS
 	VeintobrainResources resources = VeintobrainResources.INSTANCE;
@@ -83,8 +85,7 @@ public class AppController {
 		loggedIn(new LoginEvent(new User("sad","secret")));
 	}
 		
-	@EventHandler
-	void loggedIn(LoginEvent event){
+	@EventHandler void loggedIn(LoginEvent event){
 		leftFrame.clear();
 		centerFrame.clear();
 		rightFrame.clear();
@@ -101,15 +102,8 @@ public class AppController {
 		rightFrame.add(lab);
 	}
 
-	@EventHandler
-	void newEvents(MenuEvent event) {
-		// Something was clicked... what was it!?
-		av.setAnalyte(event.getName());		
+	@EventHandler void OnShow(MenuEvent event) {
+		lab.setText("BETTER CALL SAUL");
 	}
 	
-	  public void onClick(ClickEvent event) {
-		    // note that in general, events can have sources that are not Widgets.
-		   Label l = new Label("VEINTOBRAIN");
-		   rightFrame.add(l);
-		  }
 }
