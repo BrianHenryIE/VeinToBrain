@@ -9,6 +9,7 @@ import ie.brianhenry.veintobrain.representations.AnalyteStat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 import javax.inject.Inject;
 
@@ -129,24 +130,40 @@ public class SimulationCalculations extends Job {
 		//
 		//
 
-		for (int i = 7; i < allDailyAnalyteStats.size(); i++) {
+		HashMap<LocalDate, AnalyteStat> days = new HashMap<LocalDate, AnalyteStat>();
 
-			LocalDate iDate = new LocalDate(allDailyAnalyteStats.get(i).getIncludedDates().get(0));
-			
-			double movingSum = 0;
-			int movingSumCount = 0;
-			for (int j = i - 7; j < i; j++){
-				 
-				if(iDate.minusDays(7).isBefore(new LocalDate(allDailyAnalyteStats.get(j).getIncludedDates().get(0)))){
-					movingSum+=allDailyAnalyteStats.get(j).getPercentile(0.5);
-					movingSumCount++;
+		for (int i = 0; i < allDailyAnalyteStats.size(); i++) {
+			days.put(new LocalDate(allDailyAnalyteStats.get(i).getIncludedDates().get(0)), allDailyAnalyteStats.get(i));
+		}
+
+		LocalDate check = new LocalDate(2013, 7, 1);
+		LocalDate nextDate = check.plusDays(1);
+		LocalDate lastDate = new LocalDate(2014, 7, 1);
+
+		while (nextDate.isBefore(lastDate)) {
+
+			if (days.get(nextDate) != null) {
+				double movingSum = 0;
+				int movingSumCount = 0;
+
+				for (int i = 1; i < 7; i++) {
+					if (days.get(nextDate.minusDays(i)) != null) {
+						movingSum += days.get(nextDate.minusDays(i)).getPercentile(0.5);
+						movingSumCount++;
+					}
 				}
-			}
-			
-			double movingMean = movingSum/movingSumCount;
-			allDailyAnalyteStats.get(i).setMovingMean("7", movingMean);
 
-			System.out.println(iDate.toString() + ", " + movingMean);
+				double movingMean = movingSum / movingSumCount;
+
+				if (Double.isNaN(movingMean)) {
+					System.out.println("NaN : sum:" + movingSum + ", count:" + movingSumCount);
+				}
+
+				// days.get(nextDate).setMovingMean("7", movingMean);
+
+				System.out.println(nextDate.toString() + ", " + movingMean);
+			}
+			nextDate = nextDate.plusDays(1);
 		}
 
 		// calculate the mean
@@ -155,5 +172,8 @@ public class SimulationCalculations extends Job {
 
 		// record that so later
 
+		
+//		ObjectMapper mapper = new ObjectMapper();
+//	    return mapper.writeValueAsString(this) ; 
 	}
 }
