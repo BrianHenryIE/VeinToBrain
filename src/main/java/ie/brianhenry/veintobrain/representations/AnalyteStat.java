@@ -26,6 +26,46 @@ public class AnalyteStat implements JsonSerializable {
 	 */
 	private String analyteType;
 
+	private double standardDeviation;
+	
+	
+	public double getStandardDeviation() {
+		return standardDeviation;
+	}
+
+	public void setStandardDeviation(double standardDeviation) {
+		this.standardDeviation = standardDeviation;
+	}
+
+	/**
+	 * Daily, weekly, monthly,yearly,total
+	 */
+	private String analyteRange;
+	
+	public String getAnalyteRange() {
+		return analyteRange;
+	}
+
+	public void setAnalyteRange(String analyteRange) {
+		this.analyteRange = analyteRange;
+	}
+	
+	/**
+	 * The moving mean of the 50th percentile <String, Double>=<number of days/weeks included, value>
+	 */
+	private HashMap<String, Double> movingMean = new HashMap<String, Double>();
+	
+	public HashMap<String, Double> getMovingMean() {
+		return movingMean;
+	}
+
+	public void setMovingMean(HashMap<String, Double> movingMean) {
+		this.movingMean = movingMean;
+	}
+	public void setMovingMean(String length, Double value) {
+		movingMean.put(length, value);
+	}
+
 	/**
 	 * This object could be for one day, week, month, etc.
 	 */
@@ -117,6 +157,8 @@ public class AnalyteStat implements JsonSerializable {
 	public double getPercentile(double p) {
 		// if (!percentileCalculations.containsKey(p))
 		// percentileCalculations.put(p, percentile(readings, p));
+		if(p>1)
+			p=p/100;
 		return percentileCalculations.get(Double.toString(p).replace(".", "_"));
 	}
 	

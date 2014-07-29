@@ -10,6 +10,9 @@ import org.joda.time.LocalDate;
  */
 public class AnalyteResult {
 	
+	@net.vz.mongodb.jackson.Id 
+	public String id; // UUID.randomUUID().toString();
+	
 	private String analyteType;
 	private LocalDate date;
 	private String result;

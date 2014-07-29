@@ -1,6 +1,6 @@
 package ie.brianhenry.veintobrain.representations;
 
-import java.util.List;
+import java.util.HashMap;
 
 import com.kfuntak.gwt.json.serialization.client.JsonSerializable;
 
@@ -15,19 +15,16 @@ import com.kfuntak.gwt.json.serialization.client.JsonSerializable;
  */
 public class AnalyteConfig implements JsonSerializable {
 
-	private String username;
-
 	private String analyteType;
 
-	private List<Double> additionalPercentiles;
+	private double overallMean;
+	
+	private double overallSD;
+	
+	private HashMap<String, Double> maxMovingMean = new HashMap<String, Double>();
+	
+	
 
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
 
 	public String getAnalyteType() {
 		return analyteType;
@@ -37,12 +34,6 @@ public class AnalyteConfig implements JsonSerializable {
 		this.analyteType = analyteType;
 	}
 
-	public List<Double> getAdditionalPercentiles() {
-		return additionalPercentiles;
-	}
 
-	public void setAdditionalPercentiles(List<Double> additionalPercentiles) {
-		this.additionalPercentiles = additionalPercentiles;
-	}
 
 }
