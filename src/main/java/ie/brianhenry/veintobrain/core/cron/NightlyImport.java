@@ -1,7 +1,6 @@
 package ie.brianhenry.veintobrain.core.cron;
 
 import ie.brianhenry.veintobrain.representations.AnalyteResult;
-import ie.brianhenry.veintobrain.representations.AnalyteStat;
 
 import javax.inject.Inject;
 
@@ -14,20 +13,23 @@ import com.mongodb.DB;
 
 import de.spinscale.dropwizard.jobs.Job;
 import de.spinscale.dropwizard.jobs.annotations.On;
-
-// 2:30 am
-// https://github.com/spinscale/dropwizard-jobs
-// http://quartz-scheduler.org/documentation/quartz-2.2.x/tutorials/tutorial-lesson-06
-@On("0 40 18 * * ?")
-public class NightlyJob extends Job {
+ 
+/**
+ * This is a scheduled task (cron) due to run at 2:30am every day. Its purpose is to pull raw data from the 
+ * hospital information system.
+ * 
+ * @author BrianHenry.ie
+ * @see https://github.com/spinscale/dropwizard-jobs
+ * @see http://quartz-scheduler.org/documentation/quartz-2.2.x/tutorials/tutorial-lesson-06
+ */
+@On("0 30 2 * * ?")
+public class NightlyImport extends Job {
 
 	JacksonDBCollection<AnalyteResult, String> analyteResults;
-	JacksonDBCollection<AnalyteStat, String> analyteStats;
 
 	@Inject
-	public NightlyJob(DB db) {
+	public NightlyImport(DB db) {
 		analyteResults = JacksonDBCollection.wrap(db.getCollection("analyteresult"), AnalyteResult.class, String.class);
-		analyteStats = JacksonDBCollection.wrap(db.getCollection("analytestat"), AnalyteStat.class, String.class);
 	}
 
 	@Override
@@ -38,6 +40,7 @@ public class NightlyJob extends Job {
 	@Override
 	public void doJob() {
 		// logic run every time and time again
+		// TODO use actual logger
 		System.out.println("2:30am run");
 
 		//
