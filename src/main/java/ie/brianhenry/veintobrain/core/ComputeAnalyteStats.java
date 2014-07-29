@@ -1,6 +1,7 @@
 package ie.brianhenry.veintobrain.core;
 
 import ie.brianhenry.veintobrain.representations.AnalyteDate;
+import ie.brianhenry.veintobrain.representations.AnalyteResult;
 import ie.brianhenry.veintobrain.representations.AnalyteStat;
 
 import java.math.BigDecimal;
@@ -10,7 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.google.common.primitives.Doubles;
 
@@ -27,6 +28,10 @@ public class ComputeAnalyteStats {
 
 	public static AnalyteStat computeDay(AnalyteDate day, String analyteType) {
 
+		if (new LocalDate(day.getDay()).getDayOfWeek() > 5 || day.getResults().length <= MIN_TESTS) {
+			return null; // TODO 
+		}
+		
 		AnalyteStat as = new AnalyteStat(analyteType);
 
 		as.addDate(day.getDay());
@@ -56,7 +61,7 @@ public class ComputeAnalyteStats {
 		// TODO check for bank holidays
 		for (AnalyteDate ad : listOfDates) {
 
-			DateTime dt = new DateTime(ad.getDay());
+			LocalDate dt = new LocalDate(ad.getDay());
 			if (ad.getType().equals(analyteType) && dt.getMonthOfYear() == month && dt.getDayOfWeek() < 6
 					&& ad.getResults().length > MIN_TESTS) {
 
@@ -71,6 +76,44 @@ public class ComputeAnalyteStats {
 			compute(as, allReadings);
 
 		return as;
+	}
+
+	public static AnalyteStat computeOverall(List<AnalyteResult> analyteResults, String analyteType) {
+		AnalyteStat as = new AnalyteStat(analyteType);
+
+		HashMap<LocalDate, List<String>> hm = new HashMap<LocalDate, List<String>>();
+
+		for (AnalyteResult r : analyteResults) {
+			if (hm.get(r.getDate()) == null)
+				hm.put(r.getDate(), new ArrayList<String>());
+			hm.get(r.getDate()).add(r.getResult());
+		}
+
+		List<AnalyteDate> listOfDates = new ArrayList<AnalyteDate>();
+
+		for (LocalDate ld : hm.keySet()) {
+			listOfDates.add(new AnalyteDate(analyteType, ld.toDate(), hm.get(ld).toArray(new String[hm.size()])));
+		}
+
+		List<String> allReadings = new ArrayList<String>();
+
+		for (AnalyteDate ad : listOfDates) {
+
+			LocalDate dt = new LocalDate(ad.getDay());
+			if (ad.getType().equals(analyteType) && dt.getDayOfWeek() < 6 && ad.getResults().length > MIN_TESTS) {
+
+				// We're going to use this one!
+				as.addDate(ad.getDay());
+				allReadings.addAll(Arrays.asList(ad.getResults()));
+
+			}
+		}
+
+		if (allReadings.size() > 0)
+			compute(as, allReadings);
+
+		return as;
+
 	}
 
 	private static AnalyteStat compute(AnalyteStat as, List<String> allReadings) {
@@ -92,9 +135,10 @@ public class ComputeAnalyteStats {
 				/**
 				 * Non-numeric readings are recoded in a HashMap
 				 */
+				if (reading == null)
+					reading = "null_"; // TODO Is this a terrible solution?
 				if (as.getOtherData().get(reading.replace(".", "_")) != null)
-					as.getOtherData().put(reading.replace(".", "_"),
-							as.getOtherData().get(reading.replace(".", "_")) + 1);
+					as.getOtherData().put(reading.replace(".", "_"), as.getOtherData().get(reading.replace(".", "_")) + 1);
 				else
 					as.getOtherData().put(reading.replace(".", "_"), 1);
 
@@ -148,6 +192,8 @@ public class ComputeAnalyteStats {
 				modes.add(s);
 
 		as.setMode(modes);
+
+		as.setStandardDeviation(round(standardDeviation(allNumericReadings), 3));
 
 		return as;
 	}
