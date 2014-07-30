@@ -40,14 +40,18 @@ public class AnalyteStat implements JsonSerializable {
 	/**
 	 * Daily, weekly, monthly,yearly,total
 	 */
-	private String analyteRange;
+	private StatPeriod analytePeriod;
 	
-	public String getAnalyteRange() {
-		return analyteRange;
+	public StatPeriod getAnalytePeriod() {
+		return analytePeriod;
 	}
 
-	public void setAnalyteRange(String analyteRange) {
-		this.analyteRange = analyteRange;
+	public void setAnalytePeriod(StatPeriod analytePeriod) {
+		this.analytePeriod = analytePeriod;
+	}
+	
+	public enum StatPeriod {
+		DAY, WEEK, MONTH, YEAR, OVERALL
 	}
 	
 	/**

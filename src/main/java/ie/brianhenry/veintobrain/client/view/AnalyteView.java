@@ -2,6 +2,7 @@ package ie.brianhenry.veintobrain.client.view;
 
 import ie.brianhenry.veintobrain.client.RpcService;
 import ie.brianhenry.veintobrain.representations.AnalyteStat;
+import ie.brianhenry.veintobrain.representations.AnalyteStat.StatPeriod;
 
 import java.util.List;
 
@@ -82,7 +83,7 @@ public class AnalyteView implements IsWidget {
 
 	public void setAnalyte(final String analyte) {
 
-		rpcService.executeRequest(analyte, new AsyncCallback<List<AnalyteStat>>() {
+		rpcService.executeRequest(analyte, StatPeriod.DAY, new AsyncCallback<List<AnalyteStat>>() {
 			public void onFailure(Throwable caught) {
 
 			}

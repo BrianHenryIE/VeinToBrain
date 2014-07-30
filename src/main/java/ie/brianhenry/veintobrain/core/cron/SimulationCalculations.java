@@ -9,17 +9,20 @@ import ie.brianhenry.veintobrain.representations.AnalyteStat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
 
 import javax.inject.Inject;
 
 import net.vz.mongodb.jackson.DBCursor;
 import net.vz.mongodb.jackson.JacksonDBCollection;
+import net.vz.mongodb.jackson.WriteResult;
 
 import org.joda.time.LocalDate;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 
 import de.spinscale.dropwizard.jobs.Job;
@@ -44,9 +47,9 @@ public class SimulationCalculations extends Job {
 
 	@Inject
 	public SimulationCalculations(DB db) {
-		analyteConfigs = JacksonDBCollection.wrap(db.getCollection("analyteconfig"), AnalyteConfig.class, String.class);
-		analyteResults = JacksonDBCollection.wrap(db.getCollection("analyteresult"), AnalyteResult.class, String.class);
-		analyteStats = JacksonDBCollection.wrap(db.getCollection("analytestat"), AnalyteStat.class, String.class);
+//		analyteConfigs = JacksonDBCollection.wrap(db.getCollection("analyteconfig"), AnalyteConfig.class, String.class);
+//		analyteResults = JacksonDBCollection.wrap(db.getCollection("analyteresult"), AnalyteResult.class, String.class);
+//		analyteStats = JacksonDBCollection.wrap(db.getCollection("analytestat"), AnalyteStat.class, String.class);
 	}
 
 	@Override
@@ -58,7 +61,14 @@ public class SimulationCalculations extends Job {
 	public void doJob() {
 
 		// http://mongojack.org/tutorial.html
-
+/*		
+		analyteStats.drop();
+		BasicDBObject indexObj = new BasicDBObject();
+		indexObj.put("analyteType", 1);
+		indexObj.put("analytePeriod", 1);
+		analyteStats.createIndex(indexObj);
+		
+		
 		List<AnalyteResult> analyteResultsList = new ArrayList<AnalyteResult>();
 
 		DBCursor<AnalyteResult> cursor = analyteResults.find().is("analyteType", "psa");
@@ -89,6 +99,7 @@ public class SimulationCalculations extends Job {
 			if (s != null) {
 				// System.out.println("adding to all daily");
 				allDailyAnalyteStats.add(s);
+				WriteResult<AnalyteStat, String> result = analyteStats.insert(s);
 			} else {
 				System.out.println("invalid day");
 				System.out.println(day.toString() + " : " + hm.get(day));
@@ -136,8 +147,8 @@ public class SimulationCalculations extends Job {
 			days.put(new LocalDate(allDailyAnalyteStats.get(i).getIncludedDates().get(0)), allDailyAnalyteStats.get(i));
 		}
 
-		LocalDate check = new LocalDate(2013, 7, 1);
-		LocalDate nextDate = check.plusDays(1);
+		LocalDate firstDay = new LocalDate(2013, 7, 1);
+		LocalDate nextDate = firstDay.plusDays(1);
 		LocalDate lastDate = new LocalDate(2014, 7, 1);
 
 		while (nextDate.isBefore(lastDate)) {
@@ -146,7 +157,7 @@ public class SimulationCalculations extends Job {
 				double movingSum = 0;
 				int movingSumCount = 0;
 
-				for (int i = 1; i < 7; i++) {
+				for (int i = 1; movingSum < 7 && nextDate.minusDays(i).isAfter(firstDay); i++) {
 					if (days.get(nextDate.minusDays(i)) != null) {
 						movingSum += days.get(nextDate.minusDays(i)).getPercentile(0.5);
 						movingSumCount++;
@@ -159,21 +170,23 @@ public class SimulationCalculations extends Job {
 					System.out.println("NaN : sum:" + movingSum + ", count:" + movingSumCount);
 				}
 
-				// days.get(nextDate).setMovingMean("7", movingMean);
+				days.get(nextDate).setMovingMean("7", movingMean);
 
 				System.out.println(nextDate.toString() + ", " + movingMean);
 			}
 			nextDate = nextDate.plusDays(1);
 		}
 
-		// calculate the mean
-		// sd
-		// 4sd
-
-		// record that so later
-
 		
-//		ObjectMapper mapper = new ObjectMapper();
-//	    return mapper.writeValueAsString(this) ; 
+		
+		
+		
+		ObjectMapper mapper = new ObjectMapper();
+	    try {
+			System.out.println(mapper.writeValueAsString(days.get(nextDate.minusDays(12))));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  */
 	}
 }

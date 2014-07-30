@@ -31,7 +31,7 @@ public class AnalyteMenuView implements IsWidget {
 			b.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					eventBus.fireEvent(new MenuEvent());
+					eventBus.fireEvent(new MenuEvent(mi));
 				}
 			});
 			flow.add(b);

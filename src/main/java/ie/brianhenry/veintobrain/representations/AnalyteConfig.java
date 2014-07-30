@@ -26,6 +26,30 @@ public class AnalyteConfig implements JsonSerializable {
 	
 
 
+	public double getOverallMean() {
+		return overallMean;
+	}
+
+	public void setOverallMean(double overallMean) {
+		this.overallMean = overallMean;
+	}
+
+	public double getOverallSD() {
+		return overallSD;
+	}
+
+	public void setOverallSD(double overallSD) {
+		this.overallSD = overallSD;
+	}
+
+	public HashMap<String, Double> getMaxMovingMean() {
+		return maxMovingMean;
+	}
+
+	public void setMaxMovingMean(HashMap<String, Double> maxMovingMean) {
+		this.maxMovingMean = maxMovingMean;
+	}
+
 	public String getAnalyteType() {
 		return analyteType;
 	}

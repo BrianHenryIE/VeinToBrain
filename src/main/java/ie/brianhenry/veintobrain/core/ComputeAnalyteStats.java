@@ -3,6 +3,7 @@ package ie.brianhenry.veintobrain.core;
 import ie.brianhenry.veintobrain.representations.AnalyteDate;
 import ie.brianhenry.veintobrain.representations.AnalyteResult;
 import ie.brianhenry.veintobrain.representations.AnalyteStat;
+import ie.brianhenry.veintobrain.representations.AnalyteStat.StatPeriod;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -33,6 +34,7 @@ public class ComputeAnalyteStats {
 		}
 		
 		AnalyteStat as = new AnalyteStat(analyteType);
+		as.setAnalytePeriod(StatPeriod.DAY);
 
 		as.addDate(day.getDay());
 
@@ -48,7 +50,8 @@ public class ComputeAnalyteStats {
 
 	public static AnalyteStat computeMonth(List<AnalyteDate> listOfDates, String analyteType, int month) {
 		AnalyteStat as = new AnalyteStat(analyteType);
-
+		as.setAnalytePeriod(StatPeriod.MONTH);
+		
 		/**
 		 * allReadings are unedited, includes U, UX, UXH, blanks, everything!
 		 */
@@ -80,6 +83,7 @@ public class ComputeAnalyteStats {
 
 	public static AnalyteStat computeOverall(List<AnalyteResult> analyteResults, String analyteType) {
 		AnalyteStat as = new AnalyteStat(analyteType);
+		as.setAnalytePeriod(StatPeriod.OVERALL);
 
 		HashMap<LocalDate, List<String>> hm = new HashMap<LocalDate, List<String>>();
 

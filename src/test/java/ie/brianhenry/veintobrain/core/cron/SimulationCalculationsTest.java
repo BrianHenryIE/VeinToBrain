@@ -17,7 +17,7 @@ public class SimulationCalculationsTest {
 		
 		SimulationCalculations sc = new SimulationCalculations(db);
 		
-		sc.doJob();
+		//sc.doJob();
 		
 	}
 

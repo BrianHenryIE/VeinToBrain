@@ -11,7 +11,6 @@ import org.junit.Test;
 public class AnalyteStatTest {
 
 	@SuppressWarnings("deprecation")
-	@Test
 	public void constructor() {
 
 		Date statDate = new Date();
@@ -55,7 +54,7 @@ public class AnalyteStatTest {
 
 	}
 
-	@Test
+	
 	public void psaTest() {
 
 		PSAdata p = new PSAdata();

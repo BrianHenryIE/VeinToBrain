@@ -1,6 +1,5 @@
 package ie.brianhenry.veintobrain.client.view;
 
-import ie.brianhenry.veintobrain.client.AppController;
 import ie.brianhenry.veintobrain.client.RpcService;
 import ie.brianhenry.veintobrain.client.events.MenuEvent;
 
@@ -24,7 +23,7 @@ public class TimeRangeMenuView implements IsWidget {
 
 		this.eventBus = eventBus;		
 
-		String[] menuItems = { "dayly", "monthly", "yearly" };
+		String[] menuItems = { "daily", "monthly", "yearly" };
 
 		for (final String mi : menuItems){
 			Button b = new Button(mi);
@@ -32,7 +31,7 @@ public class TimeRangeMenuView implements IsWidget {
 			b.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					eventBus.fireEvent(new MenuEvent());
+					eventBus.fireEvent(new MenuEvent(mi));
 				}
 			});
 			flow.add(b);

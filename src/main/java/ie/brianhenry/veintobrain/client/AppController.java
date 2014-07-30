@@ -25,18 +25,21 @@ import com.google.web.bindery.event.shared.binder.EventBinder;
 import com.google.web.bindery.event.shared.binder.EventHandler;
 
 public class AppController {
-	
+
 	/**
 	 * Interface which allows to register the event handlers
+	 * 
 	 * @author Daniele
 	 *
 	 */
-	interface MenuEventBinder extends EventBinder<AppController>{}
-	private final MenuEventBinder eventBinder= GWT.create(MenuEventBinder.class);
+	interface MenuEventBinder extends EventBinder<AppController> {
+	}
+
+	private final MenuEventBinder eventBinder = GWT.create(MenuEventBinder.class);
 
 	/**
-	 * Client side of the client/server communication. Implements
-	 * all the methods needed and translate JSON instructions to Java.
+	 * Client side of the client/server communication. Implements all the
+	 * methods needed and translate JSON instructions to Java.
 	 */
 	RpcService rpcService;
 	/**
@@ -47,10 +50,10 @@ public class AppController {
 	private final FlowPanel contentPanel = new FlowPanel();
 
 	FlowPanel leftFrame = new FlowPanel();
-	SimplePanel centerFrame = new SimplePanel(); 
+	SimplePanel centerFrame = new SimplePanel();
 	FlowPanel rightFrame = new FlowPanel();
 
-	//this line has to be added anytime you use CSS
+	// this line has to be added anytime you use CSS
 	VeintobrainResources resources = VeintobrainResources.INSTANCE;
 
 	public AppController(RpcService rpcService, EventBus eventBus) {
@@ -70,10 +73,10 @@ public class AppController {
 		contentPanel.add(centerFrame);
 		contentPanel.add(rightFrame);
 	}
-	
-	TabLayoutPanel tab = new TabLayoutPanel(1.0, Unit.EM); //leftFrame
-	AnalyteView av = new AnalyteView(rpcService, eventBus); //centerFrame
-	Label lab = new Label("Summary:"); //rightFrame
+
+	TabLayoutPanel tab = new TabLayoutPanel(1.0, Unit.EM); // leftFrame
+	AnalyteView av = new AnalyteView(rpcService, eventBus); // centerFrame
+	Label lab = new Label("Summary:"); // rightFrame
 	DisclosurePanel p = new DisclosurePanel("Click to disclose something:");
 
 	public void go(HasWidgets container) {
@@ -81,29 +84,32 @@ public class AppController {
 		leftFrame.add(new LoginClientView(rpcService, eventBus));
 
 		container.add(contentPanel);
-		
-		loggedIn(new LoginEvent(new User("sad","secret")));
+
+		loggedIn(new LoginEvent(new User("sad", "secret")));
 	}
-		
-	@EventHandler void loggedIn(LoginEvent event){
+
+	@EventHandler
+	void loggedIn(LoginEvent event) {
 		leftFrame.clear();
 		centerFrame.clear();
 		rightFrame.clear();
-		
+
 		leftFrame.add(new AnalyteMenuView(rpcService, eventBus));
 		leftFrame.add(new TimeRangeMenuView(rpcService, eventBus));
-		
+
 		av.setAnalyte("folate");
 		tab.setSize("800px", "550px");
 		tab.add(av, "Graph");
 		tab.add(new HTML("that content"), "Table");
 		centerFrame.add(tab);
-		
+
 		rightFrame.add(lab);
 	}
 
-	@EventHandler void OnShow(MenuEvent event) {
+	@EventHandler
+	void OnShow(MenuEvent event) {
 		lab.setText("BETTER CALL SAUL");
+		av.setAnalyte(event.getButton());
 	}
-	
+
 }

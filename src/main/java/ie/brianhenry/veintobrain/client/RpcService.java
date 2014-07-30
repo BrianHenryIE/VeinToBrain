@@ -1,6 +1,7 @@
 package ie.brianhenry.veintobrain.client;
 
 import ie.brianhenry.veintobrain.representations.AnalyteStat;
+import ie.brianhenry.veintobrain.representations.AnalyteStat.StatPeriod;
 import ie.brianhenry.veintobrain.representations.LoginResponse;
 
 import java.util.ArrayList;
@@ -46,9 +47,9 @@ public class RpcService {
 
 	}
 
-	public void executeRequest(String message, final AsyncCallback<List<AnalyteStat>> asyncCallback) {
+	public void executeRequest(String type, StatPeriod period, final AsyncCallback<List<AnalyteStat>> asyncCallback) {
 
-		String jsonUrl = "/api/analyte-stat?name=" + message;
+		String jsonUrl = "/api/analyte/" + type + "/" + period;
 
 		String url = URL.encode(jsonUrl);
 
@@ -65,8 +66,8 @@ public class RpcService {
 					ArrayListSerializer alSerializer = (ArrayListSerializer) GWT.create(ArrayListSerializer.class);
 
 					@SuppressWarnings("unchecked")
-					ArrayList<AnalyteStat> deResponse = (ArrayList<AnalyteStat>) alSerializer.deSerialize(
-							response.getText(), "java.util.ArrayList");
+					ArrayList<AnalyteStat> deResponse = (ArrayList<AnalyteStat>) alSerializer.deSerialize(response.getText(),
+							"java.util.ArrayList");
 
 					asyncCallback.onSuccess(deResponse);
 

@@ -10,4 +10,13 @@ import com.google.web.bindery.event.shared.binder.GenericEvent;
  */
 public class MenuEvent extends GenericEvent {
 
+	private final String analyte;
+
+	public MenuEvent(String analyte) {
+		this.analyte = analyte;
+	}
+	
+	public String getButton(){
+		return analyte;
+	}
 }
