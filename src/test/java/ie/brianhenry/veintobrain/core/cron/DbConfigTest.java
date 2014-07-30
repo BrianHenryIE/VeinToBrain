@@ -36,15 +36,15 @@ public class DbConfigTest {
 
 		DbConfig dbc = new DbConfig(db);
 
-
-//		dbc.doJob();
-//
-//		verify(mockAppender).doAppend(argThat(new ArgumentMatcher() {
-//			@Override
-//			public boolean matches(final Object argument) {
-//				return ((LoggingEvent) argument).getFormattedMessage().contains("Hey this is the message I want to see");
-//			}
-//		}));
+		// dbc.doJob();
+		//
+		// verify(mockAppender).doAppend(argThat(new ArgumentMatcher() {
+		// @Override
+		// public boolean matches(final Object argument) {
+		// return ((LoggingEvent)
+		// argument).getFormattedMessage().contains("Hey this is the message I want to see");
+		// }
+		// }));
 	}
 
 }

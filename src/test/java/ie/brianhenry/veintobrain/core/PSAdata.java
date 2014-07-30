@@ -1,4 +1,4 @@
-package ie.brianhenry.veintobrain.jdbi;
+package ie.brianhenry.veintobrain.core;
 
 import ie.brianhenry.veintobrain.representations.AnalyteDate;
 import ie.brianhenry.veintobrain.representations.AnalyteResult;

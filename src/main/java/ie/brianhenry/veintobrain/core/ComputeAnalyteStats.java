@@ -25,7 +25,7 @@ public class ComputeAnalyteStats {
 	 */
 	private static final Double[] defaultPercentiles = { 0.025, 0.25, 0.5, 0.75, 0.975 };
 
-	public static final int MIN_TESTS = 10;
+	public static final int MIN_TESTS = 12;
 
 	public static AnalyteStat computeDay(AnalyteDate day, String analyteType) {
 

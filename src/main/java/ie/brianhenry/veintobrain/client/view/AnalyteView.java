@@ -4,6 +4,7 @@ import ie.brianhenry.veintobrain.client.RpcService;
 import ie.brianhenry.veintobrain.representations.AnalyteStat;
 import ie.brianhenry.veintobrain.representations.AnalyteStat.StatPeriod;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.moxieapps.gwt.highcharts.client.BaseChart.ZoomType;
@@ -11,7 +12,7 @@ import org.moxieapps.gwt.highcharts.client.Chart;
 import org.moxieapps.gwt.highcharts.client.Point;
 import org.moxieapps.gwt.highcharts.client.Series;
 
-import com.google.gwt.core.shared.GWT;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -57,8 +58,8 @@ public class AnalyteView implements IsWidget {
 		chart.setZoomType(ZoomType.Y);
 		chart.getYAxis().setMin(0);
 
-		chart.setType(Series.Type.BOXPLOT);
-		chart.setSize("800px", "500px");
+		chart.setType(Series.Type.LINE);
+		chart.setSize("400px", "500px");
 
 		chart.setCredits(null);
 
@@ -70,15 +71,32 @@ public class AnalyteView implements IsWidget {
 
 		chartPanel.clear();
 
+		List<String> categories = new ArrayList<String>();
 		for (int i = 0; i < analyteStats.size(); i++) {
-			GWT.log("log: " + analyteStats.get(i).getInputCount());
-			series.addPoint(new Point(analyteStats.get(i).getPercentile(0.025),
-					analyteStats.get(i).getPercentile(0.25), analyteStats.get(i).getPercentile(0.5), analyteStats
-							.get(i).getPercentile(0.75), analyteStats.get(i).getPercentile(0.975)));
+
+//			for(int j = 0; j < (int)((analyteStats.get(i).getIncludedDates().get(0).getTime()-analyteStats.get(i-1).getIncludedDates().get(0).getTime())/86400000); j++);
+//				series.addPoint(new Point());
+			series.addPoint(new Point(analyteStats.get(i).getMovingMean().get("20")));
+			GWT.log(" "+analyteStats.get(i).getMovingMean().get("20"));
+			categories.add(analyteStats.get(i).getIncludedDates().get(0).toString());
 		}
+		
+		//chart.getXAxis().setType(Type.DATE_TIME);
+		//chart.setOption("/plotOptions/line/pointInterval/",86400000);
+		
+		
+		// chart.getXAxis().setCategories(categories.toArray(new String[categories.size()]));
 
 		chartPanel.add(chart);
-
+		//
+		// StockChart stockChart = new
+		// StockChart().setChartTitleText(analyte).setMarginRight(10);
+		//
+		// Series series1 =
+		// stockChart.createSeries().addPoint(40).addPoint(35).addPoint(60);
+		// stockChart.addSeries(series1);
+		// stockChart.setSize("800px", "500px");
+		// chartPanel.add(stockChart);
 	}
 
 	public void setAnalyte(final String analyte) {

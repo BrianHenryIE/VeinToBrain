@@ -40,7 +40,6 @@ public class AnalyteResource {
 			AnalyteStat stat = dbCursor.next();
 			stats.add(stat);
 		}
-
 		return stats;
 
 	}

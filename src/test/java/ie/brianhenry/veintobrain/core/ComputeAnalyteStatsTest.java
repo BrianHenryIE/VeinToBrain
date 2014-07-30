@@ -1,7 +1,6 @@
-package ie.brianhenry.veintobrain.core.cron;
+package ie.brianhenry.veintobrain.core;
 
-import ie.brianhenry.veintobrain.core.ComputeAnalyteStats;
-import ie.brianhenry.veintobrain.representations.AnalyteConfig;
+import static org.junit.Assert.assertEquals;
 import ie.brianhenry.veintobrain.representations.AnalyteDate;
 import ie.brianhenry.veintobrain.representations.AnalyteResult;
 import ie.brianhenry.veintobrain.representations.AnalyteStat;
@@ -10,72 +9,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import net.vz.mongodb.jackson.DBCursor;
-import net.vz.mongodb.jackson.JacksonDBCollection;
-import net.vz.mongodb.jackson.WriteResult;
-
 import org.joda.time.LocalDate;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
 
-import de.spinscale.dropwizard.jobs.Job;
-import de.spinscale.dropwizard.jobs.annotations.OnApplicationStart;
+public class ComputeAnalyteStatsTest {
 
-/**
- * This is a practice class for calculating with our test data. Should be in a
- * test package, then.
- * 
- * @author BrianHenry.ie
- * @see https://github.com/spinscale/dropwizard-jobs
- * @see http
- *      ://quartz-scheduler.org/documentation/quartz-2.2.x/tutorials/tutorial
- *      -lesson-06
- */
-@OnApplicationStart
-public class SimulationCalculations extends Job {
-
-	JacksonDBCollection<AnalyteConfig, String> analyteConfigs;
-	JacksonDBCollection<AnalyteResult, String> analyteResults;
-	JacksonDBCollection<AnalyteStat, String> analyteStats;
-
-	@Inject
-	public SimulationCalculations(DB db) {
-//		analyteConfigs = JacksonDBCollection.wrap(db.getCollection("analyteconfig"), AnalyteConfig.class, String.class);
-//		analyteResults = JacksonDBCollection.wrap(db.getCollection("analyteresult"), AnalyteResult.class, String.class);
-//		analyteStats = JacksonDBCollection.wrap(db.getCollection("analytestat"), AnalyteStat.class, String.class);
-	}
-
-	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
-		super.execute(context);
-	}
-
-	@Override
-	public void doJob() {
-
-		// http://mongojack.org/tutorial.html
-/*		
-		analyteStats.drop();
-		BasicDBObject indexObj = new BasicDBObject();
-		indexObj.put("analyteType", 1);
-		indexObj.put("analytePeriod", 1);
-		analyteStats.createIndex(indexObj);
+	@Test
+	public void TestOne() {
 		
+		PSAdata pd = new PSAdata();
 		
-		List<AnalyteResult> analyteResultsList = new ArrayList<AnalyteResult>();
 
-		DBCursor<AnalyteResult> cursor = analyteResults.find().is("analyteType", "psa");
-		while (cursor.hasNext()) {
-			AnalyteResult nextObject = cursor.next();
-			analyteResultsList.add(nextObject);
-		}
+		List<AnalyteResult> analyteResultsList = pd.getResults();
 
 		AnalyteStat overall = ComputeAnalyteStats.computeOverall(analyteResultsList, "psa");
 
@@ -91,6 +39,8 @@ public class SimulationCalculations extends Job {
 			hm.get(r.getDate()).add(r.getResult());
 		}
 
+		List<AnalyteDate> allVaildAnalyteDates = new ArrayList<AnalyteDate>();
+		
 		System.out.println("hm.size() : " + hm.size());
 		for (LocalDate day : hm.keySet()) {
 			// System.out.println(day.toString() + " : " + hm.get(day));
@@ -99,13 +49,22 @@ public class SimulationCalculations extends Job {
 			if (s != null) {
 				// System.out.println("adding to all daily");
 				allDailyAnalyteStats.add(s);
-				WriteResult<AnalyteStat, String> result = analyteStats.insert(s);
+				allVaildAnalyteDates.add(d);
 			} else {
 				System.out.println("invalid day");
 				System.out.println(day.toString() + " : " + hm.get(day));
 			}
 
 		}
+		
+//		List<String> goodYear = new ArrayList<String>();
+//		for(AnalyteDate gd : allVaildAnalyteDates){
+//			goodYear.addAll(Arrays.asList(gd.getResults()));
+//		}
+//		AnalyteDate year = new AnalyteDate("psa", new Date(), goodYear.toArray(new String[goodYear.size()]));
+//		
+//		AnayteStat year = new AnayteStat
+		
 
 		System.out.println("allDailyAnalyteStats.size() : " + allDailyAnalyteStats.size());
 
@@ -141,6 +100,9 @@ public class SimulationCalculations extends Job {
 		//
 		//
 
+		
+		// Get an addressable list of the daily stats so we can ask for the previous days' stats
+		// for the moving mean
 		HashMap<LocalDate, AnalyteStat> days = new HashMap<LocalDate, AnalyteStat>();
 
 		for (int i = 0; i < allDailyAnalyteStats.size(); i++) {
@@ -151,13 +113,16 @@ public class SimulationCalculations extends Job {
 		LocalDate nextDate = firstDay.plusDays(1);
 		LocalDate lastDate = new LocalDate(2014, 7, 1);
 
+		final int MOVINGMEANDAYS = 20;
+		
+		
 		while (nextDate.isBefore(lastDate)) {
 
 			if (days.get(nextDate) != null) {
 				double movingSum = 0;
 				int movingSumCount = 0;
 
-				for (int i = 1; movingSum < 7 && nextDate.minusDays(i).isAfter(firstDay); i++) {
+				for (int i = 1; movingSum < MOVINGMEANDAYS && nextDate.minusDays(i).isAfter(firstDay); i++) {
 					if (days.get(nextDate.minusDays(i)) != null) {
 						movingSum += days.get(nextDate.minusDays(i)).getPercentile(0.5);
 						movingSumCount++;
@@ -170,7 +135,7 @@ public class SimulationCalculations extends Job {
 					System.out.println("NaN : sum:" + movingSum + ", count:" + movingSumCount);
 				}
 
-				days.get(nextDate).setMovingMean("7", movingMean);
+				days.get(nextDate).setMovingMean(Integer.toString(MOVINGMEANDAYS), movingMean);
 
 				System.out.println(nextDate.toString() + ", " + movingMean);
 			}
@@ -183,10 +148,34 @@ public class SimulationCalculations extends Job {
 		
 		ObjectMapper mapper = new ObjectMapper();
 	    try {
-			System.out.println(mapper.writeValueAsString(days.get(nextDate.minusDays(12))));
+			System.out.println(mapper.writeValueAsString(overall));
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}  */
+		}  
+
+	}
+
+	
+	
+	@Test
+	public void standardDeviationTest() {
+
+		String[] readingsS = { "11.1", "14.5", "17.9", "8.7", "15.7", "12.3", "2.8", "14.9", "4.5", "7.8", "6.6",
+				"10.6", "23.0", "19.0", "4.7", "9.5", "7.1", "13.5", "9.5", "3.5", "16.1", "21.7", "11.2", "9.8",
+				"13.8", "20.7", "6.6", "4.2", "6.2", "19.9", "15.9", "21.8", "9.0" };
+
+		List<Double> readings = new ArrayList<Double>();
+
+		for (String s : readingsS)
+			readings.add(Double.parseDouble(s));
+
+		// =STDEV.P(B13:B45)
+		// 5.774553914
+		double excel = 5.774553914;
+
+		double sd = ComputeAnalyteStats.standardDeviation(readings);
+		assertEquals(excel, sd, 0.001);
+
 	}
 }
