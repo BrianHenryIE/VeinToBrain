@@ -1,7 +1,8 @@
 package ie.brianhenry.veintobrain.client.view;
 
 import ie.brianhenry.veintobrain.client.RpcService;
-import ie.brianhenry.veintobrain.client.events.MenuEvent;
+import ie.brianhenry.veintobrain.client.events.AnalyteMenuEvent;
+import ie.brianhenry.veintobrain.client.events.TimeRangeMenuEvent;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -31,7 +32,7 @@ public class TimeRangeMenuView implements IsWidget {
 			b.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					eventBus.fireEvent(new MenuEvent(mi));
+					eventBus.fireEvent(new TimeRangeMenuEvent(mi));
 				}
 			});
 			flow.add(b);

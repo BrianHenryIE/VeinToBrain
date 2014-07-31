@@ -3,20 +3,21 @@ package ie.brianhenry.veintobrain.client.events;
 import com.google.web.bindery.event.shared.binder.GenericEvent;
 
 /**
- * MenuEvent definition
+ * AnalyteMenuEvent definition
  * 
  * @author Daniele
  *
  */
-public class MenuEvent extends GenericEvent {
+public class AnalyteMenuEvent extends GenericEvent {
 
-	private final String analyte;
-
-	public MenuEvent(String analyte) {
+	private String analyte;
+	
+	public AnalyteMenuEvent(String analyte) {
 		this.analyte = analyte;
 	}
 	
-	public String getButton(){
+	public String getAnalyte(){
 		return analyte;
 	}
+	
 }

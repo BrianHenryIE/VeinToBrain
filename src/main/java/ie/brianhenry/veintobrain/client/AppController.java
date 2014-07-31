@@ -1,7 +1,8 @@
 package ie.brianhenry.veintobrain.client;
 
 import ie.brianhenry.veintobrain.client.events.LoginEvent;
-import ie.brianhenry.veintobrain.client.events.MenuEvent;
+import ie.brianhenry.veintobrain.client.events.AnalyteMenuEvent;
+import ie.brianhenry.veintobrain.client.events.TimeRangeMenuEvent;
 import ie.brianhenry.veintobrain.client.resources.VeintobrainResources;
 import ie.brianhenry.veintobrain.client.view.AnalyteMenuView;
 import ie.brianhenry.veintobrain.client.view.AnalyteView;
@@ -76,7 +77,10 @@ public class AppController {
 
 	TabLayoutPanel tab = new TabLayoutPanel(1.0, Unit.EM); // leftFrame
 	AnalyteView av = new AnalyteView(rpcService, eventBus); // centerFrame
-	Label lab = new Label("Summary:"); // rightFrame
+	
+	Label summaryLab = new Label("Summary:"); // rightFrame
+	Label analytesLab = new Label(); // rightFrame
+	Label timeRangeLab = new Label(); // rightFrame
 	DisclosurePanel p = new DisclosurePanel("Click to disclose something:");
 
 	public void go(HasWidgets container) {
@@ -103,13 +107,18 @@ public class AppController {
 		tab.add(new HTML("that content"), "Table");
 		centerFrame.add(tab);
 
-		rightFrame.add(lab);
+		rightFrame.add(summaryLab);
+		rightFrame.add(analytesLab);
+		rightFrame.add(timeRangeLab);
 	}
 
 	@EventHandler
-	void OnShow(MenuEvent event) {
-		lab.setText("BETTER CALL SAUL");
-		av.setAnalyte(event.getButton());
+	void OnShow(AnalyteMenuEvent event) {
+		analytesLab.setText("Analyte: "+event.getAnalyte());
+	}
+	@EventHandler
+	void OnShow(TimeRangeMenuEvent event) {
+		timeRangeLab.setText("Time Range: "+event.getTimeRange());
 	}
 
 }
