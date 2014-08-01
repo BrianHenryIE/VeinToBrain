@@ -3,6 +3,7 @@ package ie.brianhenry.veintobrain.representations;
 
 
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
@@ -13,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
  * Shows single date results for a certain analyte
  * 
  * For a single day's raw data This isn't the way it comes from Cognos
- * and probably isn't the best way to store it
+ * and maybe isn't the best way to store it
  * 
  * @author BrianHenry.ie
  *
@@ -23,7 +24,7 @@ public class AnalyteDate {
 
 	private String type;
 	private Date day;
-	private String[] results;
+	private List<String> results;
 
 	/**
 	 * Constructor
@@ -38,7 +39,7 @@ public class AnalyteDate {
 	 * @param results results for that particular date (String type chosen
 	 * in order to manage non-numerical data
 	 */
-	public AnalyteDate(String type, Date day, String[] results) {
+	public AnalyteDate(String type, Date day, List<String> results) {
 		this.day = day;
 		this.results = results;
 		this.type = type;
@@ -61,7 +62,7 @@ public class AnalyteDate {
 	/**
 	 * @return results for that particular date
 	 */
-	public String[] getResults() {
+	public List<String> getResults() {
 		return results;
 
 	}
@@ -86,7 +87,7 @@ public class AnalyteDate {
 	 * sets results for that particular date
 	 * @param results
 	 */
-	public void setResults(String[] results) {
+	public void setResults(List<String> results) {
 		this.results = results;
 	}
 }

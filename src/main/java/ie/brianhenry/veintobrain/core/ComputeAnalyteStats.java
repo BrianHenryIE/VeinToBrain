@@ -12,9 +12,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.math3.stat.StatUtils;
 import org.joda.time.LocalDate;
-
-import com.google.common.primitives.Doubles;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 // TODO Do we need to filter out ICQ samples??? 
 
@@ -23,68 +24,126 @@ public class ComputeAnalyteStats {
 	/**
 	 * The percentiles to be calculated for every AnalyteStat
 	 */
-	private static final Double[] defaultPercentiles = { 0.025, 0.25, 0.5, 0.75, 0.975 };
+	protected static final Double[] defaultPercentiles = { 0.025, 0.25, 0.5, 0.75, 0.975 };
 
+	// TODO This should be analyte specific
+	// See notes for dreams of calculating it
 	public static final int MIN_TESTS = 12;
 
+	public static boolean isValidDate(AnalyteDate date) {
+		return isValidDate(new LocalDate(date.getDay()));
+	}
+
+	/**
+	 * Checks the date is not a weekend, bank holiday
+	 * 
+	 * @param date
+	 * @return
+	 */
+	public static boolean isValidDate(LocalDate date) {
+
+		return (date.getDayOfWeek() < 6 && !holidates.contains(date));
+	}
+
+	private static List<LocalDate> holidates = new ArrayList<LocalDate>();
+
+	// static initializer. Runs once per class. Cousin of constructor
+	static {
+		// 2010-2015 // TODO Put in database, user configurable
+		String[] holidays = { "01/01/2010", "17/03/2010", "05/04/2010", "03/05/2010", "07/06/2010", "02/08/2010", "25/10/2010",
+				"25/12/2010", "26/12/2010", "27/12/2010", "28/12/2010", "03/01/2011", "17/03/2011", "25/04/2011", "02/05/2011",
+				"06/06/2011", "01/08/2011", "31/10/2011", "25/12/2011", "26/12/2011", "27/12/2011", "01/01/2012", "02/01/2012",
+				"02/01/2012", "17/03/2012", "19/03/2012", "19/03/2012", "09/04/2012", "09/04/2012", "07/05/2012", "07/05/2012",
+				"04/06/2012", "04/06/2012", "06/08/2012", "06/08/2012", "29/10/2012", "29/10/2012", "30/11/2012", "25/12/2012",
+				"25/12/2012", "26/12/2012", "26/12/2012", "01/01/2013", "17/03/2013", "18/03/2013", "01/04/2013", "06/05/2013",
+				"03/06/2013", "05/08/2013", "28/10/2013", "25/12/2013", "26/12/2013", "01/01/2014", "17/03/2014", "21/04/2014",
+				"05/05/2014", "02/06/2014", "04/08/2014", "27/10/2014", "25/12/2014", "26/12/2014", "01/01/2015", "17/03/2015",
+				"06/04/2015", "04/05/2015", "01/06/2015", "03/08/2015", "26/10/2015", "25/12/2015", "26/12/2015", "28/12/2015" };
+		DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
+		for (String h : holidays)
+			holidates.add(dtf.parseLocalDate(h)); // inefficient but temporary
+	}
+
+	/**
+	 * This does not check for weekends or bank holidays. Use isValidDate() for
+	 * that.
+	 * 
+	 * @param day
+	 * @param analyteType
+	 * @return
+	 */
 	public static AnalyteStat computeDay(AnalyteDate day, String analyteType) {
 
-		if (new LocalDate(day.getDay()).getDayOfWeek() > 5 || day.getResults().length <= MIN_TESTS) {
-			return null; // TODO 
-		}
-		
 		AnalyteStat as = new AnalyteStat(analyteType);
 		as.setAnalytePeriod(StatPeriod.DAY);
-
 		as.addDate(day.getDay());
+		as.addIncludedDays(day);
 
 		/**
 		 * allReadings are unedited, includes U, UX, UXH, blanks, everything!
 		 */
-		List<String> allReadings = Arrays.asList(day.getResults());
+		as.setOriginalReadings(day.getResults());
 
-		compute(as, allReadings);
+		// Get the numeric readings
+		as = parseReadings(as);
+
+		// TODO Get the 4SD and remove
+
+		if (as.getValidCount() <= MIN_TESTS || !isValidDate(day))
+			as.setIsValid(false);
+		else
+			// Get the calculations
+			compute(as);
 
 		return as;
 	}
 
+	/**
+	 * Checks each day is a valid day, has enough tests and is actually in this
+	 * month, then combines the results and computes the stats
+	 * 
+	 * @param listOfDates
+	 * @param analyteType
+	 * @param month
+	 * @return
+	 */
 	public static AnalyteStat computeMonth(List<AnalyteDate> listOfDates, String analyteType, int month) {
 		AnalyteStat as = new AnalyteStat(analyteType);
 		as.setAnalytePeriod(StatPeriod.MONTH);
-		
-		/**
-		 * allReadings are unedited, includes U, UX, UXH, blanks, everything!
-		 */
+
 		List<String> allReadings = new ArrayList<String>();
 
-		// TODO This is maybe unnecessary considering we'll be pulling from
-		// the database by name
-		// Check for weekdays (days 1-5)
-		// Check for minimum (n) number of tests that day
-		// TODO check for bank holidays
-		for (AnalyteDate ad : listOfDates) {
-
-			LocalDate dt = new LocalDate(ad.getDay());
-			if (ad.getType().equals(analyteType) && dt.getMonthOfYear() == month && dt.getDayOfWeek() < 6
-					&& ad.getResults().length > MIN_TESTS) {
-
-				// We're going to use this one!
+		for (AnalyteDate ad : listOfDates)
+			if (computeDay(ad, analyteType).getIsValid() && new LocalDate(ad.getDay()).getMonthOfYear() == month) {
+				allReadings.addAll(ad.getResults());
 				as.addDate(ad.getDay());
-				allReadings.addAll(Arrays.asList(ad.getResults()));
-
 			}
-		}
 
-		if (allReadings.size() > 0)
-			compute(as, allReadings);
+		as.setOriginalReadings(allReadings);
+		as = parseReadings(as);
+
+		// TODO Get the 4SD and remove
+
+		if (as.getValidCount() <= MIN_TESTS)
+			as.setIsValid(false);
+		else
+			compute(as);
 
 		return as;
 	}
 
+	/**
+	 * Takes a list of individual results, builds
+	 * 
+	 * @param analyteResults
+	 * @param analyteType
+	 * @return
+	 */
 	public static AnalyteStat computeOverall(List<AnalyteResult> analyteResults, String analyteType) {
 		AnalyteStat as = new AnalyteStat(analyteType);
 		as.setAnalytePeriod(StatPeriod.OVERALL);
 
+		// HashMap for grouping results by date
 		HashMap<LocalDate, List<String>> hm = new HashMap<LocalDate, List<String>>();
 
 		for (AnalyteResult r : analyteResults) {
@@ -95,93 +154,123 @@ public class ComputeAnalyteStats {
 
 		List<AnalyteDate> listOfDates = new ArrayList<AnalyteDate>();
 
-		for (LocalDate ld : hm.keySet()) {
-			listOfDates.add(new AnalyteDate(analyteType, ld.toDate(), hm.get(ld).toArray(new String[hm.size()])));
-		}
+		for (LocalDate ld : hm.keySet())
+			listOfDates.add(new AnalyteDate(analyteType, ld.toDate(), hm.get(ld)));
 
 		List<String> allReadings = new ArrayList<String>();
 
-		for (AnalyteDate ad : listOfDates) {
-
-			LocalDate dt = new LocalDate(ad.getDay());
-			if (ad.getType().equals(analyteType) && dt.getDayOfWeek() < 6 && ad.getResults().length > MIN_TESTS) {
-
-				// We're going to use this one!
+		for (AnalyteDate ad : listOfDates)
+			if (computeDay(ad, analyteType).getIsValid()) {
+				allReadings.addAll(ad.getResults());
 				as.addDate(ad.getDay());
-				allReadings.addAll(Arrays.asList(ad.getResults()));
-
 			}
-		}
 
-		if (allReadings.size() > 0)
-			compute(as, allReadings);
+		// These are the readings only from valid days
+		as.setOriginalReadings(allReadings);
+		as = parseReadings(as);
+
+		// TODO Get the 4SD and remove
+
+		if (as.getValidCount() <= MIN_TESTS)
+			as.setIsValid(false); // should be unreachable code!
+		else
+			compute(as);
 
 		return as;
 
 	}
 
-	private static AnalyteStat compute(AnalyteStat as, List<String> allReadings) {
+	/**
+	 * @param as
+	 * @return A new AnalyteStat with only readings in it (no calculations)
+	 */
+	protected static AnalyteStat parseReadings(AnalyteStat as) {
+
+		// why would there ever be zero here? //TODO maybe get rid of this
+		if (as.getOriginalReadings().size() == 0)
+			return as;
+
+		AnalyteStat newAs = new AnalyteStat(as.getAnalyteType());
+		newAs.setOriginalReadings(as.getOriginalReadings());
+		newAs.setIncludedDates(as.getIncludedDates());
 
 		/**
 		 * allNumericReadings includes <0.3, >24 etc ±0.01
 		 */
 		List<Double> allNumericReadings = new ArrayList<Double>();
 
+		HashMap<String, Integer> otherData = new HashMap<String, Integer>();
+
 		/**
 		 * This takes all the numbers from the readings and put them in the
 		 * list. Any readings that aren't regular numbers are put in a HashMap
 		 */
-		for (String reading : allReadings)
+		for (String reading : as.getOriginalReadings())
 			// TODO check for negative number
-			if (isNumeric(reading))
+			if (isPositiveNumeric(reading))
 				allNumericReadings.add(Double.parseDouble(reading));
 			else {
 				/**
-				 * Non-numeric readings are recoded in a HashMap
+				 * Non-numeric readings are recoded in a HashMap periods are
+				 * replaced with underscores for mongo
 				 */
-				if (reading == null)
-					reading = "null_"; // TODO Is this a terrible solution?
-				if (as.getOtherData().get(reading.replace(".", "_")) != null)
-					as.getOtherData().put(reading.replace(".", "_"), as.getOtherData().get(reading.replace(".", "_")) + 1);
+				String mongoReading;
+				if (reading == null) // TODO this isn't working properly.
+					mongoReading = "null_"; // TODO Is this a terrible solution?
 				else
-					as.getOtherData().put(reading.replace(".", "_"), 1);
+					mongoReading = reading.replace(".", "_");
+
+				if (!otherData.containsKey(mongoReading))
+					otherData.put(mongoReading, 0);
+
+				otherData.put(mongoReading, otherData.get(mongoReading) + 1);
 
 				/**
 				 * each <0.03 etc is included in the calculations
 				 */
-				if (isNumeric(reading.replace(">", "")))
+				if (isPositiveNumeric(reading.replace(">", "")))
 					allNumericReadings.add(Double.parseDouble(reading.replace(">", "")) + 0.001);
-				else if (isNumeric(reading.replace("<", "")))
+				else if (isPositiveNumeric(reading.replace("<", "")))
 					allNumericReadings.add(Double.parseDouble(reading.replace("<", "")) - 0.001);
 			}
+
+		newAs.setNumericReadings(allNumericReadings);
+		newAs.setOtherData(otherData);
+		newAs.setInputCount(as.getOriginalReadings().size());
+		newAs.setValidCount(allNumericReadings.size());
+
+		return newAs;
+	}
+
+	protected static AnalyteStat compute(AnalyteStat as) {
 
 		// Now we have the full list of readings ready to calculate the
 		// percentiles etc.
 
 		// for when we need it as an array
-		double[] readings = Doubles.toArray(allNumericReadings);
+		double[] readings = as.getReadingsDA();
 
-		as.setInputCount(allReadings.size());
-		as.setValidCount(readings.length);
-
+		
 		Arrays.sort(readings);
 
 		as.setMin(round(readings[0], 3));
-		as.setMax(readings[readings.length - 1]);
+		as.setMax(round(readings[readings.length - 1], 3));
 
 		for (double pth : defaultPercentiles)
 			as.setPercentile(pth, percentile(readings, pth));
 
 		double sum = 0;
-		for (double d : readings)
+		for (Double d : as.getNumericReadings())
 			sum += d;
-		as.setMean(round(sum / readings.length, 3));
+		
+		as.setMean(round((sum / as.getNumericReadings().size()), 3));
+		
 
 		// Calculate mode
 		List<String> modes = new ArrayList<String>();
 		HashMap<String, Integer> modeCount = new HashMap<String, Integer>();
 
-		for (String reading : allReadings)
+		for (String reading : as.getOriginalReadings())
 			if (modeCount.get(reading) != null)
 				modeCount.put(reading, modeCount.get(reading) + 1);
 			else
@@ -197,7 +286,7 @@ public class ComputeAnalyteStats {
 
 		as.setMode(modes);
 
-		as.setStandardDeviation(round(standardDeviation(allNumericReadings), 3));
+		as.setStandardDeviation(round(standardDeviation(as.getNumericReadings()), 3));
 
 		return as;
 	}
@@ -211,7 +300,10 @@ public class ComputeAnalyteStats {
 	 * @see http://www.utdallas.edu/~serfling/3332/ComputingPercentiles.pdf
 	 * @see http://www.itl.nist.gov/div898/handbook/prc/section2/prc252.htm
 	 */
-	private static double percentile(double[] readings, double percentile) {
+	public static double percentile(double[] readings, double percentile) {
+
+		if (percentile > 1)
+			percentile = percentile / 100;
 
 		// Repeatedly sorting it is inefficient but not as hard as sorting it
 		// for the first time each time
@@ -231,12 +323,9 @@ public class ComputeAnalyteStats {
 	 *      ://stackoverflow.com/questions/1102891/how-to-check-if-a-string-is
 	 *      -a-numeric-type-in-java
 	 */
-	private static boolean isNumeric(String str) {
-		return str == null ? false : str.matches("-?\\d+(\\.\\d+)?"); // match a
-																		// number
-																		// with
-																		// optional
-		// '-' and decimal.
+	private static boolean isPositiveNumeric(String str) {
+		// match a number with possible decimal.
+		return str == null ? false : str.matches("\\d+(\\.\\d+)?");
 	}
 
 	/**

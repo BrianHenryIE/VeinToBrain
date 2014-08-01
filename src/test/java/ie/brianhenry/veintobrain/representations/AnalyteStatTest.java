@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import ie.brianhenry.veintobrain.core.ComputeAnalyteStats;
 import ie.brianhenry.veintobrain.core.PSAdata;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import org.junit.Test;
@@ -24,7 +25,7 @@ public class AnalyteStatTest {
 				"10.6", "23.0", "19.0", "4.7", "9.5", "7.1", "13.5", "9.5", "3.5", "16.1", "21.7", "11.2", "9.8",
 				"13.8", "20.7", "6.6", "4.2", "6.2", "19.9", "15.9", "21.8", "9.0" };
 
-		AnalyteDate day = new AnalyteDate(statType, statDate, readings);
+		AnalyteDate day = new AnalyteDate(statType, statDate, Arrays.asList(readings));
 
 		// Maybe this should take in an array of number and just have getters
 		AnalyteStat folate02Jan2009 = ComputeAnalyteStats.computeDay(day, statType);

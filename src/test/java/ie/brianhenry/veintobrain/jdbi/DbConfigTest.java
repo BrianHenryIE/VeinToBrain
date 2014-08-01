@@ -1,9 +1,12 @@
-package ie.brianhenry.veintobrain.core.cron;
+package ie.brianhenry.veintobrain.jdbi;
+
+import ie.brianhenry.veintobrain.core.cron.DbConfig;
 
 import java.net.UnknownHostException;
 
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
+
 import org.mockito.ArgumentMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

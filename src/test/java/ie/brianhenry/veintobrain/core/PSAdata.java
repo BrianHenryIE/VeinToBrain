@@ -82,7 +82,7 @@ public class PSAdata {
 			}
 		
 		for (LocalDate day : hm.keySet())
-			ads.add(new AnalyteDate("psa", day.toDate(), hm.get(day).toArray(new String[hm.get(day).size()])));
+			ads.add(new AnalyteDate("psa", day.toDate(), hm.get(day)));
 
 		return ads;
 	}

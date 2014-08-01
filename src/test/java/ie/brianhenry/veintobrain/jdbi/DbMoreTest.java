@@ -1,4 +1,4 @@
-package ie.brianhenry.veintobrain.core.cron;
+package ie.brianhenry.veintobrain.jdbi;
 
 import ie.brianhenry.veintobrain.representations.AnalyteStat;
 import ie.brianhenry.veintobrain.representations.AnalyteStat.StatPeriod;

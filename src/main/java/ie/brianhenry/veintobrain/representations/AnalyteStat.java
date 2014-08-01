@@ -1,34 +1,92 @@
 package ie.brianhenry.veintobrain.representations;
 
 import java.util.ArrayList;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.google.common.primitives.Doubles;
 import com.kfuntak.gwt.json.serialization.client.JsonSerializable;
 
 /**
- * Implements all the statistics associated to each analyte
- * and the set/get methods
+ * Implements all the statistics associated to each analyte and the set/get
+ * methods
+ */
+/**
+ * @author BrianHenry.ie
+ *
  */
 @JsonTypeInfo(use = Id.CLASS, include = As.PROPERTY, property = "class")
 public class AnalyteStat implements JsonSerializable {
 
-	@net.vz.mongodb.jackson.Id 
+	@net.vz.mongodb.jackson.Id
 	public String id; // UUID.randomUUID().toString();
-	
+
 	/**
 	 * The type of analyte (calcium, phospate, potassium, ...)
 	 */
 	private String analyteType;
 
+	// Transient stuff useful for calculations... will never be passed to client
+	// or saved and are just object references while they exist
+	private List<AnalyteDate> includedDays = new ArrayList<AnalyteDate>();
+	private List<String> originalReadings = new ArrayList<String>();
+	private List<Double> readingsD = new ArrayList<Double>();
+	private double[] readingsDA;
+
+	@JsonIgnore
+	public List<AnalyteDate> getIncludedDays() {
+		return includedDays;
+	}
+
+	@JsonIgnore
+	public void setIncludedDays(List<AnalyteDate> includedDays) {
+		this.includedDays = includedDays;
+	}
+
+	@JsonIgnore
+	public void addIncludedDays(AnalyteDate date) {
+		includedDays.add(date);
+	}
+
+	@JsonIgnore
+	public List<String> getOriginalReadings() {
+		return originalReadings;
+	}
+
+	@JsonIgnore
+	public void setOriginalReadings(List<String> readings) {
+		this.originalReadings = readings;
+	}
+
+	@JsonIgnore
+	public List<Double> getNumericReadings() {
+		return readingsD;
+	}
+
+	@JsonIgnore
+	public void setNumericReadings(List<Double> readings) {
+		this.readingsD = readings;
+		this.validCount = readings.size();
+		readingsDA = Doubles.toArray(readings);
+	}
+
+	@JsonIgnore
+	public double[] getReadingsDA() {
+		return readingsDA;
+	}
+
+	@JsonIgnore
+	public void setReadingsDA(double[] readingsDA) {
+		this.readingsDA = readingsDA;
+	}
+
 	private double standardDeviation;
-	
-	
+
 	public double getStandardDeviation() {
 		return standardDeviation;
 	}
@@ -41,7 +99,7 @@ public class AnalyteStat implements JsonSerializable {
 	 * Daily, weekly, monthly,yearly,total
 	 */
 	private StatPeriod analytePeriod;
-	
+
 	public StatPeriod getAnalytePeriod() {
 		return analytePeriod;
 	}
@@ -49,16 +107,29 @@ public class AnalyteStat implements JsonSerializable {
 	public void setAnalytePeriod(StatPeriod analytePeriod) {
 		this.analytePeriod = analytePeriod;
 	}
-	
+
 	public enum StatPeriod {
 		DAY, WEEK, MONTH, YEAR, OVERALL
 	}
+
 	
 	/**
-	 * The moving mean of the 50th percentile <String, Double>=<number of days/weeks included, value>
+	 * A stat would be invalid if it was weekend or too few readings
+	 */
+	private boolean isValid = true; // TODO should we be optimistic here?
+	public boolean getIsValid(){
+		return isValid;
+	}
+	public void setIsValid(boolean isValid){
+		this.isValid=isValid;
+	}
+	
+	/**
+	 * The moving mean of the 50th percentile <String, Double>=<number of
+	 * days/weeks included, value>
 	 */
 	private HashMap<String, Double> movingMean = new HashMap<String, Double>();
-	
+
 	public HashMap<String, Double> getMovingMean() {
 		return movingMean;
 	}
@@ -66,6 +137,7 @@ public class AnalyteStat implements JsonSerializable {
 	public void setMovingMean(HashMap<String, Double> movingMean) {
 		this.movingMean = movingMean;
 	}
+
 	public void setMovingMean(String length, Double value) {
 		movingMean.put(length, value);
 	}
@@ -90,15 +162,15 @@ public class AnalyteStat implements JsonSerializable {
 	private double max;
 	private double min;
 	private double mean;
-	
+
 	/**
 	 * It is constructed as a list of strings in case of multiple modes.
 	 */
 	private List<String> mode;
 
 	/**
-	 * Associates any non-numeric input data (e.g. U, UXINC, <0.3, >24)
-	 * with its number of occurrences.
+	 * Associates any non-numeric input data (e.g. U, UXINC, <0.3, >24) with its
+	 * number of occurrences.
 	 */
 	private HashMap<String, Integer> otherData = new HashMap<String, Integer>();
 
@@ -107,7 +179,6 @@ public class AnalyteStat implements JsonSerializable {
 	 */
 	private int validCount;
 
-	
 	/**
 	 * Constructor
 	 */
@@ -116,12 +187,13 @@ public class AnalyteStat implements JsonSerializable {
 
 	/**
 	 * Constructor
+	 * 
 	 * @param analyteType
 	 */
 	public AnalyteStat(String analyteType) {
 		this.analyteType = analyteType;
 	}
-	
+
 	/**
 	 * @return the type of the analyte
 	 */
@@ -135,44 +207,44 @@ public class AnalyteStat implements JsonSerializable {
 	public int getInputCount() {
 		return inputCount;
 	}
-	
+
 	/**
 	 * @return the list of dates of the analyte
 	 */
 	public List<Date> getIncludedDates() {
 		return includedDates;
 	}
-	
 
 	/**
-	 * @return the hashmap containing the values for each 
-	 * percentile (0.025, 0.25, 0.5, 0.75, 0.975)
+	 * @return the hashmap containing the values for each percentile (0.025,
+	 *         0.25, 0.5, 0.75, 0.975)
 	 */
 	public HashMap<String, Double> getPercentileCalculations() {
 		return percentileCalculations;
 	}
-	
+
 	// TODO What to do when a percentile hasn't been precalculated? RPC magic
 	/**
-	 * @param p the percentile to show
-	 * @return the values for the particular percentile selected through
-	 * the parameter p
+	 * @param p
+	 *            the percentile to show
+	 * @return the values for the particular percentile selected through the
+	 *         parameter p
 	 */
 	public double getPercentile(double p) {
 		// if (!percentileCalculations.containsKey(p))
 		// percentileCalculations.put(p, percentile(readings, p));
-		if(p>1)
-			p=p/100;
+		if (p > 1)
+			p = p / 100;
 		return percentileCalculations.get(Double.toString(p).replace(".", "_"));
 	}
-	
+
 	/**
 	 * @return the maximum value of the analyte
 	 */
 	public double getMax() {
 		return max;
 	}
-	
+
 	/**
 	 * @return the minimum value of the analyte
 	 */
@@ -195,8 +267,8 @@ public class AnalyteStat implements JsonSerializable {
 	}
 
 	/**
-	 * @return the hashmap containing the different non-numeric values
-	 * plus their number of occurrences 
+	 * @return the hashmap containing the different non-numeric values plus
+	 *         their number of occurrences
 	 */
 	public HashMap<String, Integer> getOtherData() {
 		return otherData;
@@ -211,6 +283,7 @@ public class AnalyteStat implements JsonSerializable {
 
 	/**
 	 * sets the type of analyte
+	 * 
 	 * @param analyteType
 	 */
 	public void setAnalyteType(String analyteType) {
@@ -219,6 +292,7 @@ public class AnalyteStat implements JsonSerializable {
 
 	/**
 	 * sets the dates of the analyte
+	 * 
 	 * @param includedDates
 	 */
 	public void setIncludedDates(List<Date> includedDates) {
@@ -227,6 +301,7 @@ public class AnalyteStat implements JsonSerializable {
 
 	/**
 	 * sets the total amount of the analyte
+	 * 
 	 * @param inputCount
 	 */
 	public void setInputCount(int inputCount) {
@@ -235,6 +310,7 @@ public class AnalyteStat implements JsonSerializable {
 
 	/**
 	 * sets the maximum value of the analyte
+	 * 
 	 * @param max
 	 */
 	public void setMax(double max) {
@@ -243,6 +319,7 @@ public class AnalyteStat implements JsonSerializable {
 
 	/**
 	 * sets the minimum value of the analyte
+	 * 
 	 * @param min
 	 */
 	public void setMin(double min) {
@@ -251,6 +328,7 @@ public class AnalyteStat implements JsonSerializable {
 
 	/**
 	 * sets the arithmetic mean of the analyte
+	 * 
 	 * @param mean
 	 */
 	public void setMean(double mean) {
@@ -259,6 +337,7 @@ public class AnalyteStat implements JsonSerializable {
 
 	/**
 	 * sets the mode (or modes) of the analyte
+	 * 
 	 * @param mode
 	 */
 	public void setMode(List<String> mode) {
@@ -267,6 +346,7 @@ public class AnalyteStat implements JsonSerializable {
 
 	/**
 	 * sets the non-numeric values of the analyte
+	 * 
 	 * @param otherData
 	 */
 	public void setOtherData(HashMap<String, Integer> otherData) {
@@ -275,6 +355,7 @@ public class AnalyteStat implements JsonSerializable {
 
 	/**
 	 * sets the values for each percentile of the analyte
+	 * 
 	 * @param percentileCalculations
 	 */
 	public void setPercentileCalculations(HashMap<String, Double> percentileCalculations) {
@@ -283,8 +364,10 @@ public class AnalyteStat implements JsonSerializable {
 
 	/**
 	 * sets the percentile value of the analyte
+	 * 
 	 * @param percentile
-	 * @param value value of the percentile
+	 * @param value
+	 *            value of the percentile
 	 */
 	public void setPercentile(double percentile, double value) {
 		percentileCalculations.put(Double.toString(percentile).replace(".", "_"), value);
@@ -292,6 +375,7 @@ public class AnalyteStat implements JsonSerializable {
 
 	/**
 	 * sets the numeric values of the analyte
+	 * 
 	 * @param validCount
 	 */
 	public void setValidCount(int validCount) {
@@ -300,6 +384,7 @@ public class AnalyteStat implements JsonSerializable {
 
 	/**
 	 * sets the dates of the analyte
+	 * 
 	 * @param day
 	 */
 	public void addDate(Date day) {
