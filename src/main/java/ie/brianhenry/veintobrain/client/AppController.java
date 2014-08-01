@@ -7,6 +7,7 @@ import ie.brianhenry.veintobrain.client.resources.VeintobrainResources;
 import ie.brianhenry.veintobrain.client.view.AnalyteMenuView;
 import ie.brianhenry.veintobrain.client.view.AnalyteView;
 import ie.brianhenry.veintobrain.client.view.LoginClientView;
+import ie.brianhenry.veintobrain.client.view.MovingAverageMenuView;
 import ie.brianhenry.veintobrain.client.view.TimeRangeMenuView;
 import ie.brianhenry.veintobrain.representations.User;
 
@@ -81,6 +82,7 @@ public class AppController {
 	Label summaryLab = new Label("Summary:"); // rightFrame
 	Label analytesLab = new Label(); // rightFrame
 	Label timeRangeLab = new Label(); // rightFrame
+	FlowPanel statsPanel = new FlowPanel(); //rightFrame
 	DisclosurePanel p = new DisclosurePanel("Click to disclose something:");
 
 	public void go(HasWidgets container) {
@@ -100,6 +102,7 @@ public class AppController {
 
 		leftFrame.add(new AnalyteMenuView(rpcService, eventBus));
 		leftFrame.add(new TimeRangeMenuView(rpcService, eventBus));
+		leftFrame.add(new MovingAverageMenuView(rpcService, eventBus));
 
 		av.setAnalyte("folate");
 		tab.setSize("800px", "550px");
@@ -110,11 +113,17 @@ public class AppController {
 		rightFrame.add(summaryLab);
 		rightFrame.add(analytesLab);
 		rightFrame.add(timeRangeLab);
+		rightFrame.add(statsPanel);
 	}
 
 	@EventHandler
 	void OnShow(AnalyteMenuEvent event) {
 		analytesLab.setText("Analyte: "+event.getAnalyte());
+		statsPanel.clear();
+		statsPanel.add(new Label("Long term mean:"));
+		statsPanel.add(new Label("Reference interval:"));
+		statsPanel.add(new Label("Average number of daily tests:"));
+		statsPanel.add(new Label("Representative CV for stable periods:"));
 	}
 	@EventHandler
 	void OnShow(TimeRangeMenuEvent event) {
