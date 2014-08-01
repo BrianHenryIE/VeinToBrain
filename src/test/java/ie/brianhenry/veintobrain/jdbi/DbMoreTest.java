@@ -17,7 +17,7 @@ import com.mongodb.MongoClient;
 
 public class DbMoreTest {
 
-	@Test
+	//@Test
 	public void TestDb() throws UnknownHostException {
 
 		MongoClient mongo = new MongoClient("137.43.192.55", 27017);
