@@ -78,8 +78,9 @@ public class AnalyteResource {
 
 		ComputeAnalyteStats.getMovingMeanOfMedian(allDailyAnalyteStats, 50);
 		ComputeAnalyteStats.getMovingMeanOfMedian(allDailyAnalyteStats, 7);
-		ComputeAnalyteStats.getMovingMeanOfMedian(allDailyAnalyteStats, 100);
-		ComputeAnalyteStats.getMovingMeanOfMedian(allDailyAnalyteStats, 150);
+
+		ComputeAnalyteStats.getMovingMean(allDailyAnalyteStats, 50);
+		ComputeAnalyteStats.getMovingMean(allDailyAnalyteStats, 7);
 
 		List<AnalyteStat> stats = new ArrayList<AnalyteStat>();
 		

@@ -406,15 +406,16 @@ public class ComputeAnalyteStats {
 				if (statsByDay.get(d.minusDays(i)) != null && statsByDay.get(d.minusDays(i)).getIsValid()) {
 					sum += statsByDay.get(d.minusDays(i)).getPercentile(0.5);
 					included++;
-					//System.out.println(d.toString() + " " + included + "/" + numberOfDays);
+					// System.out.println(d.toString() + " " + included + "/" +
+					// numberOfDays);
 					// + statsByDay.get(d.minusDays(i)).getPercentile(0.5) +
 					// " : " + included);
 				}
 			}
-			//System.out.println(included + " " + numberOfDays);
+			// System.out.println(included + " " + numberOfDays);
 			if (included == numberOfDays) {
 				statsByDay.get(d).addMovingMeanOfMedian(numberOfDays, (sum / numberOfDays));
-				//System.out.println(d.toString() + "   " + included);
+				// System.out.println(d.toString() + "   " + included);
 			}
 
 			// TODO Maybe record if there weren't n previous days to work with
@@ -425,6 +426,7 @@ public class ComputeAnalyteStats {
 	public static void getMovingMean(HashMap<LocalDate, AnalyteStat> statsByDay, int numberOfDays) {
 
 		double sum;
+		int count = 0;
 
 		for (LocalDate d : statsByDay.keySet()) {
 			sum = 0;
@@ -432,20 +434,16 @@ public class ComputeAnalyteStats {
 			int included = 1;
 			for (int i = 1; i < (3 * numberOfDays) && included < numberOfDays; i++) {
 				if (statsByDay.get(d.minusDays(i)) != null && statsByDay.get(d.minusDays(i)).getIsValid()) {
-					sum += statsByDay.get(d.minusDays(i)).getMean();
+					for (double reading : statsByDay.get(d.minusDays(i)).getNumericReadings()) {
+						sum += reading;
+						count++;
+					}
 					included++;
-					//System.out.println(d.toString() + " " + included + "/" + numberOfDays);
-					// + statsByDay.get(d.minusDays(i)).getPercentile(0.5) +
-					// " : " + included);
 				}
 			}
-			//System.out.println(included + " " + numberOfDays);
-			if (included == numberOfDays) {
-				statsByDay.get(d).addMovingMean(numberOfDays, (sum / numberOfDays));
-				//System.out.println(d.toString() + "   " + included);
-			}
+			if (included == numberOfDays)
+				statsByDay.get(d).addMovingMean(numberOfDays, (sum / count));
 
-			// TODO Maybe record if there weren't n previous days to work with
 		}
 
 	}
