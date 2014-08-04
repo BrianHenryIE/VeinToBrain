@@ -9,8 +9,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
-import com.google.common.primitives.Doubles;
-import com.google.gwt.core.shared.GwtIncompatible;
 import com.kfuntak.gwt.json.serialization.client.JsonSerializable;
 
 /**
@@ -34,114 +32,26 @@ public class AnalyteStat implements JsonSerializable {
 
 	// Transient stuff useful for calculations... will never be passed to client
 	// or saved and are just object references while they exist
+
 	private List<AnalyteDate> includedDays = new ArrayList<AnalyteDate>();
+
 	private List<String> originalReadings = new ArrayList<String>();
-	private List<Double> readingsD = new ArrayList<Double>();
-	private double[] readingsDA;
 
-	@JsonIgnore
-	public List<AnalyteDate> getIncludedDays() {
-		return includedDays;
-	}
+	private List<Double> numericReadings = new ArrayList<Double>();
 
-	@JsonIgnore
-	public void setIncludedDays(List<AnalyteDate> includedDays) {
-		this.includedDays = includedDays;
-	}
-
-	@JsonIgnore
-	public void addIncludedDays(AnalyteDate date) {
-		includedDays.add(date);
-	}
-
-	@JsonIgnore
-	public List<String> getOriginalReadings() {
-		return originalReadings;
-	}
-
-	@JsonIgnore
-	public void setOriginalReadings(List<String> readings) {
-		this.originalReadings = readings;
-	}
-
-	@JsonIgnore
-	public List<Double> getNumericReadings() {
-		return readingsD;
-	}
-
-	@JsonIgnore
-	public void setNumericReadings(List<Double> readings) {
-		this.readingsD = readings;
-		this.validCount = readings.size();
-		readingsDA = Doubles.toArray(readings);
-	}
-
-	@JsonIgnore
-	public double[] getReadingsDA() {
-		return readingsDA;
-	}
-
-	@JsonIgnore
-	public void setReadingsDA(double[] readingsDA) {
-		this.readingsDA = readingsDA;
-	}
+//	private double[] readingsDA;
 
 	private double standardDeviation;
-
-	public double getStandardDeviation() {
-		return standardDeviation;
-	}
-
-	public void setStandardDeviation(double standardDeviation) {
-		this.standardDeviation = standardDeviation;
-	}
 
 	/**
 	 * Daily, weekly, monthly,yearly,total
 	 */
 	private StatPeriod analytePeriod;
 
-	public StatPeriod getAnalytePeriod() {
-		return analytePeriod;
-	}
-
-	public void setAnalytePeriod(StatPeriod analytePeriod) {
-		this.analytePeriod = analytePeriod;
-	}
-
-	public enum StatPeriod {
-		DAY, WEEK, MONTH, YEAR, OVERALL
-	}
-
-	
 	/**
 	 * A stat would be invalid if it was weekend or too few readings
 	 */
 	private boolean isValid = true; // TODO should we be optimistic here?
-	public boolean getIsValid(){
-		return isValid;
-	}
-	public void setIsValid(boolean isValid){
-		this.isValid=isValid;
-	}
-	
-	/**
-	 * The moving mean of the 50th percentile <String, Double>=<number of
-	 * days/weeks included, value>
-	 */
-	private HashMap<String, Double> movingMean = new HashMap<String, Double>();
-
-	public HashMap<String, Double> getMovingMean() {
-		return movingMean;
-	}
-
-	public void setMovingMean(HashMap<String, Double> movingMean) {
-		this.movingMean = movingMean;
-	}
-
-	public void setMovingMean(String length, Double value) {
-		movingMean.put(length, value);
-	}
 
 	/**
 	 * This object could be for one day, week, month, etc.
@@ -153,6 +63,8 @@ public class AnalyteStat implements JsonSerializable {
 	 */
 	private int inputCount;
 
+	private double max;
+
 	/**
 	 * Associates the percentiles values stored as strings ("0.25", "0.5", ...)
 	 * to the proper value for that percentile. This is done in order to avoid
@@ -160,9 +72,12 @@ public class AnalyteStat implements JsonSerializable {
 	 */
 	private HashMap<String, Double> percentileCalculations = new HashMap<String, Double>();
 
-	private double max;
 	private double min;
-	private double mean;
+
+	/**
+	 * Counts the numeric input data
+	 */
+	private int validCount;
 
 	/**
 	 * It is constructed as a list of strings in case of multiple modes.
@@ -175,10 +90,19 @@ public class AnalyteStat implements JsonSerializable {
 	 */
 	private HashMap<String, Integer> otherData = new HashMap<String, Integer>();
 
+	private double mean;
+
 	/**
-	 * Counts the numeric input data
-	 */
-	private int validCount;
+	 * The moving mean of the 50th percentile <String, Double>=<number of
+	 * days/weeks included, value>
+	 */	
+	private HashMap<String, Double> movingMeanOfMedians = new HashMap<String, Double>();
+
+	private HashMap<String, Double> movingMean = new HashMap<String, Double>();
+
+	public enum StatPeriod {
+		DAY, WEEK, MONTH, YEAR, OVERALL
+	}
 
 	/**
 	 * Constructor
@@ -193,6 +117,98 @@ public class AnalyteStat implements JsonSerializable {
 	 */
 	public AnalyteStat(String analyteType) {
 		this.analyteType = analyteType;
+	}
+
+
+	public List<AnalyteDate> getIncludedDays() {
+		return includedDays;
+	}
+
+
+	public void addIncludedDays(AnalyteDate date) {
+		includedDays.add(date);
+	}
+
+
+	public List<String> getOriginalReadings() {
+		return originalReadings;
+	}
+
+
+	public void setOriginalReadings(List<String> readings) {
+		this.originalReadings = readings;
+	}
+
+
+	public List<Double> getNumericReadings() {
+		return numericReadings;
+	}
+
+
+	public void setNumericReadings(List<Double> readings) {
+		this.numericReadings = readings;
+		this.validCount = readings.size();
+	}
+
+//	
+//	public double[] getReadingsDA() {
+//		return readingsDA;
+//	}
+
+//	
+//	public void setReadingsDA(double[] readingsDA) {
+//		this.readingsDA = readingsDA;
+//	}
+
+	public double getStandardDeviation() {
+		return standardDeviation;
+	}
+
+	public void setStandardDeviation(double standardDeviation) {
+		this.standardDeviation = standardDeviation;
+	}
+
+	public StatPeriod getAnalytePeriod() {
+		return analytePeriod;
+	}
+
+	public boolean getIsValid() {
+		return isValid;
+	}
+
+	public void setIsValid(boolean isValid) {
+		this.isValid = isValid;
+	}
+
+
+	public void setIncludedDays(List<AnalyteDate> includedDays) {
+		this.includedDays = includedDays;
+	}
+
+	public void setAnalytePeriod(StatPeriod analytePeriod) {
+		this.analytePeriod = analytePeriod;
+	}
+
+	public HashMap<String, Double> getMovingMeanOfMedians() {
+		return movingMeanOfMedians;
+	}
+
+
+	public HashMap<String, Double> getMovingMean() {
+		return movingMean;
+	}
+
+	public void setMovingMean(HashMap<String, Double> movingMean) {
+		this.movingMean = movingMean;
+	}
+
+
+	public void setMovingMeanOfMedians(HashMap<String, Double> movingMean) {
+		this.movingMeanOfMedians = movingMean;
+	}
+
+	public double getCoefficientOfVaritation(){
+		return standardDeviation/mean;
 	}
 
 	/**
@@ -390,6 +406,15 @@ public class AnalyteStat implements JsonSerializable {
 	 */
 	public void addDate(Date day) {
 		includedDates.add(day);
+	}
+
+	public void addMovingMeanOfMedian(int numDays, double value) {
+		movingMeanOfMedians.put(Integer.toString(numDays), value);
+	}
+
+
+	public void addMovingMean(int numDays, double value) {
+		movingMean.put(Integer.toString(numDays), value);
 	}
 
 }

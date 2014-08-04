@@ -26,29 +26,19 @@ public class ComputeAnalyteStatsTest {
 	double[] readingsD = { 11.1, 14.5, 17.9, 8.7, 15.7, 12.3, 2.8, 14.9, 4.5, 7.8, 6.6, 10.6, 23.0, 19.0, 4.7, 9.5, 7.1, 13.5, 9.5,
 			3.5, 16.1, 21.7, 11.2, 9.8, 13.8, 20.7, 6.6, 4.2, 6.2, 19.9, 15.9, 21.8, 9.0 };
 
+	private HashMap<LocalDate, AnalyteStat> allDailyAnalyteStats = new HashMap<LocalDate, AnalyteStat>();
+
+	List<AnalyteResult> analyteResultsList;
+	List<AnalyteDate> allVaildAnalyteDates = new ArrayList<AnalyteDate>();
+	List<AnalyteDate> allInVaildAnalyteDates = new ArrayList<AnalyteDate>();
+
+	ObjectMapper mapper = new ObjectMapper();
+
 	@Before
 	public void setup() {
 		// MIN_TESTS = 12
-	}
 
-	@Test
-	public void TestOverall() {
-
-		List<AnalyteResult> analyteResultsList = pd.getResults();
-		// analyteResultsList.size() : 27602 ... the total that we're looking at
-
-		// allReadings.size() 27509 .. is the number of results from valid days
-
-		AnalyteStat overall = ComputeAnalyteStats.computeOverall(analyteResultsList, "psa");
-
-		// overall.getValidCount() 27325 ... is the number valid after removing
-		// nulls, U, UX, etc.
-
-		System.out.println("overall.getMean() (arithmentic mean) : " + overall.getMean());
-
-		System.out.println("overall.getMax() " + overall.getMax());
-		
-		List<AnalyteStat> allDailyAnalyteStats = new ArrayList<AnalyteStat>();
+		analyteResultsList = pd.getResults();
 
 		HashMap<LocalDate, List<String>> hm = new HashMap<LocalDate, List<String>>();
 
@@ -58,40 +48,59 @@ public class ComputeAnalyteStatsTest {
 			hm.get(r.getDate()).add(r.getResult());
 		}
 
-		List<AnalyteDate> allVaildAnalyteDates = new ArrayList<AnalyteDate>();
-
-		System.out.println("hm.size() : " + hm.size());
 		for (LocalDate day : hm.keySet()) {
-			// System.out.println(day.toString() + " : " + hm.get(day));
 			AnalyteDate d = new AnalyteDate("psa", day.toDate(), hm.get(day));
 			AnalyteStat s = ComputeAnalyteStats.computeDay(d, "psa");
-			if (s != null) {
-				// System.out.println("adding to all daily");
-				allDailyAnalyteStats.add(s);
+			if (s.getIsValid()) {
+				allDailyAnalyteStats.put(day, s);
 				allVaildAnalyteDates.add(d);
-			} else {
-				System.out.println("invalid day");
-				System.out.println(day.toString() + " : " + hm.get(day));
-			}
-
+			} else
+				allInVaildAnalyteDates.add(d);
 		}
 
-		// List<String> goodYear = new ArrayList<String>();
-		// for(AnalyteDate gd : allVaildAnalyteDates){
-		// goodYear.addAll(Arrays.asList(gd.getResults()));
+		// try {
+		// System.out.println(mapper.writeValueAsString(overall));
+		// } catch (JsonProcessingException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
 		// }
-		// AnalyteDate year = new AnalyteDate("psa", new Date(),
-		// goodYear.toArray(new String[goodYear.size()]));
-		//
-		// AnayteStat year = new AnayteStat
 
-		System.out.println("allDailyAnalyteStats.size() : " + allDailyAnalyteStats.size());
+	}
+
+	@Test
+	public void firstCalcs() {
+
+		ComputeAnalyteStats.getMovingMean(allDailyAnalyteStats, 50);
+		ComputeAnalyteStats.getMovingMean(allDailyAnalyteStats, 7);
+		ComputeAnalyteStats.getMovingMean(allDailyAnalyteStats, 100);
+		ComputeAnalyteStats.getMovingMean(allDailyAnalyteStats, 150);
+
+		for (AnalyteStat stat : allDailyAnalyteStats.values()) {
+			if (stat.getIncludedDates().get(0) != null)
+				System.out.print(new LocalDate(stat.getIncludedDates().get(0)).toString());
+			System.out.print(",");
+			if (stat.getMovingMean().get("7") != null)
+				System.out.print(stat.getMovingMean().get("7").toString());
+			System.out.print(",");
+			if (stat.getMovingMean().get("50") != null)
+				System.out.print(stat.getMovingMean().get("50").toString());
+			System.out.print(",");
+			if (stat.getMovingMean().get("100") != null)
+				System.out.print(stat.getMovingMean().get("100").toString());
+			System.out.println("");
+		}
+	}
+
+	@Test
+	public void TestOverall() {
+
+		AnalyteStat overall = ComputeAnalyteStats.computeOverall(analyteResultsList, "psa");
 
 		List<Double> allMedians = new ArrayList<Double>();
 
 		double sumOfMedian = 0.0;
 		int countValidStats = 0;
-		for (AnalyteStat stat : allDailyAnalyteStats)
+		for (AnalyteStat stat : allDailyAnalyteStats.values())
 			if (stat.getIsValid()) {
 				sumOfMedian += stat.getPercentile(0.5);
 				allMedians.add(stat.getPercentile(0.5));
@@ -110,60 +119,15 @@ public class ComputeAnalyteStatsTest {
 
 		System.out.println("medianCV : " + medianCV);
 
+		System.out.println(overall.getMean());
+
 		// Get an addressable list of the daily stats so we can ask for the
 		// previous days' stats
 		// for the moving mean
-		HashMap<LocalDate, AnalyteStat> days = new HashMap<LocalDate, AnalyteStat>();
-
-		for (int i = 0; i < allDailyAnalyteStats.size(); i++) {
-			System.out.println(i + " " + allDailyAnalyteStats.get(i).getMean());
-			System.out.println(allDailyAnalyteStats.get(i).getIncludedDates().get(0));
-			days.put(new LocalDate(allDailyAnalyteStats.get(i).getIncludedDates().get(0)), allDailyAnalyteStats.get(i));
-		}
-
-		LocalDate firstDay = new LocalDate(2013, 7, 1);
-		LocalDate nextDate = firstDay.plusDays(1);
-		LocalDate lastDate = new LocalDate(2014, 7, 1);
-
-		final int MOVINGMEANDAYS = 20;
-
-		while (nextDate.isBefore(lastDate)) {
-
-			if (days.get(nextDate) != null) {
-				double movingSum = 0;
-				int movingSumCount = 0;
-
-				for (int i = 1; movingSum < MOVINGMEANDAYS && nextDate.minusDays(i).isAfter(firstDay); i++) {
-					if (days.get(nextDate.minusDays(i)) != null && days.get(nextDate.minusDays(i)).getIsValid()) {
-						movingSum += days.get(nextDate.minusDays(i)).getPercentile(0.5);
-						movingSumCount++;
-					}
-				}
-
-				double movingMean = movingSum / movingSumCount;
-
-				if (Double.isNaN(movingMean)) {
-					System.out.println("NaN : sum:" + movingSum + ", count:" + movingSumCount);
-				}
-
-				days.get(nextDate).setMovingMean(Integer.toString(MOVINGMEANDAYS), movingMean);
-
-				System.out.println(nextDate.toString() + ", " + movingMean);
-			}
-			nextDate = nextDate.plusDays(1);
-		}
-
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			System.out.println(mapper.writeValueAsString(overall));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 	}
 
-	@Test
+	// @Test
 	public void computeDayTest() {
 
 		// pd.getMonth(1).get(1).getResults()
@@ -183,20 +147,36 @@ public class ComputeAnalyteStatsTest {
 		double p975 = 11.557;
 		double min = 0.03;
 		double max = 19.80;
-		
+
 		assertEquals(p0025, as.getPercentile(0.025), 0.001);
 		assertEquals(p025, as.getPercentile(0.25), 0.001);
 		assertEquals(median, as.getPercentile(50), 0.001);
 		assertEquals(p075, as.getPercentile(0.75), 0.001);
 		assertEquals(p975, as.getPercentile(0.975), 0.001);
-		
+
 		assertEquals(mean, as.getMean(), 0.001);
 		assertEquals(min, as.getMin(), 0.001);
 		assertEquals(max, as.getMax(), 0.001);
 		assertEquals(stdev, as.getStandardDeviation(), 0.01);
 	}
 
-	@Test
+	// @Test
+	public void getMovingMeanTest() {
+
+		// So we give in a list of AnalyteStats and a number of days for the
+		// calculation
+		// We store the calculation with the most recent stat
+		// if we pass a list of 50 and want the 20 day mm the first 19 are null
+		// for that
+
+		// hmmm... I think there's no need to return the object here. it's being
+		// operated on when it's in there
+		// statsByDay = ComputeAnalyteStats.getMovingMeanOfMedian(statsByDay,
+		// 7);
+
+	}
+
+	// @Test
 	public void parseReadingsTest() {
 
 		// pd.getMonth(1).get(1).getResults()
@@ -231,7 +211,7 @@ public class ComputeAnalyteStatsTest {
 
 	// TODO Test isValidDate(AnalyteDate)
 
-	@Test
+	// @Test
 	public void isValidDateTest() {
 
 		// Christmas is invalid
@@ -250,7 +230,7 @@ public class ComputeAnalyteStatsTest {
 
 	}
 
-	@Test
+	// @Test
 	public void percentileTest() {
 
 		// Excel calculations:
@@ -267,7 +247,7 @@ public class ComputeAnalyteStatsTest {
 		assertEquals(i97p5th, ComputeAnalyteStats.percentile(readingsD, 97.5), 0.01);
 	}
 
-	@Test
+	// @Test
 	public void standardDeviationTest() {
 
 		List<Double> readings = new ArrayList<Double>();

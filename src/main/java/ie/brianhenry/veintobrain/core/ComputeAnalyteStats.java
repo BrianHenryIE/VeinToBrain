@@ -10,12 +10,14 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.math3.stat.StatUtils;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
+import com.google.common.primitives.Doubles;
 
 // TODO Do we need to filter out ICQ samples??? 
 
@@ -122,8 +124,6 @@ public class ComputeAnalyteStats {
 		as.setOriginalReadings(allReadings);
 		as = parseReadings(as);
 
-		// TODO Get the 4SD and remove
-
 		if (as.getValidCount() <= MIN_TESTS)
 			as.setIsValid(false);
 		else
@@ -206,7 +206,7 @@ public class ComputeAnalyteStats {
 		 * list. Any readings that aren't regular numbers are put in a HashMap
 		 */
 		for (String reading : as.getOriginalReadings())
-			// TODO check for negative number
+
 			if (isPositiveNumeric(reading))
 				allNumericReadings.add(Double.parseDouble(reading));
 			else {
@@ -234,10 +234,27 @@ public class ComputeAnalyteStats {
 					allNumericReadings.add(Double.parseDouble(reading.replace("<", "")) - 0.001);
 			}
 
+		double s4d = standardDeviation(allNumericReadings) * 4;
+
+		// Remove anything > 4SD
+		Iterator<Double> d = allNumericReadings.iterator();
+		Double next;
+		while (d.hasNext()) {
+			next = d.next();
+			if (next > s4d) {
+				if (!otherData.containsKey("4SD"))
+					otherData.put("4SD", 0);
+				otherData.put("4SD", otherData.get("4SD") + 1);
+				d.remove();
+			}
+		}
+
 		newAs.setNumericReadings(allNumericReadings);
 		newAs.setOtherData(otherData);
 		newAs.setInputCount(as.getOriginalReadings().size());
 		newAs.setValidCount(allNumericReadings.size());
+
+		// newAs.setReadingsDA(Doubles.toArray(allNumericReadings));
 
 		return newAs;
 	}
@@ -248,9 +265,8 @@ public class ComputeAnalyteStats {
 		// percentiles etc.
 
 		// for when we need it as an array
-		double[] readings = as.getReadingsDA();
+		double[] readings = Doubles.toArray(as.getNumericReadings());
 
-		
 		Arrays.sort(readings);
 
 		as.setMin(round(readings[0], 3));
@@ -259,12 +275,7 @@ public class ComputeAnalyteStats {
 		for (double pth : defaultPercentiles)
 			as.setPercentile(pth, percentile(readings, pth));
 
-		double sum = 0;
-		for (Double d : as.getNumericReadings())
-			sum += d;
-		
-		as.setMean(round((sum / as.getNumericReadings().size()), 3));
-		
+		as.setMean(round(getMean(readings), 3));
 
 		// Calculate mode
 		List<String> modes = new ArrayList<String>();
@@ -289,6 +300,13 @@ public class ComputeAnalyteStats {
 		as.setStandardDeviation(round(standardDeviation(as.getNumericReadings()), 3));
 
 		return as;
+	}
+
+	private static double getMean(double[] readings) {
+		double sum = 0;
+		for (Double d : readings)
+			sum += d;
+		return (sum / readings.length);
 	}
 
 	/**
@@ -362,6 +380,75 @@ public class ComputeAnalyteStats {
 			sumSqDif += Math.pow(r - mean, 2);
 
 		return Math.sqrt(sumSqDif / readings.size());
+	}
+
+	public static void getMovingMeanOfMedian(List<AnalyteStat> analyteStats, int n) {
+
+		HashMap<LocalDate, AnalyteStat> statsByDay = new HashMap<LocalDate, AnalyteStat>();
+
+		// Prepare a hashmap of date:stat
+		for (int i = 0; i < analyteStats.size(); i++)
+			statsByDay.put(new LocalDate(analyteStats.get(i).getIncludedDates().get(0)), analyteStats.get(i));
+
+		getMovingMeanOfMedian(statsByDay, n);
+
+	}
+
+	public static void getMovingMeanOfMedian(HashMap<LocalDate, AnalyteStat> statsByDay, int numberOfDays) {
+
+		double sum;
+
+		for (LocalDate d : statsByDay.keySet()) {
+			sum = 0;
+			sum += statsByDay.get(d).getPercentile(0.5);
+			int included = 1;
+			for (int i = 1; i < (3 * numberOfDays) && included < numberOfDays; i++) {
+				if (statsByDay.get(d.minusDays(i)) != null && statsByDay.get(d.minusDays(i)).getIsValid()) {
+					sum += statsByDay.get(d.minusDays(i)).getPercentile(0.5);
+					included++;
+					//System.out.println(d.toString() + " " + included + "/" + numberOfDays);
+					// + statsByDay.get(d.minusDays(i)).getPercentile(0.5) +
+					// " : " + included);
+				}
+			}
+			//System.out.println(included + " " + numberOfDays);
+			if (included == numberOfDays) {
+				statsByDay.get(d).addMovingMeanOfMedian(numberOfDays, (sum / numberOfDays));
+				//System.out.println(d.toString() + "   " + included);
+			}
+
+			// TODO Maybe record if there weren't n previous days to work with
+		}
+
+	}
+
+
+	public static void getMovingMean(HashMap<LocalDate, AnalyteStat> statsByDay, int numberOfDays) {
+
+		double sum;
+
+		for (LocalDate d : statsByDay.keySet()) {
+			sum = 0;
+			sum += statsByDay.get(d).getPercentile(0.5);
+			int included = 1;
+			for (int i = 1; i < (3 * numberOfDays) && included < numberOfDays; i++) {
+				if (statsByDay.get(d.minusDays(i)) != null && statsByDay.get(d.minusDays(i)).getIsValid()) {
+					sum += statsByDay.get(d.minusDays(i)).getMean();
+					included++;
+					//System.out.println(d.toString() + " " + included + "/" + numberOfDays);
+					// + statsByDay.get(d.minusDays(i)).getPercentile(0.5) +
+					// " : " + included);
+				}
+			}
+			//System.out.println(included + " " + numberOfDays);
+			if (included == numberOfDays) {
+				statsByDay.get(d).addMovingMean(numberOfDays, (sum / numberOfDays));
+				//System.out.println(d.toString() + "   " + included);
+			}
+
+			// TODO Maybe record if there weren't n previous days to work with
+		}
+
 	}
 
 }
