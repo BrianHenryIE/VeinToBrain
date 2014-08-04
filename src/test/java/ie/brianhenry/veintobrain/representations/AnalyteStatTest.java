@@ -2,7 +2,7 @@ package ie.brianhenry.veintobrain.representations;
 
 import static org.junit.Assert.assertEquals;
 import ie.brianhenry.veintobrain.core.ComputeAnalyteStats;
-import ie.brianhenry.veintobrain.core.PSAdata;
+import ie.brianhenry.veintobrain.resources.PSAdata;
 
 import java.util.Arrays;
 import java.util.Date;
