@@ -95,7 +95,9 @@ public class AnalyteStat implements JsonSerializable {
 	/**
 	 * The moving mean of the 50th percentile <String, Double>=<number of
 	 * days/weeks included, value>
-	 */
+	 */	
+	private HashMap<String, Double> movingMeanOfMedians = new HashMap<String, Double>();
+	
 	private HashMap<String, Double> movingMean = new HashMap<String, Double>();
 
 	public enum StatPeriod {
@@ -187,6 +189,11 @@ public class AnalyteStat implements JsonSerializable {
 		this.analytePeriod = analytePeriod;
 	}
 
+	public HashMap<String, Double> getMovingMeanOfMedians() {
+		return movingMeanOfMedians;
+	}
+	
+
 	public HashMap<String, Double> getMovingMean() {
 		return movingMean;
 	}
@@ -195,8 +202,13 @@ public class AnalyteStat implements JsonSerializable {
 		this.movingMean = movingMean;
 	}
 
+
+	public void setMovingMeanOfMedians(HashMap<String, Double> movingMean) {
+		this.movingMeanOfMedians = movingMean;
+	}
+
 	public void setMovingMean(String length, Double value) {
-		movingMean.put(length, value);
+		movingMeanOfMedians.put(length, value);
 	}
 
 	public double getCoefficientOfVaritation(){
@@ -399,6 +411,11 @@ public class AnalyteStat implements JsonSerializable {
 	public void addDate(Date day) {
 		includedDates.add(day);
 	}
+
+	public void addMovingMeanOfMedian(int numDays, double value) {
+		movingMeanOfMedians.put(Integer.toString(numDays), value);
+	}
+
 
 	public void addMovingMean(int numDays, double value) {
 		movingMean.put(Integer.toString(numDays), value);

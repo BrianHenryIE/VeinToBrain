@@ -206,7 +206,7 @@ public class ComputeAnalyteStats {
 		 * list. Any readings that aren't regular numbers are put in a HashMap
 		 */
 		for (String reading : as.getOriginalReadings())
-			// TODO check for negative number
+
 			if (isPositiveNumeric(reading))
 				allNumericReadings.add(Double.parseDouble(reading));
 			else {
@@ -255,7 +255,7 @@ public class ComputeAnalyteStats {
 		newAs.setValidCount(allNumericReadings.size());
 
 		// newAs.setReadingsDA(Doubles.toArray(allNumericReadings));
-		
+
 		return newAs;
 	}
 
@@ -384,27 +384,67 @@ public class ComputeAnalyteStats {
 
 	public static void getMovingMeanOfMedian(List<AnalyteStat> analyteStats, int n) {
 
-		
 		HashMap<LocalDate, AnalyteStat> statsByDay = new HashMap<LocalDate, AnalyteStat>();
 
 		// Prepare a hashmap of date:stat
 		for (int i = 0; i < analyteStats.size(); i++)
 			statsByDay.put(new LocalDate(analyteStats.get(i).getIncludedDates().get(0)), analyteStats.get(i));
 
-		
+		getMovingMeanOfMedian(statsByDay, n);
+
+	}
+
+	public static void getMovingMeanOfMedian(HashMap<LocalDate, AnalyteStat> statsByDay, int numberOfDays) {
+
 		double sum;
 
 		for (LocalDate d : statsByDay.keySet()) {
 			sum = 0;
 			sum += statsByDay.get(d).getPercentile(0.5);
 			int included = 1;
-			for (int i = 1; i < 3*n && included < 8; i++) {
-				if (statsByDay.get(d.minusDays(i)) != null) {
+			for (int i = 1; i < (3 * numberOfDays) && included < numberOfDays; i++) {
+				if (statsByDay.get(d.minusDays(i)) != null && statsByDay.get(d.minusDays(i)).getIsValid()) {
 					sum += statsByDay.get(d.minusDays(i)).getPercentile(0.5);
 					included++;
+					//System.out.println(d.toString() + " " + included + "/" + numberOfDays);
+					// + statsByDay.get(d.minusDays(i)).getPercentile(0.5) +
+					// " : " + included);
 				}
 			}
-			statsByDay.get(d).addMovingMean(n, (sum / n));
+			//System.out.println(included + " " + numberOfDays);
+			if (included == numberOfDays) {
+				statsByDay.get(d).addMovingMeanOfMedian(numberOfDays, (sum / numberOfDays));
+				//System.out.println(d.toString() + "   " + included);
+			}
+
+			// TODO Maybe record if there weren't n previous days to work with
+		}
+
+	}
+	
+	
+	public static void getMovingMean(HashMap<LocalDate, AnalyteStat> statsByDay, int numberOfDays) {
+
+		double sum;
+
+		for (LocalDate d : statsByDay.keySet()) {
+			sum = 0;
+			sum += statsByDay.get(d).getPercentile(0.5);
+			int included = 1;
+			for (int i = 1; i < (3 * numberOfDays) && included < numberOfDays; i++) {
+				if (statsByDay.get(d.minusDays(i)) != null && statsByDay.get(d.minusDays(i)).getIsValid()) {
+					sum += statsByDay.get(d.minusDays(i)).getMean();
+					included++;
+					//System.out.println(d.toString() + " " + included + "/" + numberOfDays);
+					// + statsByDay.get(d.minusDays(i)).getPercentile(0.5) +
+					// " : " + included);
+				}
+			}
+			//System.out.println(included + " " + numberOfDays);
+			if (included == numberOfDays) {
+				statsByDay.get(d).addMovingMean(numberOfDays, (sum / numberOfDays));
+				//System.out.println(d.toString() + "   " + included);
+			}
 
 			// TODO Maybe record if there weren't n previous days to work with
 		}

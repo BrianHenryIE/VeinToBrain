@@ -76,8 +76,8 @@ public class AnalyteView implements IsWidget {
 
 //			for(int j = 0; j < (int)((analyteStats.get(i).getIncludedDates().get(0).getTime()-analyteStats.get(i-1).getIncludedDates().get(0).getTime())/86400000); j++);
 //				series.addPoint(new Point());
-			series.addPoint(new Point(analyteStats.get(i).getMovingMean().get("20")));
-			GWT.log(" "+analyteStats.get(i).getMovingMean().get("20"));
+			series.addPoint(new Point(analyteStats.get(i).getMovingMeanOfMedians().get("20")));
+			GWT.log(" "+analyteStats.get(i).getMovingMeanOfMedians().get("20"));
 			categories.add(analyteStats.get(i).getIncludedDates().get(0).toString());
 		}
 		

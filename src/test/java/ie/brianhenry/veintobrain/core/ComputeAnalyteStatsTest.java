@@ -26,12 +26,14 @@ public class ComputeAnalyteStatsTest {
 	double[] readingsD = { 11.1, 14.5, 17.9, 8.7, 15.7, 12.3, 2.8, 14.9, 4.5, 7.8, 6.6, 10.6, 23.0, 19.0, 4.7, 9.5, 7.1, 13.5, 9.5,
 			3.5, 16.1, 21.7, 11.2, 9.8, 13.8, 20.7, 6.6, 4.2, 6.2, 19.9, 15.9, 21.8, 9.0 };
 
-	private List<AnalyteStat> allDailyAnalyteStats = new ArrayList<AnalyteStat>();
+	private HashMap<LocalDate, AnalyteStat> allDailyAnalyteStats = new HashMap<LocalDate, AnalyteStat>();
 
 	List<AnalyteResult> analyteResultsList;
 	List<AnalyteDate> allVaildAnalyteDates = new ArrayList<AnalyteDate>();
 	List<AnalyteDate> allInVaildAnalyteDates = new ArrayList<AnalyteDate>();
-	
+
+	ObjectMapper mapper = new ObjectMapper();
+
 	@Before
 	public void setup() {
 		// MIN_TESTS = 12
@@ -50,16 +52,46 @@ public class ComputeAnalyteStatsTest {
 			AnalyteDate d = new AnalyteDate("psa", day.toDate(), hm.get(day));
 			AnalyteStat s = ComputeAnalyteStats.computeDay(d, "psa");
 			if (s.getIsValid()) {
-				allDailyAnalyteStats.add(s);
+				allDailyAnalyteStats.put(day, s);
 				allVaildAnalyteDates.add(d);
 			} else
 				allInVaildAnalyteDates.add(d);
 		}
 
+		// try {
+		// System.out.println(mapper.writeValueAsString(overall));
+		// } catch (JsonProcessingException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 
 	}
 
-	// @Test
+	@Test
+	public void firstCalcs() {
+
+		ComputeAnalyteStats.getMovingMean(allDailyAnalyteStats, 50);
+		ComputeAnalyteStats.getMovingMean(allDailyAnalyteStats, 7);
+		ComputeAnalyteStats.getMovingMean(allDailyAnalyteStats, 100);
+		ComputeAnalyteStats.getMovingMean(allDailyAnalyteStats, 150);
+
+		for (AnalyteStat stat : allDailyAnalyteStats.values()) {
+			if (stat.getIncludedDates().get(0) != null)
+				System.out.print(new LocalDate(stat.getIncludedDates().get(0)).toString());
+			System.out.print(",");
+			if (stat.getMovingMean().get("7") != null)
+				System.out.print(stat.getMovingMean().get("7").toString());
+			System.out.print(",");
+			if (stat.getMovingMean().get("50") != null)
+				System.out.print(stat.getMovingMean().get("50").toString());
+			System.out.print(",");
+			if (stat.getMovingMean().get("100") != null)
+				System.out.print(stat.getMovingMean().get("100").toString());
+			System.out.println("");
+		}
+	}
+
+	@Test
 	public void TestOverall() {
 
 		AnalyteStat overall = ComputeAnalyteStats.computeOverall(analyteResultsList, "psa");
@@ -68,7 +100,7 @@ public class ComputeAnalyteStatsTest {
 
 		double sumOfMedian = 0.0;
 		int countValidStats = 0;
-		for (AnalyteStat stat : allDailyAnalyteStats)
+		for (AnalyteStat stat : allDailyAnalyteStats.values())
 			if (stat.getIsValid()) {
 				sumOfMedian += stat.getPercentile(0.5);
 				allMedians.add(stat.getPercentile(0.5));
@@ -87,17 +119,11 @@ public class ComputeAnalyteStatsTest {
 
 		System.out.println("medianCV : " + medianCV);
 
+		System.out.println(overall.getMean());
+		
 		// Get an addressable list of the daily stats so we can ask for the
 		// previous days' stats
 		// for the moving mean
-
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			System.out.println(mapper.writeValueAsString(overall));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 	}
 
@@ -145,7 +171,8 @@ public class ComputeAnalyteStatsTest {
 
 		// hmmm... I think there's no need to return the object here. it's being
 		// operated on when it's in there
-		// statsByDay = ComputeAnalyteStats.getMovingMeanOfMedian(statsByDay, 7);
+		// statsByDay = ComputeAnalyteStats.getMovingMeanOfMedian(statsByDay,
+		// 7);
 
 	}
 
