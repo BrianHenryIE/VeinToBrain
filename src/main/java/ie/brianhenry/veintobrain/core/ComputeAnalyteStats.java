@@ -422,7 +422,6 @@ public class ComputeAnalyteStats {
 
 	}
 
-
 	public static void getMovingMean(HashMap<LocalDate, AnalyteStat> statsByDay, int numberOfDays) {
 
 		double sum;

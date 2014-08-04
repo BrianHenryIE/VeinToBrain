@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
@@ -191,9 +190,7 @@ public class AnalyteStat implements JsonSerializable {
 
 	public HashMap<String, Double> getMovingMeanOfMedians() {
 		return movingMeanOfMedians;
-	}
-
-
+}
 	public HashMap<String, Double> getMovingMean() {
 		return movingMean;
 	}
@@ -205,6 +202,10 @@ public class AnalyteStat implements JsonSerializable {
 
 	public void setMovingMeanOfMedians(HashMap<String, Double> movingMean) {
 		this.movingMeanOfMedians = movingMean;
+	}
+
+	public void setMovingMean(String length, Double value) {
+		movingMeanOfMedians.put(length, value);
 	}
 
 	public double getCoefficientOfVaritation(){
