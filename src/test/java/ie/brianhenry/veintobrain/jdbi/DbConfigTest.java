@@ -25,7 +25,7 @@ public class DbConfigTest {
 
 	private static Logger logger = LoggerFactory.getLogger(DbConfigTest.class);
 
-	@Test
+//	@Test
 	public void TestDb() throws UnknownHostException {
 
 		ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory
