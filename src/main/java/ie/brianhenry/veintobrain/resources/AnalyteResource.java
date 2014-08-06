@@ -83,10 +83,10 @@ public class AnalyteResource {
 		ComputeAnalyteStats.getMovingMean(allDailyAnalyteStats, 7);
 
 		List<AnalyteStat> stats = new ArrayList<AnalyteStat>();
-		
+
 		for(AnalyteStat as : allDailyAnalyteStats.values())
 			stats.add(as);
-		
+
 		return stats;
 
 	}

@@ -80,7 +80,7 @@ public class PSAdata {
 					hm.put(r.getDate(), new ArrayList<String>());
 				hm.get(r.getDate()).add(r.getResult());
 			}
-		
+
 		for (LocalDate day : hm.keySet())
 			ads.add(new AnalyteDate("psa", day.toDate(), hm.get(day)));
 
