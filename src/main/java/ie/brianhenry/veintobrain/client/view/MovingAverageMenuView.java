@@ -1,6 +1,7 @@
 package ie.brianhenry.veintobrain.client.view;
 
 import ie.brianhenry.veintobrain.client.RpcService;
+import ie.brianhenry.veintobrain.client.events.MovingAverageMenuEvent;
 import ie.brianhenry.veintobrain.client.events.TimeRangeMenuEvent;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -16,9 +17,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DatePicker;
 
 public class MovingAverageMenuView implements IsWidget {
+//	FlowPanel flow = new FlowPanel();
+//	DisclosurePanel p = new DisclosurePanel("Moving Averages");
+//	DatePicker date = new DatePicker();
 	FlowPanel flow = new FlowPanel();
 	DisclosurePanel p = new DisclosurePanel("Moving Averages");
-	DatePicker date = new DatePicker();
 
 	EventBus eventBus;
 
@@ -26,16 +29,30 @@ public class MovingAverageMenuView implements IsWidget {
 
 		this.eventBus = eventBus;		
 
-		Label l1 = new Label("Average #1");
-		TextBox n1 = new TextBox();
-		n1.setSize("20px", "20px");
-		Label l2 = new Label("Average #2");
-		TextBox n2 = new TextBox();
-		flow.add(l1);
-		flow.add(n1);
-		flow.add(date);
-		flow.add(l2);
-		flow.add(n2);
+//		Label l1 = new Label("Average #1");
+//		TextBox n1 = new TextBox();
+//		n1.setSize("20px", "20px");
+//		Label l2 = new Label("Average #2");
+//		TextBox n2 = new TextBox();
+//		flow.add(l1);
+//		flow.add(n1);
+//		flow.add(date);
+//		flow.add(l2);
+//		flow.add(n2);
+		String[] menuItems = { "7", "20", "50" };
+
+		for (final String mi : menuItems){
+			Button b = new Button(mi);
+			b.setSize("90px", "30px");
+			b.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					eventBus.fireEvent(new MovingAverageMenuEvent(mi));
+				}
+			});
+			flow.add(b);
+		}
+
 		p.setContent(flow);
 	}
 

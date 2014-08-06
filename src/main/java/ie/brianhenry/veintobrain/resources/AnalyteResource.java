@@ -56,6 +56,7 @@ public class AnalyteResource {
 		List<AnalyteDate> allVaildAnalyteDates = new ArrayList<AnalyteDate>();
 		List<AnalyteDate> allInVaildAnalyteDates = new ArrayList<AnalyteDate>();
 
+		//the RAW data are here
 		analyteResultsList = pd.getResults();
 
 		HashMap<LocalDate, List<String>> hm = new HashMap<LocalDate, List<String>>();

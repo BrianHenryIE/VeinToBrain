@@ -2,6 +2,7 @@ package ie.brianhenry.veintobrain.client;
 
 import ie.brianhenry.veintobrain.client.events.LoginEvent;
 import ie.brianhenry.veintobrain.client.events.AnalyteMenuEvent;
+import ie.brianhenry.veintobrain.client.events.MovingAverageMenuEvent;
 import ie.brianhenry.veintobrain.client.events.TimeRangeMenuEvent;
 import ie.brianhenry.veintobrain.client.resources.VeintobrainResources;
 import ie.brianhenry.veintobrain.client.view.AnalyteMenuView;
@@ -82,6 +83,7 @@ public class AppController {
 	Label summaryLab = new Label("Summary:"); // rightFrame
 	Label analytesLab = new Label(); // rightFrame
 	Label timeRangeLab = new Label(); // rightFrame
+	Label movingAverageLab = new Label(); //rightFrame
 	FlowPanel statsPanel = new FlowPanel(); //rightFrame
 	DisclosurePanel p = new DisclosurePanel("Click to disclose something:");
 
@@ -104,7 +106,6 @@ public class AppController {
 		leftFrame.add(new TimeRangeMenuView(rpcService, eventBus));
 		leftFrame.add(new MovingAverageMenuView(rpcService, eventBus));
 
-		av.setAnalyte("folate");
 		tab.setSize("800px", "550px");
 		tab.add(av, "Graph");
 		tab.add(new HTML("that content"), "Table");
@@ -113,11 +114,13 @@ public class AppController {
 		rightFrame.add(summaryLab);
 		rightFrame.add(analytesLab);
 		rightFrame.add(timeRangeLab);
+		rightFrame.add(movingAverageLab);
 		rightFrame.add(statsPanel);
 	}
 
 	@EventHandler
 	void OnShow(AnalyteMenuEvent event) {
+		av.setAnalyte("folate");
 		analytesLab.setText("Analyte: "+event.getAnalyte());
 		statsPanel.clear();
 		statsPanel.add(new Label("Long term mean:"));
@@ -128,6 +131,10 @@ public class AppController {
 	@EventHandler
 	void OnShow(TimeRangeMenuEvent event) {
 		timeRangeLab.setText("Time Range: "+event.getTimeRange());
+	}
+	@EventHandler
+	void OnShow(MovingAverageMenuEvent event) {
+		movingAverageLab.setText("Moving Average: "+event.getMovingAverage());
 	}
 
 }

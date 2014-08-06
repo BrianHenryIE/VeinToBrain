@@ -34,6 +34,10 @@ public class AnalyteView implements IsWidget {
 
 	Chart chart;
 	Series series;
+//	TODO implement the choise of moving mean and two graphs at a time 
+//	int movingMean;
+	Series series2;
+	Series mean;
 
 	public AnalyteView(RpcService rpcService, EventBus eventBus) {
 		this.rpcService = rpcService;
@@ -59,28 +63,34 @@ public class AnalyteView implements IsWidget {
 		chart.getYAxis().setMin(0);
 
 		chart.setType(Series.Type.LINE);
-		chart.setSize("400px", "500px");
+		chart.setSize("700px", "500px");
 
 		chart.setCredits(null);
 
 		series = chart.createSeries();
+		series2 = chart.createSeries();
+		mean = chart.createSeries();
 
 		chart.addSeries(series);
+		chart.addSeries(series2);
+		chart.addSeries(mean);
 
-		series.setName(analyte);
+		series.setName(analyte+" 7");
+		series2.setName(analyte+" 50");
+		mean.setName("Mean");
 
 		chartPanel.clear();
-
 		List<String> categories = new ArrayList<String>();
+		GWT.log("size="+analyteStats.size());
 		for (int i = 0; i < analyteStats.size(); i++) {
 
 //			for(int j = 0; j < (int)((analyteStats.get(i).getIncludedDates().get(0).getTime()-analyteStats.get(i-1).getIncludedDates().get(0).getTime())/86400000); j++);
 //				series.addPoint(new Point());
-			series.addPoint(new Point(analyteStats.get(i).getMovingMeanOfMedians().get("20")));
-			GWT.log(" "+analyteStats.get(i).getMovingMeanOfMedians().get("20"));
+			series2.addPoint(new Point(analyteStats.get(i).getMovingMeanOfMedians().get("7")));
+			series.addPoint(new Point(analyteStats.get(i).getMovingMeanOfMedians().get("50")));
+			GWT.log(""+analyteStats.get(i).getMovingMeanOfMedians().get("50"));
 			categories.add(analyteStats.get(i).getIncludedDates().get(0).toString());
 		}
-		
 		//chart.getXAxis().setType(Type.DATE_TIME);
 		//chart.setOption("/plotOptions/line/pointInterval/",86400000);
 		
@@ -103,7 +113,6 @@ public class AnalyteView implements IsWidget {
 
 		rpcService.executeRequest(analyte, StatPeriod.DAY, new AsyncCallback<List<AnalyteStat>>() {
 			public void onFailure(Throwable caught) {
-
 			}
 
 			public void onSuccess(List<AnalyteStat> result) {
