@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.moxieapps.gwt.highcharts.client.BaseChart.ZoomType;
-import org.moxieapps.gwt.highcharts.client.Chart;
 import org.moxieapps.gwt.highcharts.client.Point;
 import org.moxieapps.gwt.highcharts.client.Series;
 import org.moxieapps.gwt.highcharts.client.StockChart;
@@ -33,7 +32,9 @@ public class AnalyteView implements IsWidget {
 
 	List<AnalyteStat> analyteStats;
 
-	Chart chart;
+	//Chart chart;
+	StockChart chart = new StockChart();
+
 	Series series;
 //	TODO implement the choise of moving mean and two graphs at a time 
 //	int movingMean;
@@ -59,7 +60,9 @@ public class AnalyteView implements IsWidget {
 	}
 
 	private void setChart(String analyte) {
-		chart = new Chart();
+		//chart = new Chart();
+		chart = new StockChart();
+
 
 		chart.setZoomType(ZoomType.Y);
 		chart.getYAxis().setMin(0);
