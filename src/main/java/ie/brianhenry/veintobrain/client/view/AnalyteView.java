@@ -11,6 +11,7 @@ import org.moxieapps.gwt.highcharts.client.BaseChart.ZoomType;
 import org.moxieapps.gwt.highcharts.client.Chart;
 import org.moxieapps.gwt.highcharts.client.Point;
 import org.moxieapps.gwt.highcharts.client.Series;
+import org.moxieapps.gwt.highcharts.client.StockChart;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -37,6 +38,7 @@ public class AnalyteView implements IsWidget {
 //	TODO implement the choise of moving mean and two graphs at a time 
 //	int movingMean;
 	Series series2;
+	Series series3;
 	Series mean;
 
 	public AnalyteView(RpcService rpcService, EventBus eventBus) {
@@ -61,22 +63,24 @@ public class AnalyteView implements IsWidget {
 
 		chart.setZoomType(ZoomType.Y);
 		chart.getYAxis().setMin(0);
-
 		chart.setType(Series.Type.LINE);
 		chart.setSize("700px", "500px");
-
 		chart.setCredits(null);
-
+		
 		series = chart.createSeries();
 		series2 = chart.createSeries();
+		series3 = chart.createSeries();
 		mean = chart.createSeries();
+		
 
 		chart.addSeries(series);
 		chart.addSeries(series2);
+		chart.addSeries(series3);
 		chart.addSeries(mean);
 
 		series.setName(analyte+" 7");
 		series2.setName(analyte+" 50");
+		series3.setName(analyte+" 20");
 		mean.setName("Mean");
 
 		chartPanel.clear();
@@ -88,6 +92,7 @@ public class AnalyteView implements IsWidget {
 //				series.addPoint(new Point());
 			series2.addPoint(new Point(analyteStats.get(i).getMovingMeanOfMedians().get("7")));
 			series.addPoint(new Point(analyteStats.get(i).getMovingMeanOfMedians().get("50")));
+			series3.addPoint(new Point(analyteStats.get(i).getMovingMeanOfMedians().get("20")));
 			GWT.log(""+analyteStats.get(i).getMovingMeanOfMedians().get("50"));
 			categories.add(analyteStats.get(i).getIncludedDates().get(0).toString());
 		}

@@ -9,6 +9,7 @@ import ie.brianhenry.veintobrain.client.view.AnalyteMenuView;
 import ie.brianhenry.veintobrain.client.view.AnalyteView;
 import ie.brianhenry.veintobrain.client.view.LoginClientView;
 import ie.brianhenry.veintobrain.client.view.MovingAverageMenuView;
+import ie.brianhenry.veintobrain.client.view.TableView;
 import ie.brianhenry.veintobrain.client.view.TimeRangeMenuView;
 import ie.brianhenry.veintobrain.representations.User;
 
@@ -79,6 +80,7 @@ public class AppController {
 
 	TabLayoutPanel tab = new TabLayoutPanel(1.0, Unit.EM); // leftFrame
 	AnalyteView av = new AnalyteView(rpcService, eventBus); // centerFrame
+	TableView tv = new TableView(rpcService, eventBus); // centerFrame
 	
 	Label summaryLab = new Label("Summary:"); // rightFrame
 	Label analytesLab = new Label(); // rightFrame
@@ -108,7 +110,8 @@ public class AppController {
 
 		tab.setSize("800px", "550px");
 		tab.add(av, "Graph");
-		tab.add(new HTML("that content"), "Table");
+//		tab.add(new HTML("that content"), "Table");
+		tab.add(tv, "Table");
 		centerFrame.add(tab);
 
 		rightFrame.add(summaryLab);
@@ -121,6 +124,7 @@ public class AppController {
 	@EventHandler
 	void OnShow(AnalyteMenuEvent event) {
 		av.setAnalyte("folate");
+		tv.setAnalyte("folate");
 		analytesLab.setText("Analyte: "+event.getAnalyte());
 		statsPanel.clear();
 		statsPanel.add(new Label("Long term mean:"));

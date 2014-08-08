@@ -34,7 +34,7 @@
 			<groupId>org.moxieapps</groupId>
 			<artifactId>org.moxieapps.gwt.highcharts</artifactId>
 			<version>1.6.0</version>
-		</dependency>
+		</dependency>		
 		<dependency>
 			<!-- Like Jackson on the client side -->
 			<groupId>com.kfuntak.gwt.json</groupId>
