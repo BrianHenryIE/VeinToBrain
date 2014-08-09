@@ -5,6 +5,7 @@ import ie.brianhenry.veintobrain.representations.AnalyteStat.StatPeriod;
 import ie.brianhenry.veintobrain.representations.LoginResponse;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -69,6 +70,8 @@ public class RpcService {
 					ArrayList<AnalyteStat> deResponse = (ArrayList<AnalyteStat>) alSerializer.deSerialize(response.getText(),
 							"java.util.ArrayList");
 
+					Collections.sort(deResponse);
+					
 					asyncCallback.onSuccess(deResponse);
 
 				}

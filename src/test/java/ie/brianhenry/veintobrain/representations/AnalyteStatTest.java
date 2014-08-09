@@ -4,13 +4,72 @@ import static org.junit.Assert.assertEquals;
 import ie.brianhenry.veintobrain.core.ComputeAnalyteStats;
 import ie.brianhenry.veintobrain.resources.PSAdata;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
+import org.joda.time.LocalDate;
 import org.junit.Test;
 
 public class AnalyteStatTest {
 
+	@Test
+	public void sorting() {
+		PSAdata pd = new PSAdata();
+		HashMap<LocalDate, AnalyteStat> allDailyAnalyteStats = new HashMap<LocalDate, AnalyteStat>();
+
+		List<AnalyteResult> analyteResultsList;
+		List<AnalyteDate> allVaildAnalyteDates = new ArrayList<AnalyteDate>();
+		List<AnalyteDate> allInVaildAnalyteDates = new ArrayList<AnalyteDate>();
+
+		//the RAW data are here
+		analyteResultsList = pd.getResults();
+
+		//hm contains the results divided by day.
+		//The analytes are still mixed up though.
+		HashMap<LocalDate, List<String>> hm = new HashMap<LocalDate, List<String>>();
+
+		for (AnalyteResult r : analyteResultsList) {
+			if (hm.get(r.getDate()) == null)
+				hm.put(r.getDate(), new ArrayList<String>());
+			hm.get(r.getDate()).add(r.getResult());
+		}
+
+		for (LocalDate day : hm.keySet()) {
+			AnalyteDate d = new AnalyteDate("psa", day.toDate(), hm.get(day));
+			AnalyteStat s = ComputeAnalyteStats.computeDay(d, "psa");
+			if (s.getIsValid()) {
+				allDailyAnalyteStats.put(day, s);
+				allVaildAnalyteDates.add(d);
+			} else
+				allInVaildAnalyteDates.add(d);
+		}
+
+		ComputeAnalyteStats.getMovingMeanOfMedian(allDailyAnalyteStats, 50);
+		ComputeAnalyteStats.getMovingMeanOfMedian(allDailyAnalyteStats, 7);
+		ComputeAnalyteStats.getMovingMeanOfMedian(allDailyAnalyteStats, 20);
+
+		ComputeAnalyteStats.getMovingMean(allDailyAnalyteStats, 50);
+		ComputeAnalyteStats.getMovingMean(allDailyAnalyteStats, 7);
+		ComputeAnalyteStats.getMovingMean(allDailyAnalyteStats, 20);
+
+		List<AnalyteStat> stats = new ArrayList<AnalyteStat>();
+
+		for(AnalyteStat as : allDailyAnalyteStats.values())
+			stats.add(as);
+
+		
+		Collections.sort(stats);
+		
+		for(AnalyteStat a : stats)
+			System.out.println(a.getIncludedDates().get(0).toString());
+		
+	}
+	
+	
 	@SuppressWarnings("deprecation")
 	public void constructor() {
 
