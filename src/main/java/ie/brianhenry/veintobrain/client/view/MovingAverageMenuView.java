@@ -2,7 +2,6 @@ package ie.brianhenry.veintobrain.client.view;
 
 import ie.brianhenry.veintobrain.client.RpcService;
 import ie.brianhenry.veintobrain.client.events.MovingAverageMenuEvent;
-import ie.brianhenry.veintobrain.client.events.TimeRangeMenuEvent;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -11,10 +10,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.datepicker.client.DatePicker;
 
 public class MovingAverageMenuView implements IsWidget {
 //	FlowPanel flow = new FlowPanel();

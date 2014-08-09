@@ -1,7 +1,6 @@
 package ie.brianhenry.veintobrain.client.view;
 
 import ie.brianhenry.veintobrain.client.RpcService;
-import ie.brianhenry.veintobrain.client.events.AnalyteMenuEvent;
 import ie.brianhenry.veintobrain.client.events.TimeRangeMenuEvent;
 
 import com.google.gwt.event.dom.client.ClickEvent;

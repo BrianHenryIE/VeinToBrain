@@ -1,7 +1,7 @@
 package ie.brianhenry.veintobrain.client;
 
-import ie.brianhenry.veintobrain.client.events.LoginEvent;
 import ie.brianhenry.veintobrain.client.events.AnalyteMenuEvent;
+import ie.brianhenry.veintobrain.client.events.LoginEvent;
 import ie.brianhenry.veintobrain.client.events.MovingAverageMenuEvent;
 import ie.brianhenry.veintobrain.client.events.TimeRangeMenuEvent;
 import ie.brianhenry.veintobrain.client.resources.VeintobrainResources;
@@ -15,16 +15,13 @@ import ie.brianhenry.veintobrain.representations.User;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.binder.EventBinder;
 import com.google.web.bindery.event.shared.binder.EventHandler;
 

@@ -21,6 +21,7 @@ import org.joda.time.LocalDate;
 import net.vz.mongodb.jackson.DBCursor;
 import net.vz.mongodb.jackson.JacksonDBCollection;
 
+import com.google.gwt.core.shared.GWT;
 import com.mongodb.DB;
 
 @Path("/analyte")
@@ -59,6 +60,8 @@ public class AnalyteResource {
 		//the RAW data are here
 		analyteResultsList = pd.getResults();
 
+		//hm contains the results divided by day.
+		//The analytes are still mixed up though.
 		HashMap<LocalDate, List<String>> hm = new HashMap<LocalDate, List<String>>();
 
 		for (AnalyteResult r : analyteResultsList) {
