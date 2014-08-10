@@ -8,11 +8,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.moxieapps.gwt.highcharts.client.Axis.WeekDay;
 import org.moxieapps.gwt.highcharts.client.BaseChart.ZoomType;
+import org.moxieapps.gwt.highcharts.client.Series.Type;
 import org.moxieapps.gwt.highcharts.client.ContextButton;
 import org.moxieapps.gwt.highcharts.client.Credits;
+import org.moxieapps.gwt.highcharts.client.DateTimeLabelFormats;
 import org.moxieapps.gwt.highcharts.client.Exporting;
+import org.moxieapps.gwt.highcharts.client.Navigation;
 import org.moxieapps.gwt.highcharts.client.Point;
+import org.moxieapps.gwt.highcharts.client.RangeSelector;
 import org.moxieapps.gwt.highcharts.client.Series;
 import org.moxieapps.gwt.highcharts.client.StockChart;
 
@@ -78,29 +83,20 @@ public class AnalyteView implements IsWidget {
 		chart.addSeries(series2);
 		chart.addSeries(series3);
 		chartPanel.clear();
-
-//		DateTimeLabelFormats dateformat = new DateTimeLabelFormats();
-//		dateformat.
-//		chart.getXAxis().setDateTimeLabelFormats('%a %d %b %H:%M:%S');
 		
-		List<Date> categories = new ArrayList<Date>();
-
-		GWT.log("size=" + analyteStats.size());
+//		List<Date> categories = new ArrayList<Date>();
+		
 		for (int i = 0; i < analyteStats.size(); i++) {
-			series.addPoint(new Point(analyteStats.get(i).getMovingMeanOfMedians().get("7")));
-			series2.addPoint(new Point(analyteStats.get(i).getMovingMeanOfMedians().get("20")));
-			series3.addPoint(new Point(analyteStats.get(i).getMovingMeanOfMedians().get("50")));
-			categories.add(analyteStats.get(i).getIncludedDates().get(0));
+			series.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(),
+					analyteStats.get(i).getMovingMeanOfMedians().get("7")));
+			series2.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(),
+					analyteStats.get(i).getMovingMeanOfMedians().get("20")));
+			series3.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(),
+					analyteStats.get(i).getMovingMeanOfMedians().get("50")));
+//			categories.add(analyteStats.get(i).getIncludedDates().get(0));
 
-//			GWT.log("DATE=" + analyteStats.get(i).getIncludedDates().get(0).toString());
+			GWT.log("DATE=" + analyteStats.get(i).getIncludedDates().get(0).toString());
 		}
-		for (int i=0; i<categories.size(); i++) {
-			GWT.log("cat="+categories.get(i));
-		}
-		
-
-		
-//		chart.getXAxis().setCategories(categories.toArray(new String[categories.size()]));
 		chartPanel.add(chart);
 	}
 
