@@ -4,12 +4,16 @@ import ie.brianhenry.veintobrain.client.RpcService;
 import ie.brianhenry.veintobrain.representations.AnalyteStat;
 import ie.brianhenry.veintobrain.representations.AnalyteStat.StatPeriod;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.moxieapps.gwt.highcharts.client.Axis.WeekDay;
 import org.moxieapps.gwt.highcharts.client.BaseChart.ZoomType;
+import org.moxieapps.gwt.highcharts.client.Legend;
+import org.moxieapps.gwt.highcharts.client.Legend.Align;
 import org.moxieapps.gwt.highcharts.client.Series.Type;
 import org.moxieapps.gwt.highcharts.client.ContextButton;
 import org.moxieapps.gwt.highcharts.client.Credits;
@@ -53,23 +57,29 @@ public class AnalyteView implements IsWidget {
 	}
 
 	private void setChart(String analyte) {
-		
+
 		ContextButton contextButton = new ContextButton();
 		contextButton.setText("Export");
-		
+
 		Credits credits = new Credits();
 		credits.setText("UCD Labs Analytics");
 		credits.setHref("http://ucdlabsanalytics.wordpress.com/");
-		
+
 		Exporting exporting = new Exporting();
 		exporting.setEnabled(true);
 		exporting.setContextButton(contextButton);
 		
+		Legend legend = new Legend();
+		legend.setEnabled(true);
+		legend.setAlign(Align.CENTER);
+		
 		chart = new StockChart().setChartTitleText(analyte);
 		chart.setCredits(credits);
-		chart.setSize("780px", "500px");
+//		chart.setSize("800px", "500px");
+		chart.setSizeToMatchContainer();
 		chart.setZoomType(ZoomType.X_AND_Y);
 		chart.setExporting(exporting);
+		chart.setLegend(legend);
 
 		series = chart.createSeries();
 		series2 = chart.createSeries();
@@ -83,19 +93,33 @@ public class AnalyteView implements IsWidget {
 		chart.addSeries(series2);
 		chart.addSeries(series3);
 		chartPanel.clear();
-		
-//		List<Date> categories = new ArrayList<Date>();
-		
-		for (int i = 0; i < analyteStats.size(); i++) {
-			series.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(),
-					analyteStats.get(i).getMovingMeanOfMedians().get("7")));
-			series2.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(),
-					analyteStats.get(i).getMovingMeanOfMedians().get("20")));
-			series3.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(),
-					analyteStats.get(i).getMovingMeanOfMedians().get("50")));
-//			categories.add(analyteStats.get(i).getIncludedDates().get(0));
 
-			GWT.log("DATE=" + analyteStats.get(i).getIncludedDates().get(0).toString());
+		for (int i = 0; i < analyteStats.size(); i++) {
+//			if (analyteStats.get(i).getIncludedDates().get(0).getDate()==1) {
+//				Series month = ;
+//			}
+			
+			if (analyteStats.get(i).getMovingMeanOfMedians().get("7") == null) {
+				series.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(), analyteStats.get(i)
+						.getMovingMeanOfMedians().get("7")));
+			} else {
+				series.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(), round(analyteStats.get(i)
+						.getMovingMeanOfMedians().get("7"))));
+			}
+			if (analyteStats.get(i).getMovingMeanOfMedians().get("20") == null) {
+				series2.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(), analyteStats.get(i)
+						.getMovingMeanOfMedians().get("20")));
+			} else {
+				series2.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(), round(analyteStats.get(i)
+						.getMovingMeanOfMedians().get("20"))));
+			}
+			if (analyteStats.get(i).getMovingMeanOfMedians().get("50") == null) {
+				series3.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(), analyteStats.get(i)
+						.getMovingMeanOfMedians().get("50")));
+			} else {
+				series3.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(), round(analyteStats.get(i)
+						.getMovingMeanOfMedians().get("50"))));
+			}
 		}
 		chartPanel.add(chart);
 	}
@@ -117,6 +141,12 @@ public class AnalyteView implements IsWidget {
 	@Override
 	public Widget asWidget() {
 		return p;
+	}
+
+	public static double round(double value) {
+		BigDecimal bd = new BigDecimal(value);
+		bd = bd.setScale(2, RoundingMode.HALF_UP);
+		return bd.doubleValue();
 	}
 
 }
