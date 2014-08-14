@@ -49,10 +49,13 @@ public class AppController {
 	EventBus eventBus;
 
 	private final FlowPanel contentPanel = new FlowPanel();
-
+	
+	FlowPanel header = new FlowPanel();
 	FlowPanel leftFrame = new FlowPanel();
-	SimplePanel centerFrame = new SimplePanel();
+	FlowPanel centerFrame = new FlowPanel();
 	FlowPanel rightFrame = new FlowPanel();
+	FlowPanel middle = new FlowPanel();
+	FlowPanel footer = new FlowPanel();
 
 	// this line has to be added anytime you use CSS
 	VeintobrainResources resources = VeintobrainResources.INSTANCE;
@@ -60,19 +63,28 @@ public class AppController {
 	public AppController(RpcService rpcService, EventBus eventBus) {
 
 		resources.css().ensureInjected();
-
+		
+		header.addStyleName(resources.css().header());
+		middle.addStyleName(resources.css().middle());
 		leftFrame.addStyleName(resources.css().menuPanel());
 		centerFrame.addStyleName(resources.css().appPanel());
 		rightFrame.addStyleName(resources.css().helpPanel());
+		footer.addStyleName(resources.css().footer());
 
 		this.rpcService = rpcService;
 		this.eventBus = eventBus;
 
 		eventBinder.bindEventHandlers(this, eventBus);
-
-		contentPanel.add(leftFrame);
-		contentPanel.add(centerFrame);
-		contentPanel.add(rightFrame);
+//		middle.setSize("1000px", "1000px");
+//		middle.setHeight("510px");
+		
+		middle.add(leftFrame);
+		middle.add(centerFrame);
+		middle.add(rightFrame);
+		
+		contentPanel.add(header);
+		contentPanel.add(middle);
+		contentPanel.add(footer);
 	}
 
 	TabLayoutPanel tab = new TabLayoutPanel(1.0, Unit.EM); // leftFrame
@@ -105,7 +117,7 @@ public class AppController {
 		leftFrame.add(new TimeRangeMenuView(rpcService, eventBus));
 		leftFrame.add(new MovingAverageMenuView(rpcService, eventBus));
 
-		tab.setSize("800px", "550px");
+		tab.setSize("740px", "500px");
 		tab.add(av, "Graph");
 //		tab.add(new HTML("that content"), "Table");
 		tab.add(tv, "Table");
@@ -120,8 +132,8 @@ public class AppController {
 
 	@EventHandler
 	void OnShow(AnalyteMenuEvent event) {
-		av.setAnalyte("folate");
-		tv.setAnalyte("folate");
+		av.setAnalyte(event.getAnalyte());
+		tv.setAnalyte(event.getAnalyte());
 		analytesLab.setText("Analyte: "+event.getAnalyte());
 		statsPanel.clear();
 		statsPanel.add(new Label("Long term mean:"));
