@@ -22,7 +22,7 @@ public class AnalyteMenuView implements IsWidget {
 	public AnalyteMenuView(RpcService rpcService, final EventBus eventBus) {
 
 		this.eventBus = eventBus;		
-
+		
 		String[] menuItems = { "folate", "psa", "test", "CO3" };
 	
 		for (final String mi : menuItems){
