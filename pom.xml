@@ -11,9 +11,25 @@
 		<dropwizard.version>0.7.1</dropwizard.version>
 		<gwt.version>2.6.1</gwt.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<exclude.tests>this-is-set-in-the-profiles</exclude.tests>
 	</properties>
 
 	<dependencies>
+
+		<dependency>
+			<!-- Although gwt-user is used by both compiles, javax.validation needs 
+				to be excluded on the server side as it clashes with Dropwizard's own dependencies -->
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-user</artifactId>
+			<version>${gwt.version}</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>validation-api</artifactId>
+					<groupId>javax.validation</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava-gwt</artifactId>
@@ -34,7 +50,7 @@
 			<groupId>org.moxieapps</groupId>
 			<artifactId>org.moxieapps.gwt.highcharts</artifactId>
 			<version>1.6.0</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<!-- Like Jackson on the client side -->
 			<groupId>com.kfuntak.gwt.json</groupId>
@@ -66,6 +82,10 @@
 		<profile>
 			<id>server</id>
 
+			<properties>
+				<exclude.tests>**/test/**/client/*</exclude.tests>
+			</properties>
+
 			<dependencies>
 				<dependency>
 					<groupId>com.hubspot.dropwizard</groupId>
@@ -88,20 +108,6 @@
 					<version>${dropwizard.version}</version>
 				</dependency>
 
-				<dependency>
-					<!-- Although gwt-user is used by both compiles, javax.validation needs 
-						to be excluded on the server side as it clashes with Dropwizard's own dependencies -->
-					<groupId>com.google.gwt</groupId>
-					<artifactId>gwt-user</artifactId>
-					<version>${gwt.version}</version>
-					<scope>provided</scope>
-					<exclusions>
-						<exclusion>
-							<artifactId>validation-api</artifactId>
-							<groupId>javax.validation</groupId>
-						</exclusion>
-					</exclusions>
-				</dependency>
 				<dependency>
 					<groupId>javax.mail</groupId>
 					<artifactId>mail</artifactId>
@@ -188,7 +194,7 @@
 											implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
 										<transformer
 											implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-											<mainClass>ie.brianhenry.veintobrain.VeintobrainApplication</mainClass>
+											<mainClass>ie.brianhenry.veintobrain.server.VeintobrainApplication</mainClass>
 										</transformer>
 									</transformers>
 								</configuration>
@@ -218,16 +224,21 @@
 				</plugins>
 			</build>
 		</profile>
+
 		<profile>
 			<id>client</id>
 
+			<properties>
+				<exclude.tests>**/test/**/server/*</exclude.tests>
+			</properties>
+
 			<dependencies>
 				<dependency>
-					<groupId>com.google.gwt</groupId>
-					<artifactId>gwt-user</artifactId>
-					<version>${gwt.version}</version>
-					<scope>provided</scope>
+					<groupId>javax.validation</groupId>
+					<artifactId>validation-api</artifactId>
+					<version>1.0.0.GA</version>
 				</dependency>
+
 				<dependency>
 					<groupId>com.google.gwt</groupId>
 					<artifactId>gwt-servlet</artifactId>
@@ -258,16 +269,6 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.17</version>
-						<configuration>
-							<includes>
-								<include>**/Test/**/client/*</include>
-							</includes>
-						</configuration>
-					</plugin>
-					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>gwt-maven-plugin</artifactId>
 						<version>${gwt.version}</version>
@@ -290,4 +291,18 @@
 		</profile>
 	</profiles>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.17</version>
+				<configuration>
+	 				<excludes>
+						<exclude>${exclude.tests}</exclude>
+					</excludes> 
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

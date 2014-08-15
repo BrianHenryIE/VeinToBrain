@@ -2,7 +2,7 @@ package ie.brianhenry.veintobrain.client.view;
 
 import ie.brianhenry.veintobrain.client.RpcService;
 import ie.brianhenry.veintobrain.client.events.LoginEvent;
-import ie.brianhenry.veintobrain.representations.LoginResponse;
+import ie.brianhenry.veintobrain.shared.representations.LoginResponse;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

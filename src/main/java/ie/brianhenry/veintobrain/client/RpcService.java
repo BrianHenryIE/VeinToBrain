@@ -1,8 +1,8 @@
 package ie.brianhenry.veintobrain.client;
 
-import ie.brianhenry.veintobrain.representations.AnalyteStat;
-import ie.brianhenry.veintobrain.representations.AnalyteStat.StatPeriod;
-import ie.brianhenry.veintobrain.representations.LoginResponse;
+import ie.brianhenry.veintobrain.shared.representations.AnalyteStat;
+import ie.brianhenry.veintobrain.shared.representations.LoginResponse;
+import ie.brianhenry.veintobrain.shared.representations.AnalyteStat.StatPeriod;
 
 import java.util.ArrayList;
 import java.util.Collections;

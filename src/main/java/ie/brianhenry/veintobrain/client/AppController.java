@@ -11,7 +11,7 @@ import ie.brianhenry.veintobrain.client.view.LoginClientView;
 import ie.brianhenry.veintobrain.client.view.MovingAverageMenuView;
 import ie.brianhenry.veintobrain.client.view.TableView;
 import ie.brianhenry.veintobrain.client.view.TimeRangeMenuView;
-import ie.brianhenry.veintobrain.representations.User;
+import ie.brianhenry.veintobrain.shared.representations.User;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;

@@ -1,8 +1,8 @@
 package ie.brianhenry.veintobrain.client.view;
 
 import ie.brianhenry.veintobrain.client.RpcService;
-import ie.brianhenry.veintobrain.representations.AnalyteStat;
-import ie.brianhenry.veintobrain.representations.AnalyteStat.StatPeriod;
+import ie.brianhenry.veintobrain.shared.representations.AnalyteStat;
+import ie.brianhenry.veintobrain.shared.representations.AnalyteStat.StatPeriod;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

@@ -1,6 +1,6 @@
 package ie.brianhenry.veintobrain.client.events;
 
-import ie.brianhenry.veintobrain.representations.User;
+import ie.brianhenry.veintobrain.shared.representations.User;
 
 import com.google.web.bindery.event.shared.binder.GenericEvent;
 
