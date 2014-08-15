@@ -447,5 +447,21 @@ public class ComputeAnalyteStats {
 		}
 
 	}
+	
+	//TODO include the parameter "analyte" in the final version as shown below
+//	public static double getOverallMean(String analyte, List<AnalyteStat> analyteStats) {
+////	public static double getOverallMean(List<AnalyteDate> allValidAnalyteDates) {
+//		double sum = 0.0;
+//		int count = 0;
+//		for (int i=0; i<analyteStats.size(); i++) {
+//			if (analyteStats.get(i).getAnalyteType().equals(analyte)) {
+//				for (int j=0; j<analyteStats.get(i).getNumericReadings().size(); j++) {
+//					count++;
+//					sum+=analyteStats.get(i).getNumericReadings().get(j);
+//				}
+//			}
+//		}
+//		return (sum/count);
+//	}
 
 }

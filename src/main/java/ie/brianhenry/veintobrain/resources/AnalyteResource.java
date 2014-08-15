@@ -1,6 +1,7 @@
 package ie.brianhenry.veintobrain.resources;
 
 import ie.brianhenry.veintobrain.core.ComputeAnalyteStats;
+import ie.brianhenry.veintobrain.representations.AnalyteConfig;
 import ie.brianhenry.veintobrain.representations.AnalyteDate;
 import ie.brianhenry.veintobrain.representations.AnalyteResult;
 import ie.brianhenry.veintobrain.representations.AnalyteStat;
@@ -54,8 +55,8 @@ public class AnalyteResource {
 		HashMap<LocalDate, AnalyteStat> allDailyAnalyteStats = new HashMap<LocalDate, AnalyteStat>();
 
 		List<AnalyteResult> analyteResultsList;
-		List<AnalyteDate> allVaildAnalyteDates = new ArrayList<AnalyteDate>();
-		List<AnalyteDate> allInVaildAnalyteDates = new ArrayList<AnalyteDate>();
+		List<AnalyteDate> allValidAnalyteDates = new ArrayList<AnalyteDate>();
+		List<AnalyteDate> allInValidAnalyteDates = new ArrayList<AnalyteDate>();
 
 		//the RAW data are here
 		analyteResultsList = pd.getResults();
@@ -71,13 +72,14 @@ public class AnalyteResource {
 		}
 
 		for (LocalDate day : hm.keySet()) {
+			//hm.get(day) shows a Set view of the results in the given "day"
 			AnalyteDate d = new AnalyteDate("psa", day.toDate(), hm.get(day));
 			AnalyteStat s = ComputeAnalyteStats.computeDay(d, "psa");
 			if (s.getIsValid()) {
 				allDailyAnalyteStats.put(day, s);
-				allVaildAnalyteDates.add(d);
+				allValidAnalyteDates.add(d);
 			} else
-				allInVaildAnalyteDates.add(d);
+				allInValidAnalyteDates.add(d);
 		}
 
 		ComputeAnalyteStats.getMovingMeanOfMedian(allDailyAnalyteStats, 50);
@@ -87,6 +89,10 @@ public class AnalyteResource {
 		ComputeAnalyteStats.getMovingMean(allDailyAnalyteStats, 50);
 		ComputeAnalyteStats.getMovingMean(allDailyAnalyteStats, 7);
 		ComputeAnalyteStats.getMovingMean(allDailyAnalyteStats, 20);
+		
+//		AnalyteConfig overallStats = new AnalyteConfig();
+//		overallStats.setAnalyteType("psa");
+//		overallStats.setOverallMean(ComputeAnalyteStats.getOverallMean("psa", allValidAnalyteDates));
 
 		List<AnalyteStat> stats = new ArrayList<AnalyteStat>();
 

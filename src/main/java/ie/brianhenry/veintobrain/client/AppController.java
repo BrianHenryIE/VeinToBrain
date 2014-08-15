@@ -20,7 +20,6 @@ import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.web.bindery.event.shared.binder.EventBinder;
 import com.google.web.bindery.event.shared.binder.EventHandler;
@@ -87,7 +86,7 @@ public class AppController {
 		contentPanel.add(footer);
 	}
 
-	TabLayoutPanel tab = new TabLayoutPanel(1.0, Unit.EM); // leftFrame
+	TabLayoutPanel tab = new TabLayoutPanel(2.5, Unit.EM); // leftFrame
 	AnalyteView av = new AnalyteView(rpcService, eventBus); // centerFrame
 	TableView tv = new TableView(rpcService, eventBus); // centerFrame
 	
@@ -117,7 +116,10 @@ public class AppController {
 		leftFrame.add(new TimeRangeMenuView(rpcService, eventBus));
 		leftFrame.add(new MovingAverageMenuView(rpcService, eventBus));
 
-		tab.setSize("740px", "500px");
+//		tab.getElement().getStyle().setMarginBottom(10.0, Unit.PX);
+		tab.setAnimationDuration(1000);
+		
+//		tab.setSize("740px", "480px");
 		tab.add(av, "Graph");
 //		tab.add(new HTML("that content"), "Table");
 		tab.add(tv, "Table");

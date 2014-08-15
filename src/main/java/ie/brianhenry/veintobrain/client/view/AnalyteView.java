@@ -6,22 +6,15 @@ import ie.brianhenry.veintobrain.representations.AnalyteStat.StatPeriod;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import org.moxieapps.gwt.highcharts.client.Axis.WeekDay;
 import org.moxieapps.gwt.highcharts.client.BaseChart.ZoomType;
-import org.moxieapps.gwt.highcharts.client.Legend;
-import org.moxieapps.gwt.highcharts.client.Legend.Align;
-import org.moxieapps.gwt.highcharts.client.Series.Type;
 import org.moxieapps.gwt.highcharts.client.ContextButton;
 import org.moxieapps.gwt.highcharts.client.Credits;
-import org.moxieapps.gwt.highcharts.client.DateTimeLabelFormats;
 import org.moxieapps.gwt.highcharts.client.Exporting;
-import org.moxieapps.gwt.highcharts.client.Navigation;
+import org.moxieapps.gwt.highcharts.client.Legend;
+import org.moxieapps.gwt.highcharts.client.Legend.Align;
 import org.moxieapps.gwt.highcharts.client.Point;
-import org.moxieapps.gwt.highcharts.client.RangeSelector;
 import org.moxieapps.gwt.highcharts.client.Series;
 import org.moxieapps.gwt.highcharts.client.StockChart;
 
@@ -94,11 +87,7 @@ public class AnalyteView implements IsWidget {
 		chart.addSeries(series3);
 		chartPanel.clear();
 
-		for (int i = 0; i < analyteStats.size(); i++) {
-//			if (analyteStats.get(i).getIncludedDates().get(0).getDate()==1) {
-//				Series month = ;
-//			}
-			
+		for (int i = 0; i < analyteStats.size(); i++) {			
 			if (analyteStats.get(i).getMovingMeanOfMedians().get("7") == null) {
 				series.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(), analyteStats.get(i)
 						.getMovingMeanOfMedians().get("7")));
@@ -121,6 +110,8 @@ public class AnalyteView implements IsWidget {
 						.getMovingMeanOfMedians().get("50"))));
 			}
 		}
+		GWT.log("overall mean="+getOverallMean("psa", analyteStats));
+		
 		chartPanel.add(chart);
 	}
 
@@ -148,5 +139,20 @@ public class AnalyteView implements IsWidget {
 		bd = bd.setScale(2, RoundingMode.HALF_UP);
 		return bd.doubleValue();
 	}
+	
+	public static double getOverallMean(String analyte, List<AnalyteStat> analyteStats) {
+//		public static double getOverallMean(List<AnalyteDate> allValidAnalyteDates) {
+			double sum = 0.0;
+			int count = 0;
+			for (int i=0; i<analyteStats.size(); i++) {
+				if (analyteStats.get(i).getAnalyteType().equals(analyte)) {
+					for (int j=0; j<analyteStats.get(i).getNumericReadings().size(); j++) {
+						count++;
+						sum+=analyteStats.get(i).getNumericReadings().get(j);
+					}
+				}
+			}
+			return (sum/count);
+		}
 
 }
