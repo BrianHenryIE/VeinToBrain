@@ -19,7 +19,7 @@ public interface VeintobrainResources extends ClientBundle {
 		String menuPanel();
 		String appPanel();
 		String helpPanel();
-		String footer();
+		String bottom();
 		String copyright();
 	}
 

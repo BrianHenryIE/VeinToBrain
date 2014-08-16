@@ -54,7 +54,7 @@ public class AppController {
 	FlowPanel centerFrame = new FlowPanel();
 	FlowPanel rightFrame = new FlowPanel();
 	FlowPanel middle = new FlowPanel();
-	FlowPanel footer = new FlowPanel();
+	FlowPanel bottom = new FlowPanel();
 
 	// this line has to be added anytime you use CSS
 	VeintobrainResources resources = VeintobrainResources.INSTANCE;
@@ -69,7 +69,7 @@ public class AppController {
 		leftFrame.addStyleName(resources.css().menuPanel());
 		centerFrame.addStyleName(resources.css().appPanel());
 		rightFrame.addStyleName(resources.css().helpPanel());
-		footer.addStyleName(resources.css().footer());
+		bottom.addStyleName(resources.css().bottom());
 		copyright.addStyleName(resources.css().copyright());
 
 		this.rpcService = rpcService;
@@ -85,7 +85,7 @@ public class AppController {
 		
 		contentPanel.add(top);
 		contentPanel.add(middle);
-		contentPanel.add(footer);
+		contentPanel.add(bottom);
 	}
 
 	TabLayoutPanel tab = new TabLayoutPanel(2.5, Unit.EM); // leftFrame
@@ -137,7 +137,7 @@ public class AppController {
 		rightFrame.add(movingAverageLab);
 		rightFrame.add(statsPanel);
 		
-		footer.add(copyright);
+		bottom.add(copyright);
 	}
 
 	@EventHandler
