@@ -22,12 +22,12 @@ public class ExcelImport {
 	List<AnalyteResult> data = new ArrayList<AnalyteResult>();
 
 	// TODO catch instead of throw
-	public ExcelImport(String analyteType, String filename) throws IOException {
+	public ExcelImport(String analyteType, File file) throws IOException {
 
-		FileInputStream file = new FileInputStream(new File(filename));
+		FileInputStream fileIS = new FileInputStream(file);
 
 		// Get the workbook instance for XLS file
-		workbook = new HSSFWorkbook(file);
+		workbook = new HSSFWorkbook(fileIS);
 
 		// Get first sheet from the workbook
 		HSSFSheet sheet = workbook.getSheetAt(0);

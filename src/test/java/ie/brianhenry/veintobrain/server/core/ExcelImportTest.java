@@ -25,7 +25,7 @@ public class ExcelImportTest {
 		
 		String testFile = "./src/test/resources/B12.xls";
 
-		ExcelImport e = new ExcelImport("B12", testFile);
+		ExcelImport e = new ExcelImport("B12", new File(testFile));
 
 		// Our test file has the third column as the "Result" column
 		
