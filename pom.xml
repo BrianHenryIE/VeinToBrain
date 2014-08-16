@@ -17,13 +17,14 @@
 	<dependencies>
 
 		<dependency>
-			<!-- Although gwt-user is used by both compiles, javax.validation needs 
-				to be excluded on the server side as it clashes with Dropwizard's own dependencies -->
+
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-user</artifactId>
 			<version>${gwt.version}</version>
 			<scope>provided</scope>
 			<exclusions>
+				<!-- javax.validation needs to be excluded as it clashes with Dropwizard's 
+					own dependencies -->
 				<exclusion>
 					<artifactId>validation-api</artifactId>
 					<groupId>javax.validation</groupId>
@@ -84,7 +85,7 @@
 			<id>server</id>
 
 			<properties>
-				<exclude.tests>**/test/**/client/*</exclude.tests>
+				<exclude.tests>**/client/*</exclude.tests>
 			</properties>
 
 			<dependencies>
@@ -230,7 +231,7 @@
 			<id>client</id>
 
 			<properties>
-				<exclude.tests>**/test/**/server/*</exclude.tests>
+				<exclude.tests>**/server/**</exclude.tests>
 			</properties>
 
 			<dependencies>
