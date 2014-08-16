@@ -49,7 +49,7 @@ public class AppController {
 
 	private final FlowPanel contentPanel = new FlowPanel();
 	
-	FlowPanel header = new FlowPanel();
+	FlowPanel top = new FlowPanel();
 	FlowPanel leftFrame = new FlowPanel();
 	FlowPanel centerFrame = new FlowPanel();
 	FlowPanel rightFrame = new FlowPanel();
@@ -63,12 +63,14 @@ public class AppController {
 
 		resources.css().ensureInjected();
 		
-		header.addStyleName(resources.css().header());
+		version.addStyleName(resources.css().version());
+		top.addStyleName(resources.css().top());
 		middle.addStyleName(resources.css().middle());
 		leftFrame.addStyleName(resources.css().menuPanel());
 		centerFrame.addStyleName(resources.css().appPanel());
 		rightFrame.addStyleName(resources.css().helpPanel());
 		footer.addStyleName(resources.css().footer());
+		copyright.addStyleName(resources.css().copyright());
 
 		this.rpcService = rpcService;
 		this.eventBus = eventBus;
@@ -81,7 +83,7 @@ public class AppController {
 		middle.add(centerFrame);
 		middle.add(rightFrame);
 		
-		contentPanel.add(header);
+		contentPanel.add(top);
 		contentPanel.add(middle);
 		contentPanel.add(footer);
 	}
@@ -90,12 +92,14 @@ public class AppController {
 	AnalyteView av = new AnalyteView(rpcService, eventBus); // centerFrame
 	TableView tv = new TableView(rpcService, eventBus); // centerFrame
 	
+	Label version = new Label("Version 1.0");
 	Label summaryLab = new Label("Summary:"); // rightFrame
 	Label analytesLab = new Label(); // rightFrame
 	Label timeRangeLab = new Label(); // rightFrame
 	Label movingAverageLab = new Label(); //rightFrame
 	FlowPanel statsPanel = new FlowPanel(); //rightFrame
 	DisclosurePanel p = new DisclosurePanel("Click to disclose something:");
+	Label copyright = new Label("Copyright © 2014. All rights reserved.");
 
 	public void go(HasWidgets container) {
 
@@ -111,6 +115,8 @@ public class AppController {
 		leftFrame.clear();
 		centerFrame.clear();
 		rightFrame.clear();
+		
+		top.add(version);
 
 		leftFrame.add(new AnalyteMenuView(rpcService, eventBus));
 		leftFrame.add(new TimeRangeMenuView(rpcService, eventBus));
@@ -130,6 +136,8 @@ public class AppController {
 		rightFrame.add(timeRangeLab);
 		rightFrame.add(movingAverageLab);
 		rightFrame.add(statsPanel);
+		
+		footer.add(copyright);
 	}
 
 	@EventHandler

@@ -13,12 +13,14 @@ public interface VeintobrainResources extends ClientBundle {
 
 	public interface Style extends CssResource {
 		
-		String header();
+		String version();
+		String top();
 		String middle();
 		String menuPanel();
 		String appPanel();
 		String helpPanel();
 		String footer();
+		String copyright();
 	}
 
 //	@Source("loading.gif")
