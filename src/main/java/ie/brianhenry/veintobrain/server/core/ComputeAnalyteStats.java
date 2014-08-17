@@ -429,6 +429,7 @@ public class ComputeAnalyteStats {
 		int count = 0;
 
 		for (LocalDate d : statsByDay.keySet()) {
+			count = 0;
 			sum = 0;
 			sum += statsByDay.get(d).getPercentile(0.5);
 			int included = 1;
@@ -441,6 +442,8 @@ public class ComputeAnalyteStats {
 					included++;
 				}
 			}
+			//if the included days in the calculation are equal to the days
+			//that we want to analyse
 			if (included == numberOfDays)
 				statsByDay.get(d).addMovingMean(numberOfDays, (sum / count));
 

@@ -23,7 +23,7 @@ public class AnalyteMenuView implements IsWidget {
 
 		this.eventBus = eventBus;		
 		
-		String[] menuItems = { "folate", "psa", "test", "CO3" };
+		String[] menuItems = { "Folate", "PSA", "B12", "CO3" };
 	
 		for (final String mi : menuItems){
 			Button b = new Button(mi);

@@ -2,13 +2,12 @@ package ie.brianhenry.veintobrain.client;
 
 import ie.brianhenry.veintobrain.client.events.AnalyteMenuEvent;
 import ie.brianhenry.veintobrain.client.events.LoginEvent;
-import ie.brianhenry.veintobrain.client.events.MovingAverageMenuEvent;
 import ie.brianhenry.veintobrain.client.events.TimeRangeMenuEvent;
 import ie.brianhenry.veintobrain.client.resources.VeintobrainResources;
+import ie.brianhenry.veintobrain.client.view.AnalyteMeanView;
+import ie.brianhenry.veintobrain.client.view.AnalyteMedianView;
 import ie.brianhenry.veintobrain.client.view.AnalyteMenuView;
-import ie.brianhenry.veintobrain.client.view.AnalyteView;
 import ie.brianhenry.veintobrain.client.view.LoginClientView;
-import ie.brianhenry.veintobrain.client.view.MovingAverageMenuView;
 import ie.brianhenry.veintobrain.client.view.TableView;
 import ie.brianhenry.veintobrain.client.view.TimeRangeMenuView;
 import ie.brianhenry.veintobrain.shared.representations.User;
@@ -30,7 +29,7 @@ public class AppController {
 	 * Interface which allows to register the event handlers
 	 * 
 	 * @author Daniele
-	 *
+	 * 
 	 */
 	interface MenuEventBinder extends EventBinder<AppController> {
 	}
@@ -48,7 +47,7 @@ public class AppController {
 	EventBus eventBus;
 
 	private final FlowPanel contentPanel = new FlowPanel();
-	
+
 	FlowPanel top = new FlowPanel();
 	FlowPanel leftFrame = new FlowPanel();
 	FlowPanel centerFrame = new FlowPanel();
@@ -62,7 +61,7 @@ public class AppController {
 	public AppController(RpcService rpcService, EventBus eventBus) {
 
 		resources.css().ensureInjected();
-		
+
 		version.addStyleName(resources.css().version());
 		top.addStyleName(resources.css().top());
 		middle.addStyleName(resources.css().middle());
@@ -76,28 +75,28 @@ public class AppController {
 		this.eventBus = eventBus;
 
 		eventBinder.bindEventHandlers(this, eventBus);
-//		middle.setSize("1000px", "1000px");
-//		middle.setHeight("510px");
-		
+		// middle.setSize("1000px", "1000px");
+		// middle.setHeight("510px");
+
 		middle.add(leftFrame);
 		middle.add(centerFrame);
 		middle.add(rightFrame);
-		
+
 		contentPanel.add(top);
 		contentPanel.add(middle);
 		contentPanel.add(bottom);
 	}
 
 	TabLayoutPanel tab = new TabLayoutPanel(2.5, Unit.EM); // leftFrame
-	AnalyteView av = new AnalyteView(rpcService, eventBus); // centerFrame
+	AnalyteMeanView avMean = new AnalyteMeanView(rpcService, eventBus); // centerFrame
+	AnalyteMedianView avMedian = new AnalyteMedianView(rpcService, eventBus); // centerFrame
 	TableView tv = new TableView(rpcService, eventBus); // centerFrame
-	
+
 	Label version = new Label("Version 1.0");
 	Label summaryLab = new Label("Summary:"); // rightFrame
 	Label analytesLab = new Label(); // rightFrame
 	Label timeRangeLab = new Label(); // rightFrame
-	Label movingAverageLab = new Label(); //rightFrame
-	FlowPanel statsPanel = new FlowPanel(); //rightFrame
+	FlowPanel statsPanel = new FlowPanel(); // rightFrame
 	DisclosurePanel p = new DisclosurePanel("Click to disclose something:");
 	Label copyright = new Label("Copyright © 2014. All rights reserved.");
 
@@ -115,49 +114,47 @@ public class AppController {
 		leftFrame.clear();
 		centerFrame.clear();
 		rightFrame.clear();
-		
+
 		top.add(version);
 
 		leftFrame.add(new AnalyteMenuView(rpcService, eventBus));
 		leftFrame.add(new TimeRangeMenuView(rpcService, eventBus));
-		leftFrame.add(new MovingAverageMenuView(rpcService, eventBus));
 
-//		tab.getElement().getStyle().setMarginBottom(10.0, Unit.PX);
+		// tab.getElement().getStyle().setMarginBottom(10.0, Unit.PX);
 		tab.setAnimationDuration(1000);
-		
-//		tab.setSize("740px", "480px");
-		tab.add(av, "Graph");
-//		tab.add(new HTML("that content"), "Table");
+
+		// tab.setSize("740px", "480px");
+		tab.add(avMean, "Moving means");
+		tab.add(avMedian, "Moving medians");
+		// tab.add(new HTML("that content"), "Table");
 		tab.add(tv, "Table");
+
 		centerFrame.add(tab);
 
 		rightFrame.add(summaryLab);
 		rightFrame.add(analytesLab);
 		rightFrame.add(timeRangeLab);
-		rightFrame.add(movingAverageLab);
 		rightFrame.add(statsPanel);
-		
+
 		bottom.add(copyright);
 	}
 
 	@EventHandler
 	void OnShow(AnalyteMenuEvent event) {
-		av.setAnalyte(event.getAnalyte());
+		avMean.setAnalyte(event.getAnalyte());
+		avMedian.setAnalyte(event.getAnalyte());
 		tv.setAnalyte(event.getAnalyte());
-		analytesLab.setText("Analyte: "+event.getAnalyte());
+		analytesLab.setText("Analyte: " + event.getAnalyte());
 		statsPanel.clear();
 		statsPanel.add(new Label("Long term mean:"));
 		statsPanel.add(new Label("Reference interval:"));
 		statsPanel.add(new Label("Average number of daily tests:"));
 		statsPanel.add(new Label("Representative CV for stable periods:"));
 	}
+	
 	@EventHandler
 	void OnShow(TimeRangeMenuEvent event) {
-		timeRangeLab.setText("Time Range: "+event.getTimeRange());
-	}
-	@EventHandler
-	void OnShow(MovingAverageMenuEvent event) {
-		movingAverageLab.setText("Moving Average: "+event.getMovingAverage());
+		timeRangeLab.setText("Time Range: " + event.getTimeRange());
 	}
 
 }
