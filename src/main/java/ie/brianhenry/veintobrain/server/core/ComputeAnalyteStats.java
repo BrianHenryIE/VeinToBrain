@@ -45,7 +45,6 @@ public class ComputeAnalyteStats {
 	 * @return
 	 */
 	public static boolean isValidDate(LocalDate date) {
-
 		return (date.getDayOfWeek() > 1 && date.getDayOfWeek() < 7 && !holidates.contains(date));
 	}
 

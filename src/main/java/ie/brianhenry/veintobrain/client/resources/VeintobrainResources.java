@@ -13,6 +13,7 @@ public interface VeintobrainResources extends ClientBundle {
 
 	public interface Style extends CssResource {
 		
+		String summaryLab();
 		String version();
 		String top();
 		String middle();

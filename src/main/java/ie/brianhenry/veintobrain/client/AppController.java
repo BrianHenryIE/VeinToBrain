@@ -7,14 +7,20 @@ import ie.brianhenry.veintobrain.client.resources.VeintobrainResources;
 import ie.brianhenry.veintobrain.client.view.AnalyteMeanView;
 import ie.brianhenry.veintobrain.client.view.AnalyteMedianView;
 import ie.brianhenry.veintobrain.client.view.AnalyteMenuView;
+import ie.brianhenry.veintobrain.client.view.ExtremesView;
 import ie.brianhenry.veintobrain.client.view.LoginClientView;
+import ie.brianhenry.veintobrain.client.view.RangeView;
+import ie.brianhenry.veintobrain.client.view.StatsView;
 import ie.brianhenry.veintobrain.client.view.TableView;
-import ie.brianhenry.veintobrain.client.view.TimeRangeMenuView;
+import ie.brianhenry.veintobrain.client.view.OptionMenuView;
 import ie.brianhenry.veintobrain.shared.representations.User;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -54,6 +60,7 @@ public class AppController {
 	FlowPanel rightFrame = new FlowPanel();
 	FlowPanel middle = new FlowPanel();
 	FlowPanel bottom = new FlowPanel();
+	Button plot = new Button("Plot");
 
 	// this line has to be added anytime you use CSS
 	VeintobrainResources resources = VeintobrainResources.INSTANCE;
@@ -62,6 +69,7 @@ public class AppController {
 
 		resources.css().ensureInjected();
 
+		summaryLab.addStyleName(resources.css().summaryLab());
 		version.addStyleName(resources.css().version());
 		top.addStyleName(resources.css().top());
 		middle.addStyleName(resources.css().middle());
@@ -86,15 +94,17 @@ public class AppController {
 		contentPanel.add(middle);
 		contentPanel.add(bottom);
 	}
+	
+	
+//	AnalyteMenuView amv = new AnalyteMenuView(rpcService, eventBus);
 
-	TabLayoutPanel tab = new TabLayoutPanel(2.5, Unit.EM); // leftFrame
+	TabLayoutPanel tab = new TabLayoutPanel(2.5, Unit.EM); // centerFrame
 	AnalyteMeanView avMean = new AnalyteMeanView(rpcService, eventBus); // centerFrame
 	AnalyteMedianView avMedian = new AnalyteMedianView(rpcService, eventBus); // centerFrame
 	TableView tv = new TableView(rpcService, eventBus); // centerFrame
 
 	Label version = new Label("Version 1.0");
-	Label summaryLab = new Label("Summary:"); // rightFrame
-	Label analytesLab = new Label(); // rightFrame
+	Label summaryLab = new Label("Summary"); // rightFrame
 	Label timeRangeLab = new Label(); // rightFrame
 	FlowPanel statsPanel = new FlowPanel(); // rightFrame
 	DisclosurePanel p = new DisclosurePanel("Click to disclose something:");
@@ -115,24 +125,33 @@ public class AppController {
 		centerFrame.clear();
 		rightFrame.clear();
 
+		plot.setSize("200px", "40px");
+//		plot.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				eventBus.fireEvent(new AnalyteMenuEvent(mi));
+//			}
+//		});
+
 		top.add(version);
 
 		leftFrame.add(new AnalyteMenuView(rpcService, eventBus));
-		leftFrame.add(new TimeRangeMenuView(rpcService, eventBus));
-
-		// tab.getElement().getStyle().setMarginBottom(10.0, Unit.PX);
+		leftFrame.add(new OptionMenuView(rpcService, eventBus));
+		leftFrame.add(new RangeView(rpcService, eventBus));
+		leftFrame.add(plot);
 		tab.setAnimationDuration(1000);
 
 		// tab.setSize("740px", "480px");
 		tab.add(avMean, "Moving means");
 		tab.add(avMedian, "Moving medians");
-		// tab.add(new HTML("that content"), "Table");
 		tab.add(tv, "Table");
 
 		centerFrame.add(tab);
 
 		rightFrame.add(summaryLab);
-		rightFrame.add(analytesLab);
+		rightFrame.add(new StatsView(rpcService, eventBus));
+		rightFrame.add(new ExtremesView(rpcService, eventBus));
+
 		rightFrame.add(timeRangeLab);
 		rightFrame.add(statsPanel);
 
@@ -144,14 +163,9 @@ public class AppController {
 		avMean.setAnalyte(event.getAnalyte());
 		avMedian.setAnalyte(event.getAnalyte());
 		tv.setAnalyte(event.getAnalyte());
-		analytesLab.setText("Analyte: " + event.getAnalyte());
 		statsPanel.clear();
-		statsPanel.add(new Label("Long term mean:"));
-		statsPanel.add(new Label("Reference interval:"));
-		statsPanel.add(new Label("Average number of daily tests:"));
-		statsPanel.add(new Label("Representative CV for stable periods:"));
 	}
-	
+
 	@EventHandler
 	void OnShow(TimeRangeMenuEvent event) {
 		timeRangeLab.setText("Time Range: " + event.getTimeRange());

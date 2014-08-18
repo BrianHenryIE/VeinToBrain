@@ -1,4 +1,4 @@
-@external gwt-TabLayoutPanel,gwt-TabLayoutPanelTabs,gwt-DisclosurePanel,gwt-Label,gwt-Button, gwt-DisclosurePanel .header td,gwt-DisclosurePanel .header a, gwt-DisclosurePanel .header, gwt-DisclosurePanel .content;
+@external gwt-TabLayoutPanel,gwt-TabLayoutPanelTabs,gwt-DisclosurePanel,gwt-Label,gwt-Button, gwt-DisclosurePanel .header td,gwt-DisclosurePanel .header a, gwt-DisclosurePanel .header, gwt-DisclosurePanel .content, gwt-RadioBox;
 
 /* Elements */
 
@@ -10,6 +10,10 @@
 
 .gwt-Button:active {
   border: 2px solid #153e72;
+}
+
+.gwt-Button {
+	margin-left: 25px;
 }
 
 .gwt-DisclosurePanel {
@@ -96,12 +100,14 @@ margin-left: 6px;
 	float: left;
 	position: absolute;
 	width: 250px;
-	height: 500px;
+	height: 480px;
 	background: #ccc;
 	border-radius: 15px 15px 15px 15px;
 	-moz-border-radius : 15px 15px 15px	15px;
 	-webkit-border-radius : 15px 15px 15px 15px;
 	border: 0px solid #6a92b5;
+	padding-top: 20px;
+	
 }
 
 .appPanel {
@@ -129,6 +135,12 @@ margin-left: 6px;
 	border: 0px solid #6a92b5;
 	-moz-border-radius: 15px 15px 15px 15px;
 	-webkit-border-radius: 15px 15px 15px 15px;
+}
+
+.summaryLab {
+	margin-left: 23px;
+	color: white;
+	margin-bottom: 4px
 }
 
 /* Footer
