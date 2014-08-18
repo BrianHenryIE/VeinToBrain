@@ -4,11 +4,10 @@ import ie.brianhenry.veintobrain.client.RpcService;
 import ie.brianhenry.veintobrain.shared.representations.AnalyteStat;
 import ie.brianhenry.veintobrain.shared.representations.AnalyteStat.StatPeriod;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.moxieapps.gwt.highcharts.client.BaseChart.ZoomType;
@@ -17,14 +16,9 @@ import org.moxieapps.gwt.highcharts.client.Credits;
 import org.moxieapps.gwt.highcharts.client.Exporting;
 import org.moxieapps.gwt.highcharts.client.Legend;
 import org.moxieapps.gwt.highcharts.client.Legend.Align;
-import org.moxieapps.gwt.highcharts.client.PlotLine;
-import org.moxieapps.gwt.highcharts.client.PlotLine.DashStyle;
-import org.moxieapps.gwt.highcharts.client.labels.PlotLineLabel;
 import org.moxieapps.gwt.highcharts.client.Point;
 import org.moxieapps.gwt.highcharts.client.Series;
 import org.moxieapps.gwt.highcharts.client.StockChart;
-import org.moxieapps.gwt.highcharts.client.XAxis;
-import org.moxieapps.gwt.highcharts.client.YAxis;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -90,9 +84,9 @@ public class AnalyteMedianView implements IsWidget {
 		series3 = chart.createSeries();
 		mean = chart.createSeries();
 
-		series.setName("7 day mean of medians");
-		series2.setName("20 day mean of medians");
-		series3.setName("50 day mean of medians");
+		series.setName("7 day moving median");
+		series2.setName("20 day moving median");
+		series3.setName("50 day moving medians");
 		mean.setName("Overall median");
 
 		chart.addSeries(series);
@@ -102,34 +96,34 @@ public class AnalyteMedianView implements IsWidget {
 
 		chartPanel.clear();
 
-//		double overMedian = round(getOverallMedian("psa", analyteStats));
+		double overMedian = round(getOverallMedian("psa", analyteStats));
 
 		for (int i = 0; i < analyteStats.size(); i++) {
-//			 mean.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(),overMedian));
-			if (analyteStats.get(i).getMovingMeanOfMedians().get("7") == null) {
+			mean.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(), overMedian));
+			if (analyteStats.get(i).getMovingMedian().get("7") == null) {
 				series.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(), analyteStats.get(i)
-						.getMovingMeanOfMedians().get("7")));
+						.getMovingMedian().get("7")));
 			} else {
 				series.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(), round(analyteStats.get(i)
-						.getMovingMeanOfMedians().get("7"))));
+						.getMovingMedian().get("7"))));
 			}
-			if (analyteStats.get(i).getMovingMeanOfMedians().get("20") == null) {
+			if (analyteStats.get(i).getMovingMedian().get("20") == null) {
 				series2.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(), analyteStats.get(i)
-						.getMovingMeanOfMedians().get("20")));
+						.getMovingMedian().get("20")));
 			} else {
 				series2.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(), round(analyteStats.get(i)
-						.getMovingMeanOfMedians().get("20"))));
+						.getMovingMedian().get("20"))));
 			}
-			if (analyteStats.get(i).getMovingMeanOfMedians().get("50") == null) {
+			if (analyteStats.get(i).getMovingMedian().get("50") == null) {
 				series3.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(), analyteStats.get(i)
-						.getMovingMeanOfMedians().get("50")));
+						.getMovingMedian().get("50")));
 			} else {
 				series3.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(), round(analyteStats.get(i)
-						.getMovingMeanOfMedians().get("50"))));
+						.getMovingMedian().get("50"))));
 			}
 		}
 
-//		GWT.log("overall median=" + getOverallMedian("psa", analyteStats));
+		GWT.log("overall median=" + round(getOverallMedian("psa", analyteStats)));
 
 		chartPanel.add(chart);
 	}
@@ -159,42 +153,25 @@ public class AnalyteMedianView implements IsWidget {
 		return bd.doubleValue();
 	}
 
-	// TODO compute the overall MEDIAN
-//	public static double getOverallMedian(String analyte, List<AnalyteStat> analyteStats) {
+	public static double getOverallMedian(String analyte, List<AnalyteStat> analyteStats) {
 
-//		List<Double> sortedArray = new ArrayList<Double>();
-//		double[] sortedArray = new double[getDim(analyte, analyteStats)];
-		
-//		for (int i = 0; i < analyteStats.size(); i++) {
-//			if (analyteStats.get(i).getAnalyteType().equals(analyte)) {
-//				for (int j = 0; j < analyteStats.get(i).getNumericReadings().size(); j++) {
-//					sortedArray.add(analyteStats.get(i).getNumericReadings().get(j);
-//				}
-//			}
-//		}
-//		double[] sorted = Arrays.sort(sortedArray);
-//		Arrays.sort(sortedArray);
-//		
-//		int middle = sortedArray.size()/2;
-//		GWT.log("middle="+middle);
-//	    if (sortedArray.size()%2 == 1) {
-//	        return sortedArray.get(middle);
-//	    } else {
-//	        return (sortedArray.get(middle-1) + sortedArray.get(middle) / 2.0);
-//	    }
-//	}
-	
-	private static int getDim (String analyte, List<AnalyteStat> analyteStats) {
-		int count = 0;
+		List<Double> sortedArray = new ArrayList<Double>();
+
 		for (int i = 0; i < analyteStats.size(); i++) {
 			if (analyteStats.get(i).getAnalyteType().equals(analyte)) {
 				for (int j = 0; j < analyteStats.get(i).getNumericReadings().size(); j++) {
-					count++;
+					sortedArray.add(analyteStats.get(i).getNumericReadings().get(j));
 				}
 			}
 		}
 
-		return (count);
+		Collections.sort(sortedArray);
+		int middle = sortedArray.size() / 2;
+		if (sortedArray.size() % 2 == 1) {
+			return sortedArray.get(middle);
+		} else {
+			return (sortedArray.get(middle - 1) + sortedArray.get(middle) / 2.0);
+		}
 	}
 
 }

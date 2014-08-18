@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -18,6 +19,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import com.google.common.primitives.Doubles;
+import com.google.gwt.core.shared.GWT;
 
 // TODO Do we need to filter out ICQ samples??? 
 
@@ -44,7 +46,7 @@ public class ComputeAnalyteStats {
 	 */
 	public static boolean isValidDate(LocalDate date) {
 
-		return (date.getDayOfWeek() < 6 && !holidates.contains(date));
+		return (date.getDayOfWeek() > 1 && date.getDayOfWeek() < 7 && !holidates.contains(date));
 	}
 
 	private static List<LocalDate> holidates = new ArrayList<LocalDate>();
@@ -333,6 +335,22 @@ public class ComputeAnalyteStats {
 
 		return round(calc, 3);
 	}
+	
+	public static double percentile(List<Double> readings, double percentile) {
+
+		if (percentile > 1)
+			percentile = percentile / 100;
+
+		// Repeatedly sorting it is inefficient but not as hard as sorting it
+		// for the first time each time
+		Collections.sort(readings);
+
+		double pIndex = 1 + percentile * (readings.size() - 1) - 1;
+
+		double calc = readings.get((int)pIndex) + (pIndex % 1) * (readings.get((int) (pIndex + 1)) - readings.get((int) pIndex));
+
+		return round(calc, 3);
+	}
 
 	/**
 	 * @param str
@@ -442,29 +460,36 @@ public class ComputeAnalyteStats {
 					included++;
 				}
 			}
-			//if the included days in the calculation are equal to the days
-			//that we want to analyse
+			// if the included days in the calculation are equal to the days
+			// that we want to analyse
 			if (included == numberOfDays)
 				statsByDay.get(d).addMovingMean(numberOfDays, (sum / count));
 
 		}
 
 	}
-	
-	//TODO include the parameter "analyte" in the final version as shown below
-//	public static double getOverallMean(String analyte, List<AnalyteStat> analyteStats) {
-////	public static double getOverallMean(List<AnalyteDate> allValidAnalyteDates) {
-//		double sum = 0.0;
-//		int count = 0;
-//		for (int i=0; i<analyteStats.size(); i++) {
-//			if (analyteStats.get(i).getAnalyteType().equals(analyte)) {
-//				for (int j=0; j<analyteStats.get(i).getNumericReadings().size(); j++) {
-//					count++;
-//					sum+=analyteStats.get(i).getNumericReadings().get(j);
-//				}
-//			}
-//		}
-//		return (sum/count);
-//	}
+
+	public static void getMovingMedian(HashMap<LocalDate, AnalyteStat> statsByDay, int numberOfDays) {
+
+		for (LocalDate d : statsByDay.keySet()) {
+			List<Double> sortedArray = new ArrayList<Double>();
+			sortedArray.add(statsByDay.get(d).getPercentile(0.5));
+			int included = 1;
+			for (int i = 1; i < (3 * numberOfDays) && included < numberOfDays; i++) {
+				if (statsByDay.get(d.minusDays(i)) != null && statsByDay.get(d.minusDays(i)).getIsValid()) {
+					for (double reading : statsByDay.get(d.minusDays(i)).getNumericReadings()) {
+						sortedArray.add(reading);
+					}
+					included++;
+				}
+			}
+			// if the included days in the calculation are equal to the days
+			// that we want to analyse
+			if (included == numberOfDays) {
+				statsByDay.get(d).addMovingMedian(numberOfDays, percentile(sortedArray, 0.5));
+//				statsByDay.get(d).addMovingMedian(numberOfDays, getMedian(sortedArray));
+			}
+		}
+	}
 
 }

@@ -98,6 +98,8 @@ public class AnalyteStat implements JsonSerializable, Comparable<AnalyteStat> {
 	private HashMap<String, Double> movingMeanOfMedians = new HashMap<String, Double>();
 
 	private HashMap<String, Double> movingMean = new HashMap<String, Double>();
+	
+	private HashMap<String, Double> movingMedian = new HashMap<String, Double>();
 
 	public enum StatPeriod {
 		DAY, WEEK, MONTH, YEAR, OVERALL
@@ -188,6 +190,10 @@ public class AnalyteStat implements JsonSerializable, Comparable<AnalyteStat> {
 	public HashMap<String, Double> getMovingMean() {
 		return movingMean;
 	}
+	
+	public HashMap<String, Double> getMovingMedian() {
+		return movingMedian;
+	}
 
 	public void setMovingMean(HashMap<String, Double> movingMean) {
 		this.movingMean = movingMean;
@@ -195,6 +201,10 @@ public class AnalyteStat implements JsonSerializable, Comparable<AnalyteStat> {
 
 	public void setMovingMeanOfMedians(HashMap<String, Double> movingMean) {
 		this.movingMeanOfMedians = movingMean;
+	}
+	
+	public void setMovingMedian(HashMap<String, Double> movingMedian) {
+		this.movingMedian = movingMedian;
 	}
 
 	public void setMovingMean(String length, Double value) {
@@ -408,6 +418,10 @@ public class AnalyteStat implements JsonSerializable, Comparable<AnalyteStat> {
 
 	public void addMovingMean(int numDays, double value) {
 		movingMean.put(Integer.toString(numDays), value);
+	}
+	
+	public void addMovingMedian(int numDays, double value) {
+		movingMedian.put(Integer.toString(numDays), value);
 	}
 
 	@Override

@@ -82,17 +82,17 @@ public class AnalyteResource {
 				allInValidAnalyteDates.add(d);
 		}
 
-		ComputeAnalyteStats.getMovingMeanOfMedian(allDailyAnalyteStats, 50);
-		ComputeAnalyteStats.getMovingMeanOfMedian(allDailyAnalyteStats, 7);
-		ComputeAnalyteStats.getMovingMeanOfMedian(allDailyAnalyteStats, 20);
+//		ComputeAnalyteStats.getMovingMeanOfMedian(allDailyAnalyteStats, 50);
+//		ComputeAnalyteStats.getMovingMeanOfMedian(allDailyAnalyteStats, 7);
+//		ComputeAnalyteStats.getMovingMeanOfMedian(allDailyAnalyteStats, 20);
+		
+		ComputeAnalyteStats.getMovingMedian(allDailyAnalyteStats, 50);
+		ComputeAnalyteStats.getMovingMedian(allDailyAnalyteStats, 7);
+		ComputeAnalyteStats.getMovingMedian(allDailyAnalyteStats, 20);
 
 		ComputeAnalyteStats.getMovingMean(allDailyAnalyteStats, 50);
 		ComputeAnalyteStats.getMovingMean(allDailyAnalyteStats, 7);
 		ComputeAnalyteStats.getMovingMean(allDailyAnalyteStats, 20);
-		
-//		AnalyteConfig overallStats = new AnalyteConfig();
-//		overallStats.setAnalyteType("psa");
-//		overallStats.setOverallMean(ComputeAnalyteStats.getOverallMean("psa", allValidAnalyteDates));
 
 		List<AnalyteStat> stats = new ArrayList<AnalyteStat>();
 

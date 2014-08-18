@@ -56,7 +56,7 @@ public class AnalyteMeanView implements IsWidget {
 	}
 
 	private void setChart(String analyte) {
-		
+
 		ContextButton contextButton = new ContextButton();
 		contextButton.setText("Export");
 
@@ -67,14 +67,14 @@ public class AnalyteMeanView implements IsWidget {
 		Exporting exporting = new Exporting();
 		exporting.setEnabled(true);
 		exporting.setContextButton(contextButton);
-		
+
 		Legend legend = new Legend();
 		legend.setEnabled(true);
 		legend.setAlign(Align.CENTER);
-		
+
 		chart = new StockChart().setChartTitleText(analyte);
 		chart.setCredits(credits);
-//		chart.setSize("800px", "500px");
+		// chart.setSize("800px", "500px");
 		chart.setSizeToMatchContainer();
 		chart.setZoomType(ZoomType.X_AND_Y);
 		chart.setExporting(exporting);
@@ -96,24 +96,24 @@ public class AnalyteMeanView implements IsWidget {
 		chart.addSeries(series3);
 		chart.addSeries(mean);
 		chartPanel.clear();
-		
-		double overMean = round(getOverallMean("psa", analyteStats));
-//		YAxis xAxis = chart.getYAxis();
-//		xAxis.setPlotLines(
-//				       xAxis.createPlotLine()
-//				          .setColor("#CC0000")
-//				          .setValue(overMean)
-//				          .setWidth(2)
-//				          .setDashStyle(DashStyle.DASH)
-//				          .setLabel(new PlotLineLabel()
-//				        		  .setText("Overall mean"))
-//				);
 
-		for (int i = 0; i < analyteStats.size(); i++) {		
-			mean.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(),overMean));
+		double overMean = round(getOverallMean("psa", analyteStats));
+		// YAxis xAxis = chart.getYAxis();
+		// xAxis.setPlotLines(
+		// xAxis.createPlotLine()
+		// .setColor("#CC0000")
+		// .setValue(overMean)
+		// .setWidth(2)
+		// .setDashStyle(DashStyle.DASH)
+		// .setLabel(new PlotLineLabel()
+		// .setText("Overall mean"))
+		// );
+
+		for (int i = 0; i < analyteStats.size(); i++) {
+			mean.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(), overMean));
 			if (analyteStats.get(i).getMovingMean().get("7") == null) {
-				series.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(), analyteStats.get(i)
-						.getMovingMean().get("7")));
+				series.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(), analyteStats.get(i).getMovingMean()
+						.get("7")));
 			} else {
 				series.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(), round(analyteStats.get(i)
 						.getMovingMean().get("7"))));
@@ -133,9 +133,9 @@ public class AnalyteMeanView implements IsWidget {
 						.getMovingMean().get("50"))));
 			}
 		}
-		
-		GWT.log("overall mean="+round(getOverallMean("psa", analyteStats)));
-		
+
+		GWT.log("overall mean=" + round(getOverallMean("psa", analyteStats)));
+
 		chartPanel.add(chart);
 	}
 
@@ -163,20 +163,19 @@ public class AnalyteMeanView implements IsWidget {
 		bd = bd.setScale(2, RoundingMode.HALF_UP);
 		return bd.doubleValue();
 	}
-	
+
 	public static double getOverallMean(String analyte, List<AnalyteStat> analyteStats) {
-//		public static double getOverallMean(List<AnalyteDate> allValidAnalyteDates) {
-			double sum = 0.0;
-			int count = 0;
-			for (int i=0; i<analyteStats.size(); i++) {
-				if (analyteStats.get(i).getAnalyteType().equals(analyte)) {
-					for (int j=0; j<analyteStats.get(i).getNumericReadings().size(); j++) {
-						count++;
-						sum+=analyteStats.get(i).getNumericReadings().get(j);
-					}
+		double sum = 0.0;
+		int count = 0;
+		for (int i = 0; i < analyteStats.size(); i++) {
+			if (analyteStats.get(i).getAnalyteType().equals(analyte)) {
+				for (int j = 0; j < analyteStats.get(i).getNumericReadings().size(); j++) {
+					count++;
+					sum += analyteStats.get(i).getNumericReadings().get(j);
 				}
 			}
-			return (sum/count);
 		}
+		return (sum / count);
+	}
 
 }
