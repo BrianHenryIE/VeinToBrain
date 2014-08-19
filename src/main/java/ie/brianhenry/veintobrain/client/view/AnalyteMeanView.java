@@ -47,6 +47,9 @@ public class AnalyteMeanView implements IsWidget {
 	Series series2;
 	Series series3;
 	Series mean;
+	
+	double maxDiff750;
+	double minDiff750;
 
 	public AnalyteMeanView(RpcService rpcService, EventBus eventBus) {
 		this.rpcService = rpcService;
@@ -108,6 +111,13 @@ public class AnalyteMeanView implements IsWidget {
 		// .setLabel(new PlotLineLabel()
 		// .setText("Overall mean"))
 		// );
+		
+		//TODO
+		double val7 = 0;
+		double val50 = 0;
+		
+		setMaxDiff750(0);
+		setMinDiff750(Double.MAX_VALUE);
 
 		for (int i = 0; i < analyteStats.size(); i++) {
 			mean.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(), overMean));
@@ -131,9 +141,17 @@ public class AnalyteMeanView implements IsWidget {
 			} else {
 				series3.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(), round(analyteStats.get(i)
 						.getMovingMean().get("50"))));
+				//TODO
+				val7 = round(analyteStats.get(i).getMovingMean().get("7"));
+				//TODO
+				val50 = round(analyteStats.get(i).getMovingMean().get("50"));
 			}
+			//TODO
+			if (Math.abs(val50-val7)>maxDiff750) setMaxDiff750(Math.abs(val50-val7));
+			else if (Math.abs(val50-val7)<minDiff750) setMinDiff750(Math.abs(val50-val7));
 		}
-
+		GWT.log("maxdist="+getMaxDiff750());
+		GWT.log("mindist="+getMinDiff750());
 		GWT.log("overall mean=" + round(getOverallMean("psa", analyteStats)));
 
 		chartPanel.add(chart);
@@ -164,6 +182,13 @@ public class AnalyteMeanView implements IsWidget {
 		return bd.doubleValue();
 	}
 
+	public String getOverallMean(String analyte) {
+		Double mean = round(getOverallMean("psa", analyteStats));
+		// GWT.log("MEAN="+mean);
+		String m = mean.toString();
+		return m;
+	}
+
 	public static double getOverallMean(String analyte, List<AnalyteStat> analyteStats) {
 		double sum = 0.0;
 		int count = 0;
@@ -176,6 +201,146 @@ public class AnalyteMeanView implements IsWidget {
 			}
 		}
 		return (sum / count);
+	}
+
+	public String standardDev(String analyte) {
+		Double sd = round(standardDev("psa", analyteStats));
+		// GWT.log("MEAN="+mean);
+		String m = sd.toString();
+		return m;
+	}
+
+	public static double standardDev(String analyte, List<AnalyteStat> analyteStats) {
+		double sum = 0.0;
+		int count = 0;
+		double mean = getOverallMean(analyte, analyteStats);
+		for (int i = 0; i < analyteStats.size(); i++) {
+			if (analyteStats.get(i).getAnalyteType().equals(analyte)) {
+				for (int j = 0; j < analyteStats.get(i).getNumericReadings().size(); j++) {
+					count++;
+					double val = analyteStats.get(i).getNumericReadings().get(j);
+					sum += Math.pow(val - mean, 2);
+				}
+			}
+		}
+		GWT.log("sd=" + Math.sqrt(sum / count));
+		return (Math.sqrt(sum / count));
+	}
+
+	public String variance(String analyte) {
+		Double sd = round(variance("psa", analyteStats));
+		// GWT.log("MEAN="+mean);
+		String m = sd.toString();
+		return m;
+	}
+
+	public static double variance(String analyte, List<AnalyteStat> analyteStats) {
+		double sum = 0.0;
+		int count = 0;
+		double mean = getOverallMean(analyte, analyteStats);
+		for (int i = 0; i < analyteStats.size(); i++) {
+			if (analyteStats.get(i).getAnalyteType().equals(analyte)) {
+				for (int j = 0; j < analyteStats.get(i).getNumericReadings().size(); j++) {
+					count++;
+					sum += Math.pow(analyteStats.get(i).getNumericReadings().get(j) - mean, 2);
+					// analyteStats.get(i).getNumericReadings().get(j);
+				}
+			}
+		}
+		GWT.log("var=" + (sum / count));
+		return (sum / count);
+	}
+
+	public String avgDailyTests(String analyte) {
+		Double avg = round(avgDailyTests("psa", analyteStats));
+		// GWT.log("MEAN="+mean);
+		String m = avg.toString();
+		return m;
+	}
+
+	public static double avgDailyTests(String analyte, List<AnalyteStat> analyteStats) {
+		int sum = 0;
+		int count = 0;
+		for (int i = 0; i < analyteStats.size(); i++) {
+			if (analyteStats.get(i).getAnalyteType().equals(analyte)) {
+				count++;
+				sum += analyteStats.get(i).getNumericReadings().size();
+
+			}
+		}
+		return (sum / count);
+	}
+
+	public String maxValue(String analyte) {
+		Double max = round(maxValue("psa", analyteStats));
+		// GWT.log("MEAN="+mean);
+		String m = max.toString();
+		return m;
+	}
+
+	public static double maxValue(String analyte, List<AnalyteStat> analyteStats) {
+		
+		double max = 0;
+		
+		for (int i = 0; i < analyteStats.size(); i++) {
+			if (analyteStats.get(i).getAnalyteType().equals(analyte)) {
+				for (int j = 0; j < analyteStats.get(i).getNumericReadings().size(); j++) {
+					double val = analyteStats.get(i).getNumericReadings().get(j);
+					if (val >= max) max = val;
+				}
+			}
+		}
+		return (max);
+	}
+	
+	public String minValue(String analyte) {
+		Double min = round(minValue("psa", analyteStats));
+		// GWT.log("MEAN="+mean);
+		String m = min.toString();
+		return m;
+	}
+
+	public static double minValue(String analyte, List<AnalyteStat> analyteStats) {
+		
+		double min = 0;
+		
+		for (int i = 0; i < analyteStats.size(); i++) {
+			if (analyteStats.get(i).getAnalyteType().equals(analyte)) {
+				for (int j = 0; j < analyteStats.get(i).getNumericReadings().size(); j++) {
+					double val = analyteStats.get(i).getNumericReadings().get(j);
+					if (val <= min) min = val;
+				}
+			}
+		}
+		return (min);
+	}
+	
+	public double getMaxDiff750() {
+		return maxDiff750;
+	}
+	
+	public String getMaxDiff750s() {
+		Double mad = round(getMaxDiff750());
+		String m = mad.toString();
+		return m;
+	}
+
+	public void setMaxDiff750(double maxDiff750) {
+		this.maxDiff750 = maxDiff750;
+	}
+
+	public double getMinDiff750() {
+		return minDiff750;
+	}
+	
+	public String getMinDiff750s() {
+		Double mid = round(getMinDiff750());
+		String m = mid.toString();
+		return m;
+	}
+
+	public void setMinDiff750(double minDiff750) {
+		this.minDiff750 = minDiff750;
 	}
 
 }

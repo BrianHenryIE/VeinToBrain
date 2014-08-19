@@ -1,5 +1,7 @@
 package ie.brianhenry.veintobrain.client.events;
 
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.web.bindery.event.shared.binder.GenericEvent;
 
 /**

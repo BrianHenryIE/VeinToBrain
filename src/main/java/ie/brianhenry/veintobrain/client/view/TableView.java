@@ -69,17 +69,9 @@ public class TableView implements IsWidget {
 		
 		chartPanel.clear();
 		
-		List<String> categories = new ArrayList<String>();
 		for (int i = 0; i < analyteStats.size(); i++) {
 			table.setText(i+1, 0, "test");
-
-//			for(int j = 0; j < (int)((analyteStats.get(i).getIncludedDates().get(0).getTime()-analyteStats.get(i-1).getIncludedDates().get(0).getTime())/86400000); j++);
-//				series.addPoint(new Point());
-
 		}
-		//chart.getXAxis().setType(Type.DATE_TIME);
-		//chart.setOption("/plotOptions/line/pointInterval/",86400000);
-		// chart.getXAxis().setCategories(categories.toArray(new String[categories.size()]));
 
 		chartPanel.add(table);
 	}

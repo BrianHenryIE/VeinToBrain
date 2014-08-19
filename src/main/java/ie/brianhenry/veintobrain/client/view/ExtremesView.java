@@ -44,27 +44,34 @@ public class ExtremesView implements IsWidget {
 		f7.setSpacing(2);
 		f8.setSpacing(2);
 		
-		max.setSize("40px", "10px");
-		min.setSize("40px", "10px");
-		maxDiff750mean.setSize("40px", "10px");
-		minDiff750mean.setSize("40px", "10px");
-		maxDiff750median.setSize("40px", "10px");
-		minDiff750median.setSize("40px", "10px");
+		max.setSize("70px", "10px");
+		min.setSize("70px", "10px");
+		maxDiff750mean.setSize("70px", "10px");
+		minDiff750mean.setSize("70px", "10px");
+		maxDiff750median.setSize("70px", "10px");
+		minDiff750median.setSize("70px", "10px");
+		
+		max.setEnabled(false);
+		min.setEnabled(false);
+		maxDiff750mean.setEnabled(false);
+		minDiff750mean.setEnabled(false);
+		maxDiff750median.setEnabled(false);
+		minDiff750median.setEnabled(false);
 		
 		Label maxLab = new Label("Maximum");
-		maxLab.setSize("176px", "20px");
+		maxLab.setSize("146px", "20px");
 		Label minLab = new Label("Minimum");
-		minLab.setSize("176px", "20px");
+		minLab.setSize("146px", "20px");
 		Label meanLab = new Label ("Difference between means");
 		Label maxDiff750meanLab = new Label("Max (7-50 day)");
-		maxDiff750meanLab.setSize("176px", "20px");
+		maxDiff750meanLab.setSize("146px", "20px");
 		Label minDiff750meanLab = new Label("Min (7-50 day)");
-		minDiff750meanLab.setSize("176px", "20px");
+		minDiff750meanLab.setSize("146px", "20px");
 		Label medianLab = new Label ("Difference between medians");
 		Label maxDiff750medianLab = new Label("Max (7-50 day)");
-		maxDiff750medianLab.setSize("176px", "20px");
+		maxDiff750medianLab.setSize("146px", "20px");
 		Label minDiff750medianLab = new Label("Min (7-50 day)");
-		minDiff750medianLab.setSize("176px", "20px");
+		minDiff750medianLab.setSize("146px", "20px");
 
 		this.eventBus = eventBus;
 		p.setOpen(true);
@@ -99,6 +106,15 @@ public class ExtremesView implements IsWidget {
 	@Override
 	public Widget asWidget() {
 		return p;
+	}
+	
+	public void setExtremes(String max2, String min2, String m1, String m2, String m3, String m4) {
+		max.setText(max2+" ug/L");
+		min.setText(min2+" ug/L");
+		maxDiff750mean.setText(m1+" ug/L");
+		minDiff750mean.setText(m2+" ug/L");
+		maxDiff750median.setText(m3+" ug/L");
+		minDiff750median.setText(m4+" ug/L");
 	}
 
 }

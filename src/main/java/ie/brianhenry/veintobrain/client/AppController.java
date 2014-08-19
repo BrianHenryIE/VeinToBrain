@@ -1,5 +1,7 @@
 package ie.brianhenry.veintobrain.client;
 
+import java.util.Iterator;
+
 import ie.brianhenry.veintobrain.client.events.AnalyteMenuEvent;
 import ie.brianhenry.veintobrain.client.events.LoginEvent;
 import ie.brianhenry.veintobrain.client.events.TimeRangeMenuEvent;
@@ -23,9 +25,11 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.binder.EventBinder;
 import com.google.web.bindery.event.shared.binder.EventHandler;
 
@@ -96,17 +100,22 @@ public class AppController {
 	}
 	
 	
-//	AnalyteMenuView amv = new AnalyteMenuView(rpcService, eventBus);
 
 	TabLayoutPanel tab = new TabLayoutPanel(2.5, Unit.EM); // centerFrame
 	AnalyteMeanView avMean = new AnalyteMeanView(rpcService, eventBus); // centerFrame
 	AnalyteMedianView avMedian = new AnalyteMedianView(rpcService, eventBus); // centerFrame
 	TableView tv = new TableView(rpcService, eventBus); // centerFrame
 
+	//TODO
+	AnalyteMenuView amv = new AnalyteMenuView(rpcService, eventBus);
+	RangeView rv = new RangeView(rpcService, eventBus);
+	StatsView sv = new StatsView(rpcService, eventBus);
+	ExtremesView ev = new ExtremesView(rpcService, eventBus);
+	
 	Label version = new Label("Version 1.0");
 	Label summaryLab = new Label("Summary"); // rightFrame
 	Label timeRangeLab = new Label(); // rightFrame
-	FlowPanel statsPanel = new FlowPanel(); // rightFrame
+//	FlowPanel statsPanel = new FlowPanel(); // rightFrame
 	DisclosurePanel p = new DisclosurePanel("Click to disclose something:");
 	Label copyright = new Label("Copyright © 2014. All rights reserved.");
 
@@ -126,18 +135,38 @@ public class AppController {
 		rightFrame.clear();
 
 		plot.setSize("200px", "40px");
-//		plot.addClickHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				eventBus.fireEvent(new AnalyteMenuEvent(mi));
-//			}
-//		});
+//		plot.setEnabled(false);
+		plot.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+//				plot.setEnabled(false);
+				enableAllChildren(true,amv.getFlow());
+				avMean.setAnalyte(amv.getActiveButton());
+				avMedian.setAnalyte(amv.getActiveButton());
+				tv.setAnalyte(amv.getActiveButton());
+//				statsPanel.clear();
+				rv.setRange(amv.getActiveButton());
+				sv.setStats(avMean.getOverallMean(amv.getActiveButton())
+						, avMedian.getOverallMedian(amv.getActiveButton())
+						, avMean.standardDev(amv.getActiveButton())
+						, avMean.variance(amv.getActiveButton())
+						, avMean.avgDailyTests(amv.getActiveButton()));
+				ev.setExtremes(avMean.maxValue(amv.getActiveButton())
+						, avMean.minValue(amv.getActiveButton())
+						, avMean.getMaxDiff750s()
+						, avMean.getMinDiff750s()
+						, avMedian.getMaxDiff750s()
+						, avMedian.getMinDiff750s());
+			}
+		});
 
 		top.add(version);
 
-		leftFrame.add(new AnalyteMenuView(rpcService, eventBus));
+//		leftFrame.add(new AnalyteMenuView(rpcService, eventBus));
+		leftFrame.add(amv);
 		leftFrame.add(new OptionMenuView(rpcService, eventBus));
-		leftFrame.add(new RangeView(rpcService, eventBus));
+//		leftFrame.add(new RangeView(rpcService, eventBus));
+		leftFrame.add(rv);
 		leftFrame.add(plot);
 		tab.setAnimationDuration(1000);
 
@@ -149,26 +178,43 @@ public class AppController {
 		centerFrame.add(tab);
 
 		rightFrame.add(summaryLab);
-		rightFrame.add(new StatsView(rpcService, eventBus));
-		rightFrame.add(new ExtremesView(rpcService, eventBus));
-
+//		rightFrame.add(new StatsView(rpcService, eventBus));
+		rightFrame.add(sv);
+//		rightFrame.add(new ExtremesView(rpcService, eventBus));
+		rightFrame.add(ev);
+		
 		rightFrame.add(timeRangeLab);
-		rightFrame.add(statsPanel);
+//		rightFrame.add(statsPanel);
 
 		bottom.add(copyright);
 	}
 
-	@EventHandler
-	void OnShow(AnalyteMenuEvent event) {
-		avMean.setAnalyte(event.getAnalyte());
-		avMedian.setAnalyte(event.getAnalyte());
-		tv.setAnalyte(event.getAnalyte());
-		statsPanel.clear();
-	}
+//	@EventHandler
+//	void OnShow(AnalyteMenuEvent event) {
+//		GWT.log("SFASDFASDADS");
+//		plot.setEnabled(true);
+//	}
 
 	@EventHandler
 	void OnShow(TimeRangeMenuEvent event) {
 		timeRangeLab.setText("Time Range: " + event.getTimeRange());
+	}
+	
+	private void enableAllChildren(boolean enable, Widget widget)
+	{
+	    if (widget instanceof HasWidgets)
+	    {
+	        Iterator<Widget> iter = ((HasWidgets)widget).iterator();
+	        while (iter.hasNext())
+	        {
+	            Widget nextWidget = iter.next();
+	            enableAllChildren(enable, nextWidget);
+	            if (nextWidget instanceof FocusWidget)
+	            {
+	                ((FocusWidget)nextWidget).setEnabled(enable);
+	            }
+	        }
+	    }
 	}
 
 }

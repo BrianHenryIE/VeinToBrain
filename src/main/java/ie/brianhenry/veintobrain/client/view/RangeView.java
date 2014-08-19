@@ -34,19 +34,24 @@ public class RangeView implements IsWidget {
 		f3.setSpacing(2);
 		f4.setSpacing(2);
 		
-		ref049.setSize("40px", "10px");
-		ref5059.setSize("40px", "10px");
-		ref6069.setSize("40px", "10px");
-		ref7099.setSize("40px", "10px");
+		ref049.setSize("60px", "10px");
+		ref5059.setSize("60px", "10px");
+		ref6069.setSize("60px", "10px");
+		ref7099.setSize("60px", "10px");
+		
+		ref049.setEnabled(false);
+		ref5059.setEnabled(false);
+		ref6069.setEnabled(false);
+		ref7099.setEnabled(false);
 		
 		Label ref049Lab = new Label("0 – 49 years");
-		ref049Lab.setSize("176px", "20px");
+		ref049Lab.setSize("156px", "20px");
 		Label ref5059Lab = new Label("50 – 59 years");
-		ref5059Lab.setSize("176px", "20px");
+		ref5059Lab.setSize("156px", "20px");
 		Label ref6069Lab = new Label("60 – 69 years");
-		ref6069Lab.setSize("176px", "20px");
+		ref6069Lab.setSize("156px", "20px");
 		Label ref7099Lab = new Label ("70 – 99 years");
-		ref7099Lab.setSize("176px", "20px");
+		ref7099Lab.setSize("156px", "20px");
 
 		this.eventBus = eventBus;
 		p.setOpen(true);
@@ -71,6 +76,14 @@ public class RangeView implements IsWidget {
 	@Override
 	public Widget asWidget() {
 		return p;
+	}
+	
+	public void setRange(String analyte) {
+		//TODO set different ranges based on the analyte
+		ref049.setText("0-2.5 ug/L");
+		ref5059.setText("0-3.5 ug/L");
+		ref6069.setText("0-4.5 ug/L");
+		ref7099.setText("0-6.5 ug/L");
 	}
 
 }
