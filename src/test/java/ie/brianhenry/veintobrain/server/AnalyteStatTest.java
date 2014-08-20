@@ -15,10 +15,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.joda.time.LocalDate;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class AnalyteStatTest {
 
+	@Ignore
 	@Test
 	public void sorting() {
 		PSAdata pd = new PSAdata();

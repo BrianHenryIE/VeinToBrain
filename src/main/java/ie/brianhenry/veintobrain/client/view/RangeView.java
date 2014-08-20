@@ -45,13 +45,13 @@ public class RangeView implements IsWidget {
 		ref7099.setEnabled(false);
 		
 		Label ref049Lab = new Label("0 – 49 years");
-		ref049Lab.setSize("156px", "20px");
+		ref049Lab.setSize("110px", "20px");
 		Label ref5059Lab = new Label("50 – 59 years");
-		ref5059Lab.setSize("156px", "20px");
+		ref5059Lab.setSize("110px", "20px");
 		Label ref6069Lab = new Label("60 – 69 years");
-		ref6069Lab.setSize("156px", "20px");
+		ref6069Lab.setSize("110px", "20px");
 		Label ref7099Lab = new Label ("70 – 99 years");
-		ref7099Lab.setSize("156px", "20px");
+		ref7099Lab.setSize("110px", "20px");
 
 		this.eventBus = eventBus;
 		p.setOpen(true);

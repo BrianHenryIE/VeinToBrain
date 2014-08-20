@@ -44,7 +44,7 @@ public class AnalyteMedianView implements IsWidget {
 	Series series2;
 	Series series3;
 	Series mean;
-	
+
 	double maxDiff750;
 	double minDiff750;
 
@@ -100,11 +100,11 @@ public class AnalyteMedianView implements IsWidget {
 		chartPanel.clear();
 
 		double overMedian = round(getOverallMedian("psa", analyteStats));
-		
-		//TODO
+
+		// TODO
 		double val7 = 0;
 		double val50 = 0;
-		
+
 		setMaxDiff750(0);
 		setMinDiff750(Double.MAX_VALUE);
 
@@ -130,33 +130,28 @@ public class AnalyteMedianView implements IsWidget {
 			} else {
 				series3.addPoint(new Point(analyteStats.get(i).getIncludedDates().get(0).getTime(), round(analyteStats.get(i)
 						.getMovingMedian().get("50"))));
-				//TODO
+				// TODO
 				val7 = round(analyteStats.get(i).getMovingMedian().get("7"));
-				//TODO
+				// TODO
 				val50 = round(analyteStats.get(i).getMovingMedian().get("50"));
 			}
-			//TODO
-			if (Math.abs(val50-val7)>maxDiff750) setMaxDiff750(Math.abs(val50-val7));
-			else if (Math.abs(val50-val7)<minDiff750) setMinDiff750(Math.abs(val50-val7));
+			// TODO
+			if (Math.abs(val50 - val7) > maxDiff750)
+				setMaxDiff750(Math.abs(val50 - val7));
+			else if (Math.abs(val50 - val7) < minDiff750)
+				setMinDiff750(Math.abs(val50 - val7));
 		}
 
-//		GWT.log("overall median=" + round(getOverallMedian("psa", analyteStats)));
+		// GWT.log("overall median=" + round(getOverallMedian("psa",
+		// analyteStats)));
 
 		chartPanel.add(chart);
 	}
 
-	public void setAnalyte(final String analyte) {
+	public void setAnalyte(List<AnalyteStat> result) {
 
-		rpcService.executeRequest(analyte, StatPeriod.DAY, new AsyncCallback<List<AnalyteStat>>() {
-			public void onFailure(Throwable caught) {
-			}
-
-			public void onSuccess(List<AnalyteStat> result) {
-				analyteStats = result;
-				setChart(analyte);
-
-			}
-		});
+		analyteStats = result;
+		setChart(result.get(0).getAnalyteType());
 	}
 
 	@Override
@@ -169,10 +164,10 @@ public class AnalyteMedianView implements IsWidget {
 		bd = bd.setScale(2, RoundingMode.HALF_UP);
 		return bd.doubleValue();
 	}
-	
+
 	public String getOverallMedian(String analyte) {
 		Double median = round(getOverallMedian("psa", analyteStats));
-//		GWT.log("MEAN="+mean);
+		// GWT.log("MEAN="+mean);
 		String m = median.toString();
 		return m;
 	}
@@ -197,11 +192,11 @@ public class AnalyteMedianView implements IsWidget {
 			return (sortedArray.get(middle - 1) + sortedArray.get(middle) / 2.0);
 		}
 	}
-	
+
 	public double getMaxDiff750() {
 		return maxDiff750;
 	}
-	
+
 	public String getMaxDiff750s() {
 		Double mad = round(getMaxDiff750());
 		String m = mad.toString();
@@ -215,7 +210,7 @@ public class AnalyteMedianView implements IsWidget {
 	public double getMinDiff750() {
 		return minDiff750;
 	}
-	
+
 	public String getMinDiff750s() {
 		Double mid = round(getMinDiff750());
 		String m = mid.toString();

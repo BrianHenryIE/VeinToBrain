@@ -44,7 +44,7 @@ margin-left: 6px;
 
 .gwt-TabLayoutPanel {
 	margin: 5px 5px 5px 5px;
-	width: 800px;
+	width: 720px;
 	height: 480px;
 }
 
@@ -99,7 +99,7 @@ margin-left: 6px;
 .menuPanel {
 	float: left;
 	position: absolute;
-	width: 250px;
+	width: 210px;
 	height: 480px;
 	background: #ccc;
 	border-radius: 15px 15px 15px 15px;
@@ -112,9 +112,9 @@ margin-left: 6px;
 
 .appPanel {
 	float: left;
-	width: 820px;
+	width: 790px;
 	height: 500px;
-	margin-left: 258px;
+	margin-left: 215px;
 	/*background: #B5E3FF;*/
 	background: #ccc;
 	/*padding: 0 50px 0 50px;*/

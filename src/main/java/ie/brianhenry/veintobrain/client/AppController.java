@@ -1,6 +1,7 @@
 package ie.brianhenry.veintobrain.client;
 
 import java.util.Iterator;
+import java.util.List;
 
 import ie.brianhenry.veintobrain.client.events.AnalyteMenuEvent;
 import ie.brianhenry.veintobrain.client.events.LoginEvent;
@@ -15,13 +16,16 @@ import ie.brianhenry.veintobrain.client.view.RangeView;
 import ie.brianhenry.veintobrain.client.view.StatsView;
 import ie.brianhenry.veintobrain.client.view.TableView;
 import ie.brianhenry.veintobrain.client.view.OptionMenuView;
+import ie.brianhenry.veintobrain.shared.representations.AnalyteStat;
 import ie.brianhenry.veintobrain.shared.representations.User;
+import ie.brianhenry.veintobrain.shared.representations.AnalyteStat.StatPeriod;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -134,29 +138,39 @@ public class AppController {
 		centerFrame.clear();
 		rightFrame.clear();
 
-		plot.setSize("200px", "40px");
+		plot.setSize("150px", "40px");
 //		plot.setEnabled(false);
 		plot.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-//				plot.setEnabled(false);
-				enableAllChildren(true,amv.getFlow());
-				avMean.setAnalyte(amv.getActiveButton());
-				avMedian.setAnalyte(amv.getActiveButton());
-				tv.setAnalyte(amv.getActiveButton());
-//				statsPanel.clear();
-				rv.setRange(amv.getActiveButton());
-				sv.setStats(avMean.getOverallMean(amv.getActiveButton())
-						, avMedian.getOverallMedian(amv.getActiveButton())
-						, avMean.standardDev(amv.getActiveButton())
-						, avMean.variance(amv.getActiveButton())
-						, avMean.avgDailyTests(amv.getActiveButton()));
-				ev.setExtremes(avMean.maxValue(amv.getActiveButton())
-						, avMean.minValue(amv.getActiveButton())
-						, avMean.getMaxDiff750s()
-						, avMean.getMinDiff750s()
-						, avMedian.getMaxDiff750s()
-						, avMedian.getMinDiff750s());
+				GWT.log("appcontroller logged in");
+				rpcService.getAnalyte(amv.getActiveButton(), StatPeriod.DAY, new AsyncCallback<List<AnalyteStat>>() {
+					public void onFailure(Throwable caught) {
+					}
+
+					public void onSuccess(List<AnalyteStat> result) {
+						
+						enableAllChildren(true,amv.getFlow());
+						avMean.setAnalyte(result);
+						avMedian.setAnalyte(result);
+						tv.setChart(amv.getActiveButton(), result);
+//						statsPanel.clear();
+						rv.setRange(amv.getActiveButton());
+						sv.setStats(avMean.getOverallMean(amv.getActiveButton())
+								, avMedian.getOverallMedian(amv.getActiveButton())
+								, avMean.standardDev(amv.getActiveButton())
+								, avMean.variance(amv.getActiveButton())
+								, avMean.avgDailyTests(amv.getActiveButton()));
+						ev.setExtremes(avMean.maxValue(amv.getActiveButton())
+								, avMean.minValue(amv.getActiveButton())
+								, avMean.getMaxDiff750s()
+								, avMean.getMinDiff750s()
+								, avMedian.getMaxDiff750s()
+								, avMedian.getMinDiff750s());
+					}
+					
+				});
+				
 			}
 		});
 

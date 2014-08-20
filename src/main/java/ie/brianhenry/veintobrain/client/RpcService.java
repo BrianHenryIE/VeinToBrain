@@ -1,15 +1,17 @@
 package ie.brianhenry.veintobrain.client;
 
 import ie.brianhenry.veintobrain.shared.representations.AnalyteStat;
-import ie.brianhenry.veintobrain.shared.representations.LoginResponse;
 import ie.brianhenry.veintobrain.shared.representations.AnalyteStat.StatPeriod;
+import ie.brianhenry.veintobrain.shared.representations.LoginResponse;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.UmbrellaException;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -48,48 +50,63 @@ public class RpcService {
 
 	}
 
-	public void executeRequest(String type, StatPeriod period, final AsyncCallback<List<AnalyteStat>> asyncCallback) {
+	private HashMap<String, ArrayList<AnalyteStat>> retrieved = new HashMap<String, ArrayList<AnalyteStat>>();
 
-		String jsonUrl = "/api/analyte/" + type + "/" + period;
+	public HashMap<String, ArrayList<AnalyteStat>> getRetrievedMap(){
+		return retrieved;
+	}
+	
+	public void getAnalyte(final String type, final StatPeriod period, final AsyncCallback<List<AnalyteStat>> asyncCallback) {
 
-		String url = URL.encode(jsonUrl);
+		final String jsonUrl = "/api/analyte/" + type + "/" + period;
+		
+		
+		if (this.retrieved.containsKey(jsonUrl)) {
+			// We already have it
+			asyncCallback.onSuccess(retrieved.get(jsonUrl));
 
-		System.out.println(url);
+		} else {
 
-		// Send request to server and catch any errors.
-		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
+			String url = URL.encode(jsonUrl);
 
-		try {
-			builder.sendRequest(null, new RequestCallback() {
+			System.out.println(url);
 
-				@Override
-				public void onResponseReceived(Request request, Response response) {
-					ArrayListSerializer alSerializer = (ArrayListSerializer) GWT.create(ArrayListSerializer.class);
+			// Send request to server and catch any errors.
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
 
-					@SuppressWarnings("unchecked")
-					ArrayList<AnalyteStat> deResponse = (ArrayList<AnalyteStat>) alSerializer.deSerialize(response.getText(),
-							"java.util.ArrayList");
+			try {
+				builder.sendRequest(null, new RequestCallback() {
 
-					Collections.sort(deResponse);
-					
-					asyncCallback.onSuccess(deResponse);
+					@Override
+					public void onResponseReceived(Request request, Response response) {
+						ArrayListSerializer alSerializer = (ArrayListSerializer) GWT.create(ArrayListSerializer.class);
 
-				}
+						@SuppressWarnings("unchecked")
+						ArrayList<AnalyteStat> deResponse = (ArrayList<AnalyteStat>) alSerializer.deSerialize(response.getText(),
+								"java.util.ArrayList");
 
-				@Override
-				public void onError(Request request, Throwable exception) {
-					// TODO Auto-generated method stub
+						Collections.sort(deResponse);
 
-				}
-			});
-		} catch (RequestException e) {
-			System.out.println("Couldn't retrieve JSON : " + e.getMessage() + " :getEventsForPage()");
+						retrieved.put(jsonUrl, deResponse);
+						asyncCallback.onSuccess(deResponse);
+
+					}
+
+					@Override
+					public void onError(Request request, Throwable exception) {
+						// TODO Auto-generated method stub
+
+					}
+				});
+			} catch (RequestException e) {
+				System.out.println("Couldn't retrieve JSON : " + e.getMessage() + " :getEventsForPage()");
+			}
 		}
 	}
 
 	public void sendPassword(final String username, String password, final AsyncCallback<LoginResponse> asyncCallback) {
 
-		String jsonUrl = "http://localhost:8080/api/login";
+		String jsonUrl = "/api/login";
 
 		String url = URL.encode(jsonUrl);
 

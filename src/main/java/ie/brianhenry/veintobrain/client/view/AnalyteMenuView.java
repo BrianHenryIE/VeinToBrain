@@ -1,17 +1,24 @@
 package ie.brianhenry.veintobrain.client.view;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
 
 import ie.brianhenry.veintobrain.client.RpcService;
 import ie.brianhenry.veintobrain.client.events.AnalyteMenuEvent;
+import ie.brianhenry.veintobrain.shared.representations.AnalyteStat;
+import ie.brianhenry.veintobrain.shared.representations.AnalyteStat.StatPeriod;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -30,8 +37,10 @@ public class AnalyteMenuView implements IsWidget {
 
 	EventBus eventBus;
 
-	public AnalyteMenuView(RpcService rpcService, final EventBus eventBus) {
+	
+	public AnalyteMenuView(final RpcService rpcService, final EventBus eventBus) {
 
+		
 		this.eventBus = eventBus;
 		p.setOpen(true);
 
@@ -50,6 +59,17 @@ public class AnalyteMenuView implements IsWidget {
 //					eventBus.fireEvent(new AnalyteMenuEvent(mi));
 					setActiveButton(mi);
 					enableAllChildren(false, flow);
+					GWT.log("should now get analyte from server");
+					
+//					rpcService.getAnalyte(mi.toLowerCase(), StatPeriod.DAY, new AsyncCallback<List<AnalyteStat>>() {
+//						public void onFailure(Throwable caught) {
+//						}
+//
+//						public void onSuccess(List<AnalyteStat> result) {
+//							// Nothing... we're just prefetching 
+//							GWT.log("Analyte prefetched");
+//						}
+//					});
 					
 				}
 			});
