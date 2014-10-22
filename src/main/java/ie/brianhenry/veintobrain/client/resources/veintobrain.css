@@ -44,7 +44,7 @@ margin-left: 6px;
 
 .gwt-TabLayoutPanel {
 	margin: 5px 5px 5px 5px;
-	width: 720px;
+	width: 800px;
 	height: 480px;
 }
 
@@ -112,7 +112,7 @@ margin-left: 6px;
 
 .appPanel {
 	float: left;
-	width: 790px;
+	width: 875px;
 	height: 500px;
 	margin-left: 215px;
 	/*background: #B5E3FF;*/
@@ -141,6 +141,10 @@ margin-left: 6px;
 	margin-left: 23px;
 	color: white;
 	margin-bottom: 4px
+}
+
+.uploadButton {
+	
 }
 
 /* Footer

@@ -22,6 +22,7 @@ public interface VeintobrainResources extends ClientBundle {
 		String helpPanel();
 		String bottom();
 		String copyright();
+		String uploadButton();
 	}
 
 //	@Source("loading.gif")

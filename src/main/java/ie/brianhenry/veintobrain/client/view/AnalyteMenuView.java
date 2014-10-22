@@ -1,27 +1,14 @@
 package ie.brianhenry.veintobrain.client.view;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.swing.ButtonGroup;
-import javax.swing.JRadioButton;
-
 import ie.brianhenry.veintobrain.client.RpcService;
-import ie.brianhenry.veintobrain.client.events.AnalyteMenuEvent;
-import ie.brianhenry.veintobrain.shared.representations.AnalyteStat;
-import ie.brianhenry.veintobrain.shared.representations.AnalyteStat.StatPeriod;
+
+import java.util.Iterator;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;

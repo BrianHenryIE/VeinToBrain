@@ -1,7 +1,6 @@
 package ie.brianhenry.veintobrain.server.resources;
 
 import ie.brianhenry.veintobrain.server.core.ComputeAnalyteStats;
-import ie.brianhenry.veintobrain.shared.representations.AnalyteConfig;
 import ie.brianhenry.veintobrain.shared.representations.AnalyteDate;
 import ie.brianhenry.veintobrain.shared.representations.AnalyteResult;
 import ie.brianhenry.veintobrain.shared.representations.AnalyteStat;
@@ -10,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -19,22 +17,12 @@ import javax.ws.rs.core.MediaType;
 
 import org.joda.time.LocalDate;
 
-import net.vz.mongodb.jackson.DBCursor;
-import net.vz.mongodb.jackson.JacksonDBCollection;
-
-import com.google.gwt.core.shared.GWT;
-import com.mongodb.DB;
-
 @Path("/analyte")
 @Produces(MediaType.APPLICATION_JSON)
 public class AnalyteResource {
 
-	JacksonDBCollection<AnalyteStat, String> analyteStats;
 
-	@Inject
-	public AnalyteResource(DB db) {
-
-		analyteStats = JacksonDBCollection.wrap(db.getCollection("analytestat"), AnalyteStat.class, String.class);
+	public AnalyteResource() {
 
 	}
 

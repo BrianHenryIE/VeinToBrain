@@ -19,3 +19,15 @@ We need to use our technical and data mining skills to analyse the existing elec
 
 Our intention is to design and develop a data-mining tool tailored to the healthcare environment, so that they may be able to analyse and gain knowledge from any other historical clinical information. This system could be used as extra quality control tool for hospital in order to determine the efficiency and effectiveness of new protocols.
 
+
+To compile & run, open two terminal windows: 
+mvn -P server package
+java -jar target/veintobrain-0.0.1-SNAPSHOT.jar server veintobrain.yaml
+
+mvn -P client compile
+mvn -P client gwt:run-codeserver
+
+then visit http://localhost:8080
+
+
+
