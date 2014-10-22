@@ -13,6 +13,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
@@ -21,8 +22,10 @@ import com.sun.jersey.multipart.FormDataParam;
  * @author BrianHenry.ie
  * @see http://www.mkyong.com/webservices/jax-rs/file-upload-example-in-jersey/
  */
-@Path("/upload")
+
+// @Produces(MediaType.TEXT_HTML)
 @Produces(MediaType.APPLICATION_JSON)
+@Path("/upload")
 public class UploadResource {
 
 	@POST
@@ -34,7 +37,7 @@ public class UploadResource {
 
 		System.out.println("file upload!");
 		
-		// String uploadedFileLocation = "./temp/" + fileDetail.getFileName();
+		// String uploadedFileLocation = "./uploads/" + fileDetail.getFileName();
 		String uploadedFileLocation = "./"+fileDetail.getFileName();
 
 		try {
@@ -57,7 +60,7 @@ public class UploadResource {
 
 		String output = "File uploaded to : " + uploadedFileLocation;
 
-//		return Response.status(200).entity(output).build();
+		// return Response.status(200).entity(output).build();
 		return new UploadResponse(true, fileDetail.getFileName());
 	}
 

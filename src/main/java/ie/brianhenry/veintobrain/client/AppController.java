@@ -124,7 +124,7 @@ public class AppController {
 			}
 		});
 		
-		//leftFrame.add(uploadButton);
+		leftFrame.add(uploadButton);
 	}
 
 	TabLayoutPanel tab = new TabLayoutPanel(2.5, Unit.EM); // centerFrame

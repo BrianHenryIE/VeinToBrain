@@ -1,7 +1,7 @@
 package ie.brianhenry.veintobrain.server;
 
 import ie.brianhenry.veintobrain.server.resources.AnalyteResource;
-import ie.brianhenry.veintobrain.server.resources.FriendlyLoginResource;
+import ie.brianhenry.veintobrain.server.resources.UploadResource;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.auth.basic.BasicAuthProvider;
@@ -30,8 +30,9 @@ public class VeintobrainApplication extends Application<VeintobrainConfiguration
 		final AnalyteResource resource = new AnalyteResource();
 		environment.jersey().register(resource);
 
-		final FriendlyLoginResource loginResource = new FriendlyLoginResource();
-		environment.jersey().register(loginResource);
+		final UploadResource uploadResource = new UploadResource();
+		environment.jersey().register(uploadResource);
+		
 
 	}
 
